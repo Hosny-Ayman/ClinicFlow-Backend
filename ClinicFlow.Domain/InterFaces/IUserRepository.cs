@@ -9,6 +9,8 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, bool Tracking = false);
 
+        Task<User?> GetUserByEmailAsync(string Email, bool Tracking = false);
+
         Task<int> AddAsync(User user);
 
         Task UpdateAsync();

@@ -9,7 +9,6 @@
 
         public static Error Conflict(string message) => new("Conflict", message);
 
-
-
+        public static Error BadRequst(string message) => new("BadRequst", message);
     }
 }

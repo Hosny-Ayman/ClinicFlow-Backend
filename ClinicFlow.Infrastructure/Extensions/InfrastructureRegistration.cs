@@ -1,4 +1,6 @@
-﻿using ClinicFlow.Domain.InterFaces;
+﻿using ClinicFlow.Application.Common.Interfaces;
+using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +13,7 @@ namespace ClinicFlow.Infrastructure.Extensions
         {
             services.AddScoped<IClinicRepository, ClinicRepository>();
             services.AddScoped<IUserRepository, UserReposittory>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
             return services;
         }

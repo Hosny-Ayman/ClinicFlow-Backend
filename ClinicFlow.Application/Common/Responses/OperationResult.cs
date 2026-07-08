@@ -56,5 +56,7 @@ namespace ClinicFlow.Application.Common.Responses
             return new(false, OperationStatus.ServerError, default, error);
         }
 
+       
+
     }
 }

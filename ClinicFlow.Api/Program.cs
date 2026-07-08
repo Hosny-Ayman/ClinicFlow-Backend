@@ -23,7 +23,9 @@ namespace ClinicFlow.Api
 
             var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            builder.Services.AddApiServices();
+            builder.Services.AddApiServices(builder.Configuration);
+
+            builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.Services.AddApplicationServices();
 

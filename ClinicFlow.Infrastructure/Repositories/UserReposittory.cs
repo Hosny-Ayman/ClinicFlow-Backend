@@ -48,6 +48,17 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await query.SingleOrDefaultAsync(x => x.PhoneNumber == PhoneNumber);
         }
 
+        public async Task<User?> GetUserByEmailAsync(string Email, bool Tracking = false)
+        {
+            var query = _appDbContext.Users.AsQueryable();
+
+            if (!Tracking)
+                query = query.AsNoTracking();
+
+
+            return await query.SingleOrDefaultAsync(x => x.Email == Email);
+        }
+
         public async Task<bool> IsUserExistsByIdAsync(int userId)
         {
             return await _appDbContext.Users.AnyAsync(x => x.Id == userId);
