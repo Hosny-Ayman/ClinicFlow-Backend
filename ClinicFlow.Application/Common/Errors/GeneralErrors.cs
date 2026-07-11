@@ -9,6 +9,6 @@
 
         public static Error Conflict(string message) => new("Conflict", message);
 
-        public static Error BadRequst(string message) => new("BadRequst", message);
+        public static Error Unauthorized(string message) => new("Unauthorized", message);
     }
 }

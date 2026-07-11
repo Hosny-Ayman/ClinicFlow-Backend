@@ -18,7 +18,7 @@ public static class ApiBehaviorRegistration
                     .Select(x => new Error("ValidationError", x.ErrorMessage))
                     .ToList();
 
-                var result = OperationResult<bool>.BadRequest(errors);
+                var result = OperationResult<bool>.BadRequest(errors.ToArray());
 
                 return new BadRequestObjectResult(result);
             };

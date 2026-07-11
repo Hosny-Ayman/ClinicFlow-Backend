@@ -31,7 +31,7 @@ namespace ClinicFlow.Application.Features.Clinics
             var user = _mapper.Map<User>(userDto);
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
-            user.RoleId = RoleEnum.Doctor;
+           
 
 
             var clinicId = await _clinicRepository.AddAsync(clinic, user);

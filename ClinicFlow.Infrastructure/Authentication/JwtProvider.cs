@@ -28,10 +28,11 @@ namespace ClinicFlow.Infrastructure.Authentication
 
             new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
 
-            new(ClaimTypes.Role, user.RoleId.ToString()),
 
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+            claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role.Name)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 

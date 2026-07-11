@@ -21,7 +21,6 @@ namespace ClinicFlow.Infrastructure.Repositories
         {
             await _appDbContext.AddAsync(user);
 
-            await _appDbContext.SaveChangesAsync();
 
             return user.Id;
         }
@@ -56,7 +55,15 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
 
-            return await query.SingleOrDefaultAsync(x => x.Email == Email);
+            return await query.Select(x=> new User
+            {
+                Id= x.Id,
+                Email = x.Email,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                UserRoles = x.UserRoles
+
+            }).SingleOrDefaultAsync(x => x.Email == Email);
         }
 
         public async Task<bool> IsUserExistsByIdAsync(int userId)
@@ -64,9 +71,6 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await _appDbContext.Users.AnyAsync(x => x.Id == userId);
         }
 
-        public async Task UpdateAsync()
-        {
-            await _appDbContext.SaveChangesAsync();
-        }
+       
     }
 }

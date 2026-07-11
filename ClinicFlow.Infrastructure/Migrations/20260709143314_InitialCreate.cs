@@ -51,8 +51,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -86,6 +87,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     Gender = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     BloodType = table.Column<int>(type: "int", nullable: true),
                     NationalId = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: true),
@@ -111,12 +113,12 @@ namespace ClinicFlow.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClinicId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
@@ -169,7 +171,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                     ConsultationFee = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    ExperienceYears = table.Column<int>(type: "int", nullable: false)
+                    ExperienceYears = table.Column<int>(type: "int", nullable: false),
+                    ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -195,24 +198,57 @@ namespace ClinicFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRoles",
+                name: "RefreshTokens",
                 columns: table => new
                 {
-                    RolesId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TokenHash = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReplacedByTokenHash = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.RolesId, x.UsersId });
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RolesId",
-                        column: x => x.RolesId,
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ClinicId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Clinics_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Clinics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Users_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_UserRoles_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -596,7 +632,8 @@ namespace ClinicFlow.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Clinics_Name",
                 table: "Clinics",
-                column: "Name");
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clinics_Phone",
@@ -638,7 +675,7 @@ namespace ClinicFlow.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorSchedules_DayOfWeek",
                 table: "DoctorSchedules",
-                column: "DayOfWeekEnum");
+                column: "DayOfWeek");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorSchedules_DoctorId",
@@ -648,12 +685,12 @@ namespace ClinicFlow.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorSchedules_DoctorId_DayOfWeek",
                 table: "DoctorSchedules",
-                columns: new[] { "DoctorId", "DayOfWeekEnum" });
+                columns: new[] { "DoctorId", "DayOfWeek" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorSchedules_DoctorId_DayOfWeek_StartTime_EndTime",
                 table: "DoctorSchedules",
-                columns: new[] { "DoctorId", "DayOfWeekEnum", "StartTime", "EndTime" });
+                columns: new[] { "DoctorId", "DayOfWeek", "StartTime", "EndTime" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorSchedules_IsDeleted",
@@ -780,7 +817,7 @@ namespace ClinicFlow.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_Gender",
                 table: "Patients",
-                column: "GenderEnum");
+                column: "Gender");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_LastName",
@@ -876,6 +913,28 @@ namespace ClinicFlow.Infrastructure.Migrations
                 columns: new[] { "MedicalRecordId", "IssuedAt" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_TokenHash",
+                table: "RefreshTokens",
+                column: "TokenHash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_IsActive",
+                table: "Roles",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_Name",
+                table: "Roles",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Specialties_IsActive",
                 table: "Specialties",
                 column: "IsActive");
@@ -887,9 +946,19 @@ namespace ClinicFlow.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_UsersId",
+                name: "IX_UserRoles_ClinicId",
                 table: "UserRoles",
-                column: "UsersId");
+                column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_UserId",
+                table: "UserRoles",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ClinicId",
@@ -954,6 +1023,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PrescriptionItems");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");

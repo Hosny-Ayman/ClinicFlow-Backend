@@ -46,6 +46,8 @@ namespace ClinicFlow.Infrastructure.Data
 
         public DbSet<UserRole> UserRoles => Set<UserRole>();
 
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

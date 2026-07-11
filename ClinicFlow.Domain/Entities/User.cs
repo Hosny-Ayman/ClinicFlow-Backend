@@ -9,8 +9,6 @@ namespace ClinicFlow.Domain.Entities
 
         public int ClinicId { get; set; }
 
-        public RoleEnum RoleId { get; set; }
-
         public string FirstName { get; set; } = null!;
 
         public string LastName { get; set; } = null!;
@@ -32,6 +30,8 @@ namespace ClinicFlow.Domain.Entities
         public Doctor? Doctor { get; set; }
 
         public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
+
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     }
 }

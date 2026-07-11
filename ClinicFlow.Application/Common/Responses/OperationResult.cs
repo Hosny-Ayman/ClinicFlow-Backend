@@ -26,34 +26,34 @@ namespace ClinicFlow.Application.Common.Responses
             return new(true, OperationStatus.Success, data, null);
         }
 
-        public static OperationResult<T> BadRequest(List <Error> error)
+        public static OperationResult<T> BadRequest(params Error[] errors)
         {
-            return new(false, OperationStatus.BadRequest, default, error);
+            return new(false, OperationStatus.BadRequest, default, errors.ToList());
         }
 
-        public static OperationResult<T> NotFound(List<Error> error)
+        public static OperationResult<T> NotFound(params Error[] errors)
         {
-            return new(false, OperationStatus.NotFound, default, error);
+            return new(false, OperationStatus.NotFound, default, errors.ToList());
         }
 
-        public static OperationResult<T> Conflict(List<Error> error)
+        public static OperationResult<T> Conflict(params Error[] errors)
         {
-            return new(false, OperationStatus.Conflict, default, error);
+            return new(false, OperationStatus.Conflict, default, errors.ToList());
         }
 
-        public static OperationResult<T> Unauthorized(List<Error> error)
+        public static OperationResult<T> Unauthorized(params Error[] errors)
         {
-            return new(false, OperationStatus.Unauthorized, default, error);
+            return new(false, OperationStatus.Unauthorized, default, errors.ToList());
         }
 
-        public static OperationResult<T> Forbidden(List<Error> error)
+        public static OperationResult<T> Forbidden(params Error[] errors)
         {
-            return new(false, OperationStatus.Forbidden, default, error);
+            return new(false, OperationStatus.Forbidden, default, errors.ToList());
         }
 
-        public static OperationResult<T> Failure(List<Error> error)
+        public static OperationResult<T> Failure(params Error[] errors)
         {
-            return new(false, OperationStatus.ServerError, default, error);
+            return new(false, OperationStatus.ServerError, default, errors.ToList());
         }
 
        

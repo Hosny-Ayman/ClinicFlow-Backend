@@ -272,7 +272,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("ExperienceYears")
                         .HasColumnType("int");
 
-                    b.Property<int>("GenderEnum")
+                    b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<string>("ProfileImageUrl")
@@ -312,7 +312,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DayOfWeekEnum")
+                    b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 
                     b.Property<int>("DoctorId")
@@ -331,15 +331,15 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DayOfWeekEnum");
+                    b.HasIndex("DayOfWeek");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("DoctorId", "DayOfWeekEnum");
+                    b.HasIndex("DoctorId", "DayOfWeek");
 
-                    b.HasIndex("DoctorId", "DayOfWeekEnum", "StartTime", "EndTime");
+                    b.HasIndex("DoctorId", "DayOfWeek", "StartTime", "EndTime");
 
                     b.ToTable("DoctorSchedules", (string)null);
                 });
@@ -536,7 +536,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("GenderEnum")
+                    b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -569,7 +569,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasIndex("FirstName");
 
-                    b.HasIndex("GenderEnum");
+                    b.HasIndex("Gender");
 
                     b.HasIndex("LastName");
 
@@ -741,7 +741,46 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("PrescriptionItems", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.RoleEnum", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplacedByTokenHash")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -837,7 +876,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -1105,6 +1144,17 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Prescription");
                 });
 
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("ClinicFlow.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ClinicFlow.Domain.Entities.User", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
@@ -1124,7 +1174,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow.Domain.Entities.RoleEnum", "RoleEnum")
+                    b.HasOne("ClinicFlow.Domain.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1138,7 +1188,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("Clinic");
 
-                    b.Navigation("RoleEnum");
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -1207,7 +1257,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("PrescriptionItems");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.RoleEnum", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
@@ -1222,6 +1272,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("AuditLogs");
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("UserRoles");
                 });

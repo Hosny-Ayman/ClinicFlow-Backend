@@ -13,7 +13,6 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<int> AddAsync(User user);
 
-        Task UpdateAsync();
 
         Task<bool> IsUserExistsByIdAsync(int userId);
 

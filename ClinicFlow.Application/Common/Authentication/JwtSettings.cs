@@ -8,7 +8,9 @@
 
         public string Audience { get; set; } = default!;
 
-        public int DurationInMinutes { get; set; }
+        public int DurationInMinutes { get; init; }
+
+        public int RefreshTokenDurationInDays { get; init; }
 
     }
 }
