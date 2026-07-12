@@ -7,7 +7,7 @@ namespace ClinicFlow.Application.Features.Authentication
     public class AuthenticationProfile:Profile
     {
 
-        AuthenticationProfile()
+        public AuthenticationProfile()
         {
             CreateMap<User,LoginDtoRequest>().ReverseMap();
         }

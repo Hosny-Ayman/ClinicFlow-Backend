@@ -15,6 +15,7 @@ namespace ClinicFlow.Api.Extensions
                 OperationStatus.Conflict => controller.Conflict(result),
                 OperationStatus.NotFound => controller.NotFound(result),
                 OperationStatus.BadRequest => controller.BadRequest(result),
+                OperationStatus.Unauthorized => controller.Unauthorized(result),
                 _ => controller.StatusCode(500, result)
 
             };

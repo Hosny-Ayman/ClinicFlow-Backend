@@ -17,16 +17,16 @@ namespace ClinicFlow.Infrastructure.Repositories
         }
 
 
-        public async Task<int> AddAsync(Clinic clinic,User user)
+        public async Task<int> AddAsync(Clinic clinic)
         {
 
             await _appDbContext.Clinics.AddAsync(clinic);
 
-            user.Clinic = clinic;
+            //user.Clinic = clinic;
 
-            await _appDbContext.Users.AddAsync(user);
+            //await _appDbContext.Users.AddAsync(user);
 
-            await _appDbContext.SaveChangesAsync();
+            //await _appDbContext.SaveChangesAsync();
 
             return clinic.Id;
         }

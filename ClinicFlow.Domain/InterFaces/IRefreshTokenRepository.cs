@@ -7,7 +7,9 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task AddAsync(RefreshToken refreshToken);
 
-        Task<RefreshToken?> GetByTokenHashAsync(string tokenHash,bool Tracking = false);
+        Task<RefreshToken?> GetByTokenHashAsync(string tokenHash,bool tracking = false);
+
+        Task<List<RefreshToken>> GetAllActiveTokensByUserIdAsync(int userId,bool tracking = false);
 
     }
 }

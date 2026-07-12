@@ -23,9 +23,15 @@ namespace ClinicFlow.Api
 
             var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+            builder.Services.AddCorsServices(builder.Configuration);
+
             builder.Services.AddApiServices(builder.Configuration);
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
+           
+            builder.Services.AddRateLimitingServices();
+
+            builder.Services.AddAuthorizationServices();
 
             builder.Services.AddApplicationServices();
 
@@ -36,9 +42,7 @@ namespace ClinicFlow.Api
 
             var app = builder.Build();
 
-            app.UseApplicationMiddleware();
-
-
+          
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -46,7 +50,15 @@ namespace ClinicFlow.Api
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("ClinicFlowCorsPolicy");
+
             app.UseHttpsRedirection();
+
+            app.UseApplicationMiddleware();
+
+            app.UseAuthentication();
+
+            app.UseRateLimiter();
 
             app.UseAuthorization();
 

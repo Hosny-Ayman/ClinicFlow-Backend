@@ -20,11 +20,21 @@ namespace ClinicFlow.Infrastructure.Repositories
 
         }
 
-        public async Task<RefreshToken?> GetByTokenHashAsync(string tokenHash, bool Tracking = false)
+        public async Task<List<RefreshToken>> GetAllActiveTokensByUserIdAsync(int userId, bool tracking = false)
         {
             var query = _appDbContext.RefreshTokens.AsQueryable();
 
-            if (!Tracking)
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<RefreshToken?> GetByTokenHashAsync(string tokenHash, bool tracking = false)
+        {
+            var query = _appDbContext.RefreshTokens.AsQueryable();
+
+            if (!tracking)
                 query = query.AsNoTracking();
 
             return await query.Include(x=>x.User).ThenInclude(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.TokenHash == tokenHash);

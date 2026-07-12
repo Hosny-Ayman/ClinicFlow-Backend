@@ -15,7 +15,7 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<Clinic?> GetClinicByNameAsync(string clinicName, bool Tracking = false);
 
-        Task<int> AddAsync(Clinic clinic,User user);
+        Task<int> AddAsync(Clinic clinic);
 
         Task UpdateAsync();
 

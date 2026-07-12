@@ -18,6 +18,18 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();
             services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IOwnershipService, OwnershipService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddHttpContextAccessor();
+
+
+
+
+
+
+
+
 
             return services;
         }

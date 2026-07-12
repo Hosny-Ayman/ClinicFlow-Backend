@@ -30,5 +30,15 @@ namespace ClinicFlow.Api.Extensions
                     Expires = DateTimeOffset.UtcNow.AddDays(jwtSettings.RefreshTokenDurationInDays)
                 });
         }
+
+        public static void DeleteAccessToken(this HttpResponse response)
+        {
+            response.Cookies.Delete("AccessToken");
+        }
+
+        public static void DeleteRefreshToken(this HttpResponse response)
+        {
+            response.Cookies.Delete("RefreshToken");
+        }
     }
 }

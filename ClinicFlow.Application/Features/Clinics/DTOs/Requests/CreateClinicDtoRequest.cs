@@ -12,8 +12,6 @@ namespace ClinicFlow.Application.Features.Clinics.DTOs.Requests
 
         public string Name { get; set; } = null!;
 
-        public string? LogoUrl { get; set; }
-
         public string Phone { get; set; } = null!;
 
         public string Email { get; set; } = null!;

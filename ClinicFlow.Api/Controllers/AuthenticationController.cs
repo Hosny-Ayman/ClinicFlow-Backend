@@ -3,7 +3,9 @@ using ClinicFlow.Application.Common.Authentication;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.Authentication;
 using ClinicFlow.Application.Features.Authentication.DTOs.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
 namespace ClinicFlow.Api.Controllers
@@ -21,8 +23,9 @@ namespace ClinicFlow.Api.Controllers
             _jwtSettings = jwtOptions.Value;
         }
 
-
-        [HttpPost]
+        [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDtoRequest request)
         {
             var result = await _authenticationService.LoginAsync(request);
@@ -41,6 +44,42 @@ namespace ClinicFlow.Api.Controllers
 
         }
 
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutAsync(string? refreshToken)
+        {
+
+            var result = await _authenticationService.LogoutAsync(refreshToken);
+
+            Response.DeleteAccessToken();
+            Response.DeleteRefreshToken();
+
+            return NoContent();
+
+        }
+
+        [Authorize]
+        [HttpPost("logout-all-devices")]
+        public async Task<IActionResult> LogoutAllDevices()
+        {
+
+            var result = await _authenticationService.LogoutFromAllDevicesAsync();
+
+            if (!result.IsSuccess)
+            {
+                return this.ToHttpResponse(result);
+            }
+
+
+            Response.DeleteAccessToken();
+            Response.DeleteRefreshToken();
+
+            return NoContent();
+
+        }
+
+        [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
@@ -66,5 +105,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
 
         }
+
+
     }
 }

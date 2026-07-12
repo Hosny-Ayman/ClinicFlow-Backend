@@ -25,11 +25,12 @@ namespace ClinicFlow.Application.Features.Authentication
         private readonly IRefreshTokenHasher _refreshTokenHasher;
         private readonly JwtSettings _jwtSettings;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
         public AuthenticationService(IUserRepository userRepository, IMapper mapper, ILogger<AuthenticationService> Logger
             , IRefreshTokenRepository refreshTokenRepository,IJwtProvider jwtProvider,
             IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenHasher refreshTokenHasher
-            , IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork)
+            , IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -40,6 +41,8 @@ namespace ClinicFlow.Application.Features.Authentication
             _refreshTokenGenerator = refreshTokenGenerator;
             _jwtSettings = jwtOptions.Value;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
+            
         }
 
         public async Task<OperationResult<AuthenticationResultDto>> LoginAsync(LoginDtoRequest request)
@@ -144,6 +147,57 @@ namespace ClinicFlow.Application.Features.Authentication
 
             return OperationResult<GenerateRefreshAndAccessTokenDto>.Success(result);
 
+
+        }
+
+        public async Task<OperationResult<bool>> LogoutAsync(string? refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                return OperationResult<bool>.Success(true);
+            }
+
+            var hash = _refreshTokenHasher.Hash(refreshToken);
+
+            var refreshTokenEntity = await _refreshTokenRepository.GetByTokenHashAsync(hash, true);
+
+            if (refreshTokenEntity is null)
+            {
+                return OperationResult<bool>.Success(true);
+            }
+
+            if (refreshTokenEntity.RevokedAt is not null)
+            {
+                return OperationResult<bool>.Success(true);
+            }
+
+            refreshTokenEntity.RevokedAt = DateTime.UtcNow;
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
+        }
+
+        public async Task<OperationResult<bool>> LogoutFromAllDevicesAsync()
+        {
+            var userId = _currentUserService.UserId;
+
+            if(userId is null)
+            {
+                _logger.LogWarning("user try to log out without login");
+                return OperationResult<bool>.Unauthorized(GeneralErrors.Unauthorized("User is not authenticated"));
+            }
+
+            var allTokens = await _refreshTokenRepository.GetAllActiveTokensByUserIdAsync(userId.Value,true);
+
+            foreach (var token in allTokens)
+            {
+                token.RevokedAt = DateTime.UtcNow;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
 
         }
 

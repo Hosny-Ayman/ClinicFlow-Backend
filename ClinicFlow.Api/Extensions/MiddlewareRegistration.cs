@@ -9,7 +9,6 @@ namespace ClinicFlow.Api.Extensions
         {
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-            app.UseHttpsRedirection();
 
             return app;
         }

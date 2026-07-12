@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Api.Extensions;
+using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
@@ -19,6 +20,7 @@ namespace ClinicFlow.Api.Controllers
             _clinicService = ClinicService;
         }
 
+        [Authorize(policy:Policies.ManageDoctors)]
         [HttpPost]
         public async Task <IActionResult> Create(CreateClinicWithOwnerDtoRequest requst)
         {

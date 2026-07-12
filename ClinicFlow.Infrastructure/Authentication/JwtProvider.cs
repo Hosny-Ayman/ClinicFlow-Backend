@@ -28,6 +28,7 @@ namespace ClinicFlow.Infrastructure.Authentication
 
             new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
 
+            new Claim("ClinicId", user.ClinicId.ToString()),
 
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
