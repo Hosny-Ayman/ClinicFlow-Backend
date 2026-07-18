@@ -42,7 +42,8 @@ namespace ClinicFlow.Application.Features.Clinics
 
             user.UserRoles.Add(new UserRole
             {
-                RoleId = (int)RoleEnum.ClinicOwner
+                RoleId = (int)RoleEnum.ClinicOwner,
+              
             });
 
             user.Clinic = clinic;

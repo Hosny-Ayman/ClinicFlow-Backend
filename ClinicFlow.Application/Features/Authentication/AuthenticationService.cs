@@ -7,6 +7,7 @@ using ClinicFlow.Application.Features.Authentication.DTOs;
 using ClinicFlow.Application.Features.Authentication.DTOs.Requests;
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.InterFaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,7 +43,7 @@ namespace ClinicFlow.Application.Features.Authentication
             _jwtSettings = jwtOptions.Value;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
-            
+           
         }
 
         public async Task<OperationResult<AuthenticationResultDto>> LoginAsync(LoginDtoRequest request)
@@ -200,6 +201,8 @@ namespace ClinicFlow.Application.Features.Authentication
             return OperationResult<bool>.Success(true);
 
         }
+
+       
 
 
     }

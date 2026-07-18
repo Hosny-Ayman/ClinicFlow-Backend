@@ -55,15 +55,7 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
 
-            return await query.Select(x=> new User
-            {
-                Id= x.Id,
-                Email = x.Email,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                UserRoles = x.UserRoles
-
-            }).SingleOrDefaultAsync(x => x.Email == Email);
+            return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Email == Email);
         }
 
         public async Task<bool> IsUserExistsByIdAsync(int userId)

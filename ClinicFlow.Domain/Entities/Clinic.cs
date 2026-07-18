@@ -28,7 +28,6 @@
 
         public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
 
     }

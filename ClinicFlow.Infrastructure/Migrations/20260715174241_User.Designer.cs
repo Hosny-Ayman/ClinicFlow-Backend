@@ -4,6 +4,7 @@ using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260715174241_User")]
+    partial class User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -840,35 +843,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Specialties", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.SysteamSetting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("SettingKey")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("SettingValue")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SettingKey");
-
-                    b.ToTable("SysteamSettings", (string)null);
-                });
-
             modelBuilder.Entity("ClinicFlow.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -946,6 +920,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -953,6 +930,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClinicId");
 
                     b.HasIndex("RoleId");
 
@@ -1189,6 +1168,12 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.UserRole", b =>
                 {
+                    b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ClinicFlow.Domain.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
@@ -1200,6 +1185,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Clinic");
 
                     b.Navigation("Role");
 
@@ -1220,6 +1207,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Invoices");
 
                     b.Navigation("Patients");
+
+                    b.Navigation("UserRoles");
 
                     b.Navigation("Users");
                 });

@@ -3,10 +3,10 @@
    
         public enum RoleEnum
         {
-            SuperAdmin,
-            ClinicOwner,
-            Doctor,
-            Receptionist
+            SuperAdmin = 1,
+            ClinicOwner = 2,
+            Doctor = 3,
+            Receptionist = 4,
         }
 
 

@@ -48,6 +48,8 @@ namespace ClinicFlow.Infrastructure.Data
 
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+        public DbSet<SysteamSetting> SysteamSettings => Set<SysteamSetting>();
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -783,7 +783,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.Role", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.Roles", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1177,7 +1177,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow.Domain.Entities.Role", "Role")
+                    b.HasOne("ClinicFlow.Domain.Entities.Roles", "Roles")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1191,7 +1191,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("Clinic");
 
-                    b.Navigation("Role");
+                    b.Navigation("Roles");
 
                     b.Navigation("User");
                 });
@@ -1260,7 +1260,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("PrescriptionItems");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.Role", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.Roles", b =>
                 {
                     b.Navigation("UserRoles");
                 });

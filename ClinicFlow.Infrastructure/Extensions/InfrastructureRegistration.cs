@@ -2,6 +2,7 @@
 using ClinicFlow.Domain.InterFaces;
 using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
+using ClinicFlow.Infrastructure.QueryServices;
 using ClinicFlow.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IOwnershipService, OwnershipService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IUserQueryService, UserQueryService>();
             services.AddHttpContextAccessor();
 
 

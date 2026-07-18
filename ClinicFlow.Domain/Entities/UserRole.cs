@@ -18,9 +18,7 @@ namespace ClinicFlow.Domain.Entities
 
         public Role Role { get; set; } = null!;
 
-        public int ClinicId { get; set; }
-
-        public Clinic Clinic { get; set; } = null!;
+     
 
     }
 }

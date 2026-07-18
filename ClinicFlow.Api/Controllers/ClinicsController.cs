@@ -20,7 +20,7 @@ namespace ClinicFlow.Api.Controllers
             _clinicService = ClinicService;
         }
 
-        [Authorize(policy:Policies.ManageDoctors)]
+        //[Authorize(policy:Policies.ManageDoctors)]
         [HttpPost]
         public async Task <IActionResult> Create(CreateClinicWithOwnerDtoRequest requst)
         {

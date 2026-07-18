@@ -21,6 +21,9 @@ public static class AuthenticationRegistration
      })
      .AddJwtBearer(options =>
      {
+
+         options.MapInboundClaims = false;
+
          options.TokenValidationParameters =
              new TokenValidationParameters
              {

@@ -32,38 +32,4 @@ namespace ClinicFlow.Infrastructure.Data.Config
     }
 
 
-
-
-
-    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
-    {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
-        {
-            builder.ToTable("UserRoles");
-
-            builder.HasKey(pm => pm.Id);
-
-
-
-            builder.HasIndex(pm => pm.UserId);
-            builder.HasIndex(pm => pm.RoleId);
-            builder.HasIndex(pm => pm.ClinicId);
-
-
-
-            builder.HasOne(u => u.User)
-                 .WithMany(r => r.UserRoles)
-                 .HasForeignKey(r => r.UserId);
-
-            builder.HasOne(u => u.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(r => r.RoleId);
-
-            builder.HasOne(u => u.Clinic)
-              .WithMany(r => r.UserRoles)
-              .HasForeignKey(r => r.ClinicId);
-        }
-    }
-
-
 }
