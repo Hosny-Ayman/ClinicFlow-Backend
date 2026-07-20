@@ -22,6 +22,7 @@ namespace ClinicFlow.Infrastructure.QueryServices
               Id = x.Id,
               FullName = x.FirstName +" "+x.LastName,
               Email = x.Email,
+              ClinicId = x.ClinicId,
               Roles = x.UserRoles.Select(x=> x.Role.Name).ToList()
            }).SingleOrDefaultAsync();
          

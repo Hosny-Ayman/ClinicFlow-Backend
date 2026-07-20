@@ -8,6 +8,6 @@ namespace ClinicFlow.Application.Features.Authentication.DTOs
 
         public string RefreshToken { get; init; } = string.Empty;
 
-        public LoginDtoResponse User { get; init; } = default!;
+     
     }
 }

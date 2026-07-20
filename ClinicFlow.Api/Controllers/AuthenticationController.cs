@@ -37,7 +37,7 @@ namespace ClinicFlow.Api.Controllers
 
                 Response.SetRefreshToken(result.Data.RefreshToken, _jwtSettings);
 
-                return Ok(OperationResult<object>.Success(result.Data.User));
+                return Ok(OperationResult<object>.Success("Login Successfully"));
             }
 
             return this.ToHttpResponse(result);

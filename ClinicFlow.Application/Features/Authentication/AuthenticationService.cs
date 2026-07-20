@@ -73,18 +73,18 @@ namespace ClinicFlow.Application.Features.Authentication
 
             };
 
-           await _refreshTokenRepository.AddAsync(refreshTokenEntity);
+            await _refreshTokenRepository.AddAsync(refreshTokenEntity);
 
             await _unitOfWork.SaveChangesAsync();
 
 
-            var response = _mapper.Map<LoginDtoResponse>(user);
+           
 
             var result = new AuthenticationResultDto
             {
                 RefreshToken = refreshToken,
                 AccessToken = accessToken,
-                User = response
+               
             };
 
 
