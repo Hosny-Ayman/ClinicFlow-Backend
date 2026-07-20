@@ -4,6 +4,7 @@ using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.QueryServices;
 using ClinicFlow.Infrastructure.Repositories;
+using ClinicFlow.Infrastructure.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicFlow.Infrastructure.Extensions
@@ -15,7 +16,7 @@ namespace ClinicFlow.Infrastructure.Extensions
         {
             services.AddScoped<IClinicRepository, ClinicRepository>();
             services.AddScoped<IUserRepository, UserReposittory>();
-            services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();
             services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -23,6 +24,9 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IUserQueryService, UserQueryService>();
+            services.AddSingleton<IFileStorageService,CloudinaryFileStorageService>();
+            services.AddScoped<ISysteamSettingRepository, SysteamSettingRepository>();
+            services.AddScoped<ISysteamSettingService, SysteamSettingService>();
             services.AddHttpContextAccessor();
 
 

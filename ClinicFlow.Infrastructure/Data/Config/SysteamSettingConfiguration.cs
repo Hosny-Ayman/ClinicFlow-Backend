@@ -13,7 +13,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.SettingKey)
-                .IsRequired()
+                .IsRequired()               
                 .HasMaxLength(255);
 
             builder.Property(a => a.SettingValue)
@@ -26,7 +26,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
 
 
-            builder.HasIndex(a => a.SettingKey);
+            builder.HasIndex(a => a.SettingKey).IsUnique(true);
 
 
         }

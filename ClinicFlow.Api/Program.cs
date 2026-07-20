@@ -37,6 +37,8 @@ namespace ClinicFlow.Api
 
             builder.Services.AddInfrastructureServices();
 
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
             
 
