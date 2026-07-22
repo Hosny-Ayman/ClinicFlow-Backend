@@ -22,9 +22,9 @@ namespace ClinicFlow.Application.Common.ValidationRules
         public static IRuleBuilderOptions<T, string> PasswordRule<T>(this IRuleBuilder<T, string> rule)
         {
             return rule
-               //.NotEmpty().WithMessage("Password Should Not Be Empty")
-               //.MinimumLength(8)
-               //.WithMessage("Password must be at least 8 characters.")
+               .NotEmpty().WithMessage("Password Should Not Be Empty")
+               .MinimumLength(8)
+               .WithMessage("Password must be at least 8 characters.")
                .MaximumLength(100)
                .WithMessage("Password cannot exceed 100 characters.");
             ;

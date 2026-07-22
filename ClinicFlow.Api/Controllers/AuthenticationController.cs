@@ -46,10 +46,10 @@ namespace ClinicFlow.Api.Controllers
 
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> LogoutAsync(string? refreshToken)
+        public async Task<IActionResult> LogoutAsync()
         {
 
-            var result = await _authenticationService.LogoutAsync(refreshToken);
+            var result = await _authenticationService.LogoutAsync();
 
             Response.DeleteAccessToken();
             Response.DeleteRefreshToken();
@@ -83,14 +83,11 @@ namespace ClinicFlow.Api.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var refreshToken = Request.Cookies["RefreshToken"];
+           
 
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                return Unauthorized();
-            }
+          
 
-            var result = await _authenticationService.RefreshAsync(refreshToken);
+            var result = await _authenticationService.RefreshAsync();
 
             if(result.IsSuccess)
             {

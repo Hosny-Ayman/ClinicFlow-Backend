@@ -12,7 +12,7 @@ namespace ClinicFlow.Api.Extensions
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTimeOffset.UtcNow.AddMinutes(jwtSettings.DurationInMinutes)
                 });
         }
@@ -26,7 +26,7 @@ namespace ClinicFlow.Api.Extensions
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTimeOffset.UtcNow.AddDays(jwtSettings.RefreshTokenDurationInDays)
                 });
         }

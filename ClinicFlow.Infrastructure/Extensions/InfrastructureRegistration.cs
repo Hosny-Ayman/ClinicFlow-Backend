@@ -27,6 +27,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddSingleton<IFileStorageService,CloudinaryFileStorageService>();
             services.AddScoped<ISysteamSettingRepository, SysteamSettingRepository>();
             services.AddScoped<ISysteamSettingService, SysteamSettingService>();
+            services.AddScoped<ICookieService, CookieService>();
             services.AddHttpContextAccessor();
 
 

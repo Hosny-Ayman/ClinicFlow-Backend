@@ -27,11 +27,13 @@ namespace ClinicFlow.Application.Features.Authentication
         private readonly JwtSettings _jwtSettings;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICookieService _cokieService;
 
         public AuthenticationService(IUserRepository userRepository, IMapper mapper, ILogger<AuthenticationService> Logger
             , IRefreshTokenRepository refreshTokenRepository,IJwtProvider jwtProvider,
             IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenHasher refreshTokenHasher
-            , IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            , IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork, ICurrentUserService currentUserService
+            , ICookieService cokieService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -43,7 +45,7 @@ namespace ClinicFlow.Application.Features.Authentication
             _jwtSettings = jwtOptions.Value;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
-           
+            _cokieService = cokieService;
         }
 
         public async Task<OperationResult<AuthenticationResultDto>> LoginAsync(LoginDtoRequest request)
@@ -92,11 +94,19 @@ namespace ClinicFlow.Application.Features.Authentication
 
         }
 
-        public async Task<OperationResult<GenerateRefreshAndAccessTokenDto>> RefreshAsync(string refreshToken)
+        public async Task<OperationResult<GenerateRefreshAndAccessTokenDto>> RefreshAsync()
         {
-            var hash = _refreshTokenHasher.Hash(refreshToken);
 
-            var refreshTokenEntity = await _refreshTokenRepository.GetByTokenHashAsync(hash,true);
+            var refreshToken = _cokieService.GetRefreshToken();
+
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                return OperationResult<GenerateRefreshAndAccessTokenDto>.Unauthorized();
+            }
+
+            var hashToken = _refreshTokenHasher.Hash(refreshToken);
+
+            var refreshTokenEntity = await _refreshTokenRepository.GetByTokenHashAsync(hashToken,true);
 
             if (refreshTokenEntity is null)
             {
@@ -151,16 +161,19 @@ namespace ClinicFlow.Application.Features.Authentication
 
         }
 
-        public async Task<OperationResult<bool>> LogoutAsync(string? refreshToken)
+        public async Task<OperationResult<bool>> LogoutAsync()
         {
+
+            var refreshToken = _cokieService.GetRefreshToken();
+
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
                 return OperationResult<bool>.Success(true);
             }
 
-            var hash = _refreshTokenHasher.Hash(refreshToken);
+            var hashToken = _refreshTokenHasher.Hash(refreshToken);
 
-            var refreshTokenEntity = await _refreshTokenRepository.GetByTokenHashAsync(hash, true);
+            var refreshTokenEntity = await _refreshTokenRepository.GetByTokenHashAsync(hashToken, true);
 
             if (refreshTokenEntity is null)
             {
