@@ -28,6 +28,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<ISysteamSettingRepository, SysteamSettingRepository>();
             services.AddScoped<ISysteamSettingService, SysteamSettingService>();
             services.AddScoped<ICookieService, CookieService>();
+            services.AddScoped<IClinicQueryService, ClinicQueryService>();
             services.AddHttpContextAccessor();
 
 

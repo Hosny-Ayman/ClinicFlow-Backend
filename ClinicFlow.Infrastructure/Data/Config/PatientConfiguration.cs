@@ -52,9 +52,9 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
             builder.HasIndex(p => p.ClinicId);
 
-            builder.HasIndex(p => p.PhoneNumber);
+            builder.HasIndex(p => p.PhoneNumber).IsUnique(false);
 
-            builder.HasIndex(p => p.Email);
+            builder.HasIndex(p => p.Email).IsUnique(false);
 
             builder.HasIndex(p => p.Gender);
 

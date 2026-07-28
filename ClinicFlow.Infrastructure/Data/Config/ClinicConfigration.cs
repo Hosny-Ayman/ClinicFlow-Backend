@@ -41,13 +41,13 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.Property(c => c.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasIndex(c => c.Name).IsUnique();
+            builder.HasIndex(c => c.Name).IsUnique(false);
 
             builder.HasIndex(c => c.Email)
                 .IsUnique();
 
             builder.HasIndex(c => c.Phone)
-                .IsUnique();
+                .IsUnique(false);
 
             builder.HasIndex(c => c.CreatedAt);
 

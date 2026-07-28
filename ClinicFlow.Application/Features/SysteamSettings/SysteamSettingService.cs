@@ -20,21 +20,21 @@ namespace ClinicFlow.Application.Features.SysteamSettings
         }
 
 
-        public async Task <OperationResult<ImageDtoRequest>> GetSystemLogoAsync()
+        public async Task <OperationResult<ImageDtoRequest>> GetSystemImageAsync(string imageKey)
         {
 
-            var SystemLogo = await _systeamSettingService.GetOnlySettingValueAsyncBySettingKeyAsync("SystemLogo");
+            var SystemImage = await _systeamSettingService.GetOnlySettingValueAsyncBySettingKeyAsync(imageKey);
 
-            if(SystemLogo == null)
+            if(SystemImage == null)
             {
                 return OperationResult<ImageDtoRequest>.NotFound();
             }
 
-            var Logo = _fileStorageService.GetFileUrl(SystemLogo);
+            var Image = _fileStorageService.GetFileUrl(SystemImage);
 
             var request = new ImageDtoRequest
             {
-                ImageUrl = Logo
+                ImageUrl = Image
             };
 
             return OperationResult<ImageDtoRequest>.Success(request);

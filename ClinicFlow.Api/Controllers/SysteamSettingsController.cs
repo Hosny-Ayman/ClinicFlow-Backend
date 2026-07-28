@@ -16,10 +16,10 @@ namespace ClinicFlow.Api.Controllers
             _systeamSettingService = systeamSettingService;
         }
         [AllowAnonymous]
-        [HttpGet("Logo")]
-        public async Task <IActionResult> SytemLogo()
+        [HttpGet("Image")]
+        public async Task <IActionResult> SytemImage(string imageKey)
         {
-            var result = await _systeamSettingService.GetSystemLogoAsync();
+            var result = await _systeamSettingService.GetSystemImageAsync(imageKey);
 
             return this.ToHttpResponse(result);
         }

@@ -63,6 +63,14 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await _appDbContext.Users.AnyAsync(x => x.Id == userId);
         }
 
-       
+        public async Task<bool> IsEmailExitsAsync(string email)
+        {
+            return await _appDbContext.Users.AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<bool> IsPhoneExitsAsync(string phone)
+        {
+            return await _appDbContext.Users.AnyAsync(x => x.PhoneNumber == phone);
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace ClinicFlow.Api.Controllers
         }
 
         //[Authorize(policy:Policies.ManageDoctors)]
+        [AllowAnonymous]
         [HttpPost]
         public async Task <IActionResult> Create(CreateClinicWithOwnerDtoRequest requst)
         {

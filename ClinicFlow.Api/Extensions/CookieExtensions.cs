@@ -33,12 +33,24 @@ namespace ClinicFlow.Api.Extensions
 
         public static void DeleteAccessToken(this HttpResponse response)
         {
-            response.Cookies.Delete("AccessToken");
+            response.Cookies.Delete("AccessToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            });
         }
 
         public static void DeleteRefreshToken(this HttpResponse response)
         {
-            response.Cookies.Delete("RefreshToken");
+            response.Cookies.Delete("RefreshToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            });
         }
     }
 }
