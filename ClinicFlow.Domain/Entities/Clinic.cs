@@ -28,7 +28,9 @@
 
         public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
+        public ICollection<ClinicWorkingHour> ClinicWorkingHours { get; set; } = new List<ClinicWorkingHour>();
 
+        public ClinicSetup ClinicSetup { get; set; } = null!;
 
     }
 }

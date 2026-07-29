@@ -277,7 +277,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProfileImageUrl")
+                    b.Property<string>("ProFileImageid")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

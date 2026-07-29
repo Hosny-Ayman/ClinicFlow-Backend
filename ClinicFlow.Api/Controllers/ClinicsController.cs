@@ -1,10 +1,7 @@
 ﻿using ClinicFlow.Api.Extensions;
-using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
-using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicFlow.Api.Controllers

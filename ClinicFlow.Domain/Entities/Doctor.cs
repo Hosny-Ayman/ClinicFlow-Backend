@@ -15,19 +15,19 @@ namespace ClinicFlow.Domain.Entities
 
         public decimal ConsultationFee { get; set; }
 
-        public string Bio { get; set; } = null!;
+        public string? Bio { get; set; } = null!;
 
         public GenderEnum Gender { get; set; }
 
         public int ExperienceYears { get; set; }
+
+        public string? ProFileImageid { get; set; } = null!;
 
         public User User { get; set; } = null!;
 
         public Clinic Clinic { get; set; } = null!;
 
         public Specialty Specialty { get; set; } = null!;
-
-        public string ProfileImageUrl { get; set; } = null!;
 
         public ICollection<DoctorSchedule> DoctorSchedules { get; set; } = new List<DoctorSchedule>();
 

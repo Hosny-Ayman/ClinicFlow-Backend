@@ -22,12 +22,6 @@ namespace ClinicFlow.Infrastructure.Repositories
 
             await _appDbContext.Clinics.AddAsync(clinic);
 
-            //user.Clinic = clinic;
-
-            //await _appDbContext.Users.AddAsync(user);
-
-            //await _appDbContext.SaveChangesAsync();
-
             return clinic.Id;
         }
 

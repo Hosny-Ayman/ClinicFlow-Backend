@@ -6,7 +6,7 @@ namespace ClinicFlow.Application.Features.Clinics
 {
     public class ClinicProfile:Profile
     {
-         public ClinicProfile()
+        public ClinicProfile()
         {
             CreateMap<CreateClinicDtoRequest,Clinic>().ReverseMap();
         }

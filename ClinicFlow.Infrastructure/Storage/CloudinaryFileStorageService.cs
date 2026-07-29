@@ -2,6 +2,7 @@
 using ClinicFlow.Application.Common.Interfaces;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace ClinicFlow.Infrastructure.Storage
@@ -38,11 +39,13 @@ namespace ClinicFlow.Infrastructure.Storage
             return _cloudinary.Api.UrlImgUp.Transform(new Transformation().Width(width).Height(height).Crop("fill")).BuildUrl(publicId);
         }
 
-        public async Task<string> UploadImageAsync(Stream stream, string fileName)
+        public async Task<string> UploadImageAsync(IFormFile file)
         {
+            await using var stream = file.OpenReadStream();
+
             var uploadParams = new ImageUploadParams
             {
-                File = new FileDescription(fileName, stream)
+                File = new FileDescription(file.FileName, stream)
             };
 
             var result = await _cloudinary.UploadAsync(uploadParams);

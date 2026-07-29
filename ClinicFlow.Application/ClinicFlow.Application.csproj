@@ -15,10 +15,12 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.9" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Doctors\DTOs\Responses\" />
     <Folder Include="Features\SysteamSettings\DTOs\Responses\" />
   </ItemGroup>
 

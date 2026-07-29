@@ -20,10 +20,11 @@ namespace ClinicFlow.Application.Features.Clinics
         private readonly IOwnershipService _ownershipService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClinicQueryService _queryService;
+        private readonly IUserRoleRepository _roleRepository;
 
 
         public ClinicService(IClinicRepository clinicRepository,IUserRepository userRepository,IMapper mapper, IOwnershipService ownershipService
-            , IUnitOfWork unitOfWork, IClinicQueryService QueryService)
+            , IUnitOfWork unitOfWork, IClinicQueryService QueryService, IUserRoleRepository RoleRepository)
         {
             _clinicRepository = clinicRepository;
             _userRepository = userRepository;
@@ -31,6 +32,7 @@ namespace ClinicFlow.Application.Features.Clinics
             _ownershipService = ownershipService;
             _unitOfWork = unitOfWork;
             _queryService = QueryService;
+            _roleRepository = RoleRepository;
         }
 
       
@@ -53,11 +55,7 @@ namespace ClinicFlow.Application.Features.Clinics
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-            user.UserRoles.Add(new UserRole
-            {
-                RoleId = (int)RoleEnum.ClinicOwner,
-              
-            });
+            await _roleRepository.AssignRoleAsync(user.Id, RoleEnum.ClinicOwner);
 
             user.Clinic = clinic;
 

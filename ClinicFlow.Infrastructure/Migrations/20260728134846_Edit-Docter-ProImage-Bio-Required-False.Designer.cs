@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260718195921_Add-Table-SysteamSettings")]
-    partial class AddTableSysteamSettings
+    [Migration("20260728134846_Edit-Docter-ProImage-Bio-Required-False")]
+    partial class EditDocterProImageBioRequiredFalse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,11 +243,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasIndex("IsActive");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("Name");
 
-                    b.HasIndex("Phone")
-                        .IsUnique();
+                    b.HasIndex("Phone");
 
                     b.ToTable("Clinics", (string)null);
                 });
@@ -261,7 +259,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
@@ -279,7 +276,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProFileImageid")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -867,7 +863,8 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SettingKey");
+                    b.HasIndex("SettingKey")
+                        .IsUnique();
 
                     b.ToTable("SysteamSettings", (string)null);
                 });

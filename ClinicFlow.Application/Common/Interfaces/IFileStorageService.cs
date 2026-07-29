@@ -1,9 +1,11 @@
-﻿namespace ClinicFlow.Application.Common.Interfaces
+﻿using Microsoft.AspNetCore.Http;
+
+namespace ClinicFlow.Application.Common.Interfaces
 {
     public interface IFileStorageService
     {
 
-        Task<string> UploadImageAsync(Stream stream, string fileName);
+        Task<string> UploadImageAsync(IFormFile file);
 
         Task DeleteImageAsync(string publicId);
 

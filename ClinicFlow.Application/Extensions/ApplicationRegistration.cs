@@ -1,6 +1,7 @@
 ﻿using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Features.Authentication;
 using ClinicFlow.Application.Features.Clinics;
+using ClinicFlow.Application.Features.Doctors;
 using ClinicFlow.Application.Features.SysteamSettings;
 using ClinicFlow.Application.Features.Users;
 using FluentValidation;
@@ -17,6 +18,7 @@ namespace ClinicFlow.Application.Extensions
             services.AddScoped<UserService>();
             services.AddScoped<AuthenticationService>();
             services.AddScoped<SysteamSettingService>();
+            services.AddScoped<DoctorService>();
 
             services.AddAutoMapper(typeof(ApplicationRegistration).Assembly);
 

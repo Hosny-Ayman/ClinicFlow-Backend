@@ -50,6 +50,10 @@ namespace ClinicFlow.Infrastructure.Data
 
         public DbSet<SysteamSetting> SysteamSettings => Set<SysteamSetting>();
 
+        public DbSet<ClinicSetup> ClinicSetups => Set<ClinicSetup>();
+
+        public DbSet<ClinicWorkingHour> ClinicWorkingHours => Set<ClinicWorkingHour>();
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

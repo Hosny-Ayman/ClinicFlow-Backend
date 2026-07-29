@@ -17,13 +17,13 @@ namespace ClinicFlow.Infrastructure.Data.Config
                 .HasPrecision(18, 2);
 
             builder.Property(d => d.Bio)
-                .IsRequired()
+                .IsRequired(false)
                 .HasMaxLength(2000);
 
             builder.Property(d => d.ExperienceYears).IsRequired();
 
-            builder.Property(u => u.ProfileImageUrl)
-              .IsRequired()
+            builder.Property(u => u.ProFileImageid)
+              .IsRequired(false)
               .HasMaxLength(500);
 
             builder.HasIndex(d => d.UserId)
@@ -36,6 +36,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.HasIndex(d => d.ExperienceYears);
 
             builder.HasIndex(d => d.ConsultationFee);
+
 
             builder.HasIndex(d => new { d.ClinicId, d.SpecialtyId });
 
