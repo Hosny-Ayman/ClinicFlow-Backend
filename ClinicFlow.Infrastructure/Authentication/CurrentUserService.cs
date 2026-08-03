@@ -37,5 +37,13 @@ namespace ClinicFlow.Infrastructure.Authentication
                 return int.TryParse(value, out var clinicId)? clinicId : null;
             }
         }
+
+        public IReadOnlyList<string> Roles
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList()?? [];
+            }
+        }
     }
 }

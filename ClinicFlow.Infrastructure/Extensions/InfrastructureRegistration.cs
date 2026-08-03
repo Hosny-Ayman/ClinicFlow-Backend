@@ -31,6 +31,10 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IClinicQueryService, ClinicQueryService>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            services.AddScoped<IClinicSetupRepository, ClinicSetupRepository>();
+            services.AddScoped<IClinicWorkingHourRepository, ClinicWorkingHourRepository>();
+            services.AddScoped<IClinicSetupQueryService, ClinicSetuppQueryService>();
+            services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
             services.AddHttpContextAccessor();
 
 

@@ -1,67 +1,57 @@
-﻿using ClinicFlow.Domain.Entities;
+﻿using ClinicFlow.Application.Common.ValidationRules;
+using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.InterFaces;
 using ClinicFlow.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow.Infrastructure.Repositories
 {
     internal class UserRoleRepository : IUserRoleRepository
     {
-        private readonly IUserRepository _userRepository;
+        private readonly AppDbContext _appDbContext;
 
-        public UserRoleRepository(IUserRepository userRepository)
+        public UserRoleRepository(AppDbContext appDbContext)
         {
-            _userRepository = userRepository;
+            _appDbContext = appDbContext;
         }
 
         public async Task AssignRoleAsync(int userId, RoleEnum role)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId, true);
-
-            if (user == null)
-                throw new Exception("User not found");
-
+            var user = await _appDbContext.Users.SingleOrDefaultAsync(x=>x.Id == userId);
 
             var roleId = (int)role;
 
-
-            if (user.UserRoles.Any(x => x.RoleId == roleId))
-                return;
-
-
-            user.UserRoles.Add(new UserRole
+            var userRole = new UserRole
             {
                 UserId = userId,
                 RoleId = roleId
-            });
+            };
+
+            await _appDbContext.UserRoles.AddAsync(userRole);
         }
 
         public async Task<bool> HasRoleAsync(int userId, RoleEnum role)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId, true);
+            var userRoles = await _appDbContext.UserRoles.AsNoTracking().Where(x => x.UserId == userId).ToListAsync();
 
-            if (user == null)
+            if (userRoles == null || userRoles.Count == 0)
                 return false;
 
 
-            return user.UserRoles.Any(x => x.RoleId == (int)role);
+            return  userRoles.Any(x => x.RoleId == (int)role);
         }
 
         public async Task RemoveRoleAsync(int userId, RoleEnum role)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId, true);
+            var userRole = await _appDbContext.UserRoles.SingleOrDefaultAsync(x => x.UserId == userId && x.RoleId == (int)role);
 
-            if (user == null)
-                throw new Exception("User not found");
+            if(userRole!=null)
+            _appDbContext.UserRoles.Remove(userRole);
 
-
-            var userRole = user.UserRoles.FirstOrDefault(x => x.RoleId == (int)role);
-
-
-            if (userRole != null)
-            {
-                user.UserRoles.Remove(userRole);
-            }
+           
         }
+
+        
     }
 }

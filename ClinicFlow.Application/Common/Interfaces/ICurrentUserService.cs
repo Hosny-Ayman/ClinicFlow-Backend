@@ -10,6 +10,8 @@
             string? Email { get; }
 
             int? ClinicId { get; }
-        }
+
+            IReadOnlyList<string> Roles { get; }
+    }
 
 }

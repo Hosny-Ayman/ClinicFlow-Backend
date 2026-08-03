@@ -20,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Doctors\DTOs\Responses\" />
+    <Folder Include="Features\ClinicSetups\ClinicSetupValidators\" />
+    <Folder Include="Features\ClinicWorkingHours\DTOs\Responses\" />
+    <Folder Include="Features\Specialties\DTOs\Responses\" />
     <Folder Include="Features\SysteamSettings\DTOs\Responses\" />
   </ItemGroup>
 

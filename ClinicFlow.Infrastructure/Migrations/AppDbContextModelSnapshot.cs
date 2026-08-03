@@ -247,7 +247,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Clinics", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetups", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -327,7 +327,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProFileImageid")
+                    b.Property<string>("ProfileImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -1054,11 +1054,11 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetups", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "clinic")
-                        .WithOne("ClinicSetup")
-                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetup", "ClinicId")
+                        .WithOne("ClinicSetups")
+                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetups", "ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1289,7 +1289,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Clinic", b =>
                 {
-                    b.Navigation("ClinicSetup")
+                    b.Navigation("ClinicSetups")
                         .IsRequired();
 
                     b.Navigation("ClinicWorkingHours");

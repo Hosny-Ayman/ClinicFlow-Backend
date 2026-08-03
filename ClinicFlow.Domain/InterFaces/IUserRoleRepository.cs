@@ -11,6 +11,7 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<bool> HasRoleAsync(int userId, RoleEnum role);
 
+      
 
     }
 }

@@ -35,7 +35,7 @@ namespace ClinicFlow.Api.Controllers
 
         [Authorize(policy: (Policies.ManageUsers))]
         [HttpPost("Receptionist")]
-        public async Task<IActionResult> Receptionist(CreateUserDtoRequest userDto)
+        public async Task<IActionResult> Receptionist(CreateAndEditUserDtoRequest userDto)
         {
             var result = await _userService.CreateReceptionistAsync(userDto);
 

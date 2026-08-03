@@ -21,7 +21,7 @@ namespace ClinicFlow.Domain.Entities
 
         public int ExperienceYears { get; set; }
 
-        public string? ProFileImageid { get; set; } = null!;
+        public string? ProfileImageUrl { get; set; } = null!;
 
         public User User { get; set; } = null!;
 

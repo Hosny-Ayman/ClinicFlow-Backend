@@ -22,7 +22,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
             builder.Property(d => d.ExperienceYears).IsRequired();
 
-            builder.Property(u => u.ProFileImageid)
+            builder.Property(u => u.ProfileImageUrl)
               .IsRequired(false)
               .HasMaxLength(500);
 

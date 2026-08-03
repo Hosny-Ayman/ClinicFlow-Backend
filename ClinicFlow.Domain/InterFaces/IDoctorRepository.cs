@@ -6,6 +6,7 @@ namespace ClinicFlow.Domain.InterFaces
     {
 
         Task<int> AddDoctorAsync(Doctor doctor);
+        Task<Doctor?> GetDoctorByIdAsync(int id,int ClinicId, bool Tracking = false);
 
     }
 }

@@ -7,7 +7,7 @@ namespace ClinicFlow.Application.Features.Clinics.DTOs.Requests
 
         public CreateClinicDtoRequest Clinic { get; set; } = null!;
 
-        public CreateUserDtoRequest User { get; set; } = null!;
+        public CreateAndEditUserDtoRequest User { get; set; } = null!;
 
     }
 }

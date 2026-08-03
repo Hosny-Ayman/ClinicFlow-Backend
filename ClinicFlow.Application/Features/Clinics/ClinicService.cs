@@ -37,7 +37,7 @@ namespace ClinicFlow.Application.Features.Clinics
 
       
 
-        public async Task<OperationResult<CreateClinicResponse>> CreateClinicAsync(CreateClinicDtoRequest clinicDto, CreateUserDtoRequest userDto)
+        public async Task<OperationResult<CreateClinicResponse>> CreateClinicAsync(CreateClinicDtoRequest clinicDto, CreateAndEditUserDtoRequest userDto)
         {
             if(await _userRepository.IsEmailExitsAsync(userDto.Email))
             {

@@ -22,11 +22,13 @@ namespace ClinicFlow.Infrastructure.Storage
         }
 
 
-        public async Task DeleteImageAsync(string publicId)
+        public async Task<bool> DeleteImageAsync(string publicId)
         {
             var deleteParams = new DeletionParams(publicId);
 
-            await _cloudinary.DestroyAsync(deleteParams);
+            var result = await _cloudinary.DestroyAsync(deleteParams);
+
+            return result.Result == "ok";
         }
 
         public string GetFileUrl(string publicId)

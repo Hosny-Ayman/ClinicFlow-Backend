@@ -16,7 +16,7 @@ namespace ClinicFlow.Api.Extensions
 
                 options.AddPolicy(Policies.ManageDoctors, policy =>
                 {
-                    policy.RequireRole("ClinicOwner");
+                    policy.RequireRole("ClinicOwner", "Admin", "Doctor");
                 });
 
                 options.AddPolicy(Policies.ManageAppointments, policy =>

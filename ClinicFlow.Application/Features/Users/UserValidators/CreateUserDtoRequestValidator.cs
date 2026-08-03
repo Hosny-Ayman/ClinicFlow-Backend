@@ -4,10 +4,10 @@ using FluentValidation;
 
 namespace ClinicFlow.Application.Features.Users.UserValidators
 {
-    public class CreateUserValidator:AbstractValidator<CreateUserDtoRequest>
+    public class CreateUserDtoRequestValidator:AbstractValidator<CreateAndEditUserDtoRequest>
     {
 
-        public CreateUserValidator()
+        public CreateUserDtoRequestValidator()
         {
 
             RuleFor(x => x.FirstName).FirtsNameRule();

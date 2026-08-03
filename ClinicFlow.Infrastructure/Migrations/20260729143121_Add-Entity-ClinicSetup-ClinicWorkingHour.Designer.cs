@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260729143121_Add-Entity-ClinicSetup-ClinicWorkingHour")]
+    [Migration("20260729143121_Add-Entity-ClinicSetupRepository-ClinicWorkingHourRepository")]
     partial class AddEntityClinicSetupClinicWorkingHour
     {
         /// <inheritdoc />
@@ -250,7 +250,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Clinics", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetupRepository", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,7 +275,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("ClinicSetups");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHourRepository", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1057,18 +1057,18 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetupRepository", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "clinic")
-                        .WithOne("ClinicSetup")
-                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetup", "ClinicId")
+                        .WithOne("ClinicSetupRepository")
+                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetupRepository", "ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("clinic");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHourRepository", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
                         .WithMany("ClinicWorkingHours")
@@ -1292,7 +1292,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Clinic", b =>
                 {
-                    b.Navigation("ClinicSetup")
+                    b.Navigation("ClinicSetupRepository")
                         .IsRequired();
 
                     b.Navigation("ClinicWorkingHours");

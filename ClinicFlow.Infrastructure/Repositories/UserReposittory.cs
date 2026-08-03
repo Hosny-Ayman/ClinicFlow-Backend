@@ -25,7 +25,7 @@ namespace ClinicFlow.Infrastructure.Repositories
             return user.Id;
         }
 
-        public async Task<User?> GetUserByIdAsync(int userId, bool Tracking = false)
+        public async Task<User?> GetUserByIdAsync(int userId, int clinicId, bool Tracking = false)
         {
             var query = _appDbContext.Users.AsQueryable();
 
@@ -33,10 +33,10 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
 
-            return await query.SingleOrDefaultAsync(x => x.Id == userId);
+            return await query.SingleOrDefaultAsync(x => x.Id == userId && x.ClinicId == clinicId);
         }
 
-        public async Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, bool Tracking = false)
+        public async Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, int clinicId, bool Tracking = false)
         {
             var query = _appDbContext.Users.AsQueryable();
 
@@ -44,7 +44,7 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
 
-            return await query.SingleOrDefaultAsync(x => x.PhoneNumber == PhoneNumber);
+            return await query.SingleOrDefaultAsync(x => x.PhoneNumber == PhoneNumber && x.ClinicId == clinicId);
         }
 
         public async Task<User?> GetUserByEmailAsync(string Email, bool Tracking = false)
@@ -55,7 +55,7 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
 
-            return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Email == Email);
+            return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Email == Email );
         }
 
         public async Task<bool> IsUserExistsByIdAsync(int userId)
@@ -72,5 +72,18 @@ namespace ClinicFlow.Infrastructure.Repositories
         {
             return await _appDbContext.Users.AnyAsync(x => x.PhoneNumber == phone);
         }
+
+        public async Task<User?> GetUserByDoctorIdAsync(int DoctorId, int clinicId, bool Tracking = false)
+        {
+            var query = _appDbContext.Users.AsQueryable();
+
+            if (!Tracking)
+                query = query.AsNoTracking();
+
+
+            return await query.SingleOrDefaultAsync(x => x.Doctor!.Id == DoctorId && x.ClinicId == clinicId);
+        }
+
+      
     }
 }
