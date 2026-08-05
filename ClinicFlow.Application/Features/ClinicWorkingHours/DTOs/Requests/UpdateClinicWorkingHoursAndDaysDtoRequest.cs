@@ -1,10 +1,8 @@
-﻿namespace ClinicFlow.Domain.Entities
+﻿namespace ClinicFlow.Application.Features.ClinicWorkingHours.DTOs.Requests
 {
-    public class ClinicWorkingHour
+    public sealed record UpdateClinicWorkingHoursAndDaysDtoRequest
     {
         public int Id { get; set; }
-
-        public int ClinicId { get; set; }
 
         public DayOfWeek Day { get; set; }
 
@@ -16,8 +14,6 @@
 
         public int AppointmentDurationInMinutes { get; set; }
 
-        public Clinic Clinic { get; set; } = null!;
-       
-    }
 
+    }
 }

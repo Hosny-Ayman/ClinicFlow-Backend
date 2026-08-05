@@ -75,6 +75,66 @@ namespace ClinicFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SysteamSettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SettingKey = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    SettingValue = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SysteamSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicSetups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClinicId = table.Column<int>(type: "int", nullable: false),
+                    IsSetupCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    HasSkippedSetup = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicSetups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClinicSetups_Clinics_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Clinics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicWorkingHours",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClinicId = table.Column<int>(type: "int", nullable: false),
+                    Day = table.Column<int>(type: "int", nullable: false),
+                    OpenTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    CloseTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
+                    AppointmentDurationInMinutes = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicWorkingHours", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClinicWorkingHours_Clinics_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Clinics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Patients",
                 columns: table => new
                 {
@@ -113,7 +173,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClinicId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -169,10 +228,10 @@ namespace ClinicFlow.Infrastructure.Migrations
                     ClinicId = table.Column<int>(type: "int", nullable: false),
                     SpecialtyId = table.Column<int>(type: "int", nullable: false),
                     ConsultationFee = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Bio = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     ExperienceYears = table.Column<int>(type: "int", nullable: false),
-                    ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    ProfileImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -228,18 +287,11 @@ namespace ClinicFlow.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    ClinicId = table.Column<int>(type: "int", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRoles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserRoles_Clinics_ClinicId",
-                        column: x => x.ClinicId,
-                        principalTable: "Clinics",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
@@ -632,14 +684,23 @@ namespace ClinicFlow.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Clinics_Name",
                 table: "Clinics",
-                column: "Name",
-                unique: true);
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clinics_Phone",
                 table: "Clinics",
-                column: "Phone",
+                column: "Phone");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicSetups_ClinicId",
+                table: "ClinicSetups",
+                column: "ClinicId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicWorkingHours_ClinicId",
+                table: "ClinicWorkingHours",
+                column: "ClinicId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Doctors_ClinicId",
@@ -946,9 +1007,10 @@ namespace ClinicFlow.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_ClinicId",
-                table: "UserRoles",
-                column: "ClinicId");
+                name: "IX_SysteamSettings_SettingKey",
+                table: "SysteamSettings",
+                column: "SettingKey",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -1013,6 +1075,12 @@ namespace ClinicFlow.Infrastructure.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
+                name: "ClinicSetups");
+
+            migrationBuilder.DropTable(
+                name: "ClinicWorkingHours");
+
+            migrationBuilder.DropTable(
                 name: "DoctorSchedules");
 
             migrationBuilder.DropTable(
@@ -1026,6 +1094,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
+                name: "SysteamSettings");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");

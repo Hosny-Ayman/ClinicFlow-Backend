@@ -55,7 +55,7 @@ namespace ClinicFlow.Application.Features.Clinics
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-            await _roleRepository.AssignRoleAsync(user.Id, RoleEnum.ClinicOwner);
+            await _roleRepository.AssignRoleAsync(user, RoleEnum.ClinicOwner);
 
             user.Clinic = clinic;
 

@@ -29,6 +29,24 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: (Policies.ManageUsers))]
+        [HttpPut]
+        public async Task<IActionResult> Update(List<UpdateClinicWorkingHoursAndDaysDtoRequest> request)
+        {
+            var result = await _clinicWorkingHoursService.UpdateWorkingHoursAndDaysAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: (Policies.ManageUsers))]
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _clinicWorkingHoursService.GetAllWorkingHoursAndDaysAsync();
+
+            return this.ToHttpResponse(result);
+        }
+
 
     }
 }

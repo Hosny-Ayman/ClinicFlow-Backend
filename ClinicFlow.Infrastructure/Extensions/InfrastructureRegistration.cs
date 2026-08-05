@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Application.Common.Interfaces;
+using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Domain.InterFaces;
 using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
@@ -35,6 +36,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IClinicWorkingHourRepository, ClinicWorkingHourRepository>();
             services.AddScoped<IClinicSetupQueryService, ClinicSetuppQueryService>();
             services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddHttpContextAccessor();
 
 

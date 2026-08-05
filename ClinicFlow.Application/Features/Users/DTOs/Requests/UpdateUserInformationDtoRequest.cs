@@ -9,7 +9,7 @@
         public string Email { get; init; } = null!;
         public string? Password { get; init; }
         public string PhoneNumber { get; init; } = null!;
-        public bool IsActive { get; init; }
+        public bool IsActive { get; init; } = true;
      
 
     }

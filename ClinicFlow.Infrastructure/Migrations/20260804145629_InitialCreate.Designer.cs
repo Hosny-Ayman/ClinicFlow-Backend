@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260729143121_Add-Entity-ClinicSetupRepository-ClinicWorkingHourRepository")]
-    partial class AddEntityClinicSetupClinicWorkingHour
+    [Migration("20260804145629_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -250,7 +250,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Clinics", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetupRepository", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,13 +275,16 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("ClinicSetups");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHourRepository", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentDurationInMinutes")
+                        .HasColumnType("int");
 
                     b.Property<int>("ClinicId")
                         .HasColumnType("int");
@@ -330,7 +333,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProFileImageid")
+                    b.Property<string>("ProfileImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -1057,18 +1060,18 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetupRepository", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "clinic")
-                        .WithOne("ClinicSetupRepository")
-                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetupRepository", "ClinicId")
+                        .WithOne("ClinicSetup")
+                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetup", "ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("clinic");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHourRepository", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
                         .WithMany("ClinicWorkingHours")
@@ -1292,7 +1295,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Clinic", b =>
                 {
-                    b.Navigation("ClinicSetupRepository")
+                    b.Navigation("ClinicSetup")
                         .IsRequired();
 
                     b.Navigation("ClinicWorkingHours");

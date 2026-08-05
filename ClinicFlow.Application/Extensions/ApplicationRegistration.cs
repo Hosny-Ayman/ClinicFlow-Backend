@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Application.Common.Interfaces;
+using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Application.Features.Authentication;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.ClinicSetups;
@@ -25,7 +26,7 @@ namespace ClinicFlow.Application.Extensions
             services.AddScoped<ClinicWorkingHoursService>();
             services.AddScoped<ClinicSetupService>();
             services.AddScoped<SpecialityService>();
-
+            services.AddScoped<AuthorizationService>();
             services.AddAutoMapper(typeof(ApplicationRegistration).Assembly);
 
             services.AddValidatorsFromAssembly(typeof(ApplicationRegistration).Assembly);

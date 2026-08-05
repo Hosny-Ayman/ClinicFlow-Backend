@@ -2,6 +2,7 @@
 using ClinicFlow.Application.Common.Errors;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
+using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Application.Features.Doctors.DTOs.Requests;
 using ClinicFlow.Application.Features.Doctors.DTOs.Responses;
 using ClinicFlow.Application.Features.Users;
@@ -10,7 +11,6 @@ using ClinicFlow.Application.Features.Users.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.InterFaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ClinicFlow.Application.Features.Doctors
@@ -27,11 +27,12 @@ namespace ClinicFlow.Application.Features.Doctors
         private readonly ICurrentUserService _currentUserService;
         private readonly UserService _userService;
         private readonly ILogger<DoctorService> _logger;
+        private readonly IAuthorizationService _authorizationService;
 
         public DoctorService(IDoctorRepository doctorRepository, IUnitOfWork unitOfWork, IMapper mapper,
             IFileStorageService FileStorageService, IUserRepository userRepository,
             IUserRoleRepository userRoleRepository, ICurrentUserService currentUserService,
-            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger)
+            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, IAuthorizationService authorizationService)
         {
             _doctorRepository = doctorRepository;
             _unitOfWork = unitOfWork;
@@ -42,6 +43,7 @@ namespace ClinicFlow.Application.Features.Doctors
             _currentUserService = currentUserService;
             _userService = userService;
             _logger = logger;
+            _authorizationService = authorizationService;
 
         }
 
@@ -63,7 +65,7 @@ namespace ClinicFlow.Application.Features.Doctors
                 {
                     return OperationResult<int>.Conflict(GeneralErrors.Conflict("User Already Has This Roles"));
                 }
-                await _userRoleRepository.AssignRoleAsync(_currentUserService.UserId!.Value, RoleEnum.Doctor);
+                await _userRoleRepository.AssignRoleAsync(user, RoleEnum.Doctor);
 
 
                 if (doctorDto.ProfileImage != null)
@@ -106,7 +108,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
             try
             {
-                var user = await _userService.AddUserAsync(userDto);
+                var user = await _userService.AddUserInsideProjectOnlyAsync(userDto);
 
                 if (user == null)
                 {
@@ -117,7 +119,7 @@ namespace ClinicFlow.Application.Features.Doctors
                 {
                     return OperationResult<int>.Conflict(GeneralErrors.Conflict("User Already Has This Role"));
                 }
-                await _userRoleRepository.AssignRoleAsync(_currentUserService.UserId!.Value, RoleEnum.Doctor);
+                await _userRoleRepository.AssignRoleAsync(user, RoleEnum.Doctor);
 
 
                 if (doctorDto.ProfileImage != null)
@@ -157,11 +159,18 @@ namespace ClinicFlow.Application.Features.Doctors
         public async Task<OperationResult<GetDoctorFullInforamtionDtoResponse>> GetDoctorFullInforamtionByIdAsync(int DoctorId)
         {
 
+            
+
             var user = await _userRepository.GetUserByDoctorIdAsync(DoctorId, _currentUserService.ClinicId!.Value);
 
             if (user == null )
             {
                 OperationResult<GetDoctorFullInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
+            }
+
+            if (!_authorizationService.EnsureCanManageUser(user.Id!))
+            {
+                return OperationResult<GetDoctorFullInforamtionDtoResponse>.Forbidden();
             }
 
             var doctor = await _doctorRepository.GetDoctorByIdAsync(DoctorId, _currentUserService.ClinicId!.Value);
@@ -193,6 +202,12 @@ namespace ClinicFlow.Application.Features.Doctors
 
         public async Task<OperationResult<bool>> UpdateDoctorAsync(UpdateUserInformationDtoRequest userDto, UpdateDoctorInforamtionDtoRequest doctorDto)
         {
+
+            if (!_authorizationService.EnsureCanManageUser(userDto.Id))
+            {
+                return OperationResult<bool>.Forbidden();
+            }
+
             string? oldImage = null;
             string? newImage = null;
             try
@@ -214,7 +229,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
                 oldImage = doctor.ProfileImageUrl;
 
-                await _userService.UpdateUserAsync(user, userDto);
+                await _userService.UpdateUserInsideProjectOnlyAsync(user, userDto);
 
                 _mapper.Map(doctorDto, doctor);
 

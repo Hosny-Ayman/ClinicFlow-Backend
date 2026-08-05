@@ -2,12 +2,14 @@
 using ClinicFlow.Application.Common.Errors;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
+using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
+using ClinicFlow.Application.Features.Doctors.DTOs.Responses;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
+using ClinicFlow.Application.Features.Users.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.InterFaces;
-using System.Threading.Tasks;
 
 namespace ClinicFlow.Application.Features.Users
 {
@@ -20,9 +22,11 @@ namespace ClinicFlow.Application.Features.Users
         private readonly IMapper _mapper;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IUnitOfWork _UnitOfWork;
+        private readonly IAuthorizationService _authorizationService;
 
-      public UserService(IUserQueryService userQueryService, ICurrentUserService currentUserService,
-          IUserRepository userRepository, IMapper mapper, IUserRoleRepository userRoleRepository, IUnitOfWork unitOfWork)
+        public UserService(IUserQueryService userQueryService, ICurrentUserService currentUserService,
+          IUserRepository userRepository, IMapper mapper, IUserRoleRepository userRoleRepository,
+          IUnitOfWork unitOfWork, IAuthorizationService authorizationService)
         {
             _userQueryService = userQueryService;
             _currentUserService = currentUserService;
@@ -30,6 +34,7 @@ namespace ClinicFlow.Application.Features.Users
             _mapper = mapper;
             _userRoleRepository = userRoleRepository;
             _UnitOfWork = unitOfWork;
+            _authorizationService = authorizationService;
         }
 
         public async Task<OperationResult<CurrentUserDto>> GetCurrentUserAsync()
@@ -54,14 +59,14 @@ namespace ClinicFlow.Application.Features.Users
         public async Task<OperationResult<int>> CreateReceptionistAsync(CreateAndEditUserDtoRequest userDto)
         {      
 
-            var user = await AddUserAsync(userDto);
+            var user = await AddUserInsideProjectOnlyAsync(userDto);
 
             if(user == null)
             {
                 return OperationResult<int>.Conflict(GeneralErrors.Conflict("The User Is Already Exists"));
             }
 
-            await _userRoleRepository.AssignRoleAsync(user.Id, RoleEnum.Receptionist);
+            await _userRoleRepository.AssignRoleAsync(user, RoleEnum.Receptionist);
            
             await _UnitOfWork.SaveChangesAsync();
 
@@ -69,7 +74,7 @@ namespace ClinicFlow.Application.Features.Users
            
         }
 
-        public async Task<User?> AddUserAsync(CreateAndEditUserDtoRequest userDto)
+        public async Task<User?> AddUserInsideProjectOnlyAsync(CreateAndEditUserDtoRequest userDto)
         {
 
             if(await _userRepository.IsEmailExitsAsync(userDto.Email) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber))
@@ -89,7 +94,50 @@ namespace ClinicFlow.Application.Features.Users
 
         }
 
-        public async Task UpdateUserAsync(User user, UpdateUserInformationDtoRequest dto)
+        public async Task<OperationResult<GetUserInformationDtoResponse>> GetUserInformationByIdAsync(int userId)
+        {
+
+            if (!_authorizationService.EnsureCanManageUser(userId))
+            {
+                return OperationResult<GetUserInformationDtoResponse>.Forbidden();
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(userId, _currentUserService.ClinicId!.Value);
+
+            if(user == null)
+            {
+                return OperationResult<GetUserInformationDtoResponse>.NotFound();
+            }
+
+            var userDto = _mapper.Map<GetUserInformationDtoResponse>(user);
+
+            return OperationResult<GetUserInformationDtoResponse>.Success(userDto);
+        }
+
+        public async Task<OperationResult<bool>> UpdateUserAsync(UpdateUserInformationDtoRequest userDto)
+        {
+
+            if (!_authorizationService.EnsureCanManageUser(userDto.Id))
+            {
+                return OperationResult<bool>.Forbidden();
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(userDto.Id, _currentUserService.ClinicId!.Value, true);
+
+            if(user == null)
+            {
+                return OperationResult<bool>.NotFound(GeneralErrors.NotFound("Update Failed User Not Found"));
+            }
+
+            await UpdateUserInsideProjectOnlyAsync(user, userDto);
+
+            await _UnitOfWork.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
+
+        }
+
+        public async Task UpdateUserInsideProjectOnlyAsync(User user, UpdateUserInformationDtoRequest dto)
         {
             var oldPassword = user.PasswordHash;
 

@@ -16,16 +16,15 @@ namespace ClinicFlow.Infrastructure.Repositories
             _appDbContext = appDbContext;
         }
 
-        public async Task AssignRoleAsync(int userId, RoleEnum role)
+        public async Task AssignRoleAsync(User user, RoleEnum role)
         {
-            var user = await _appDbContext.Users.SingleOrDefaultAsync(x=>x.Id == userId);
 
             var roleId = (int)role;
 
             var userRole = new UserRole
             {
-                UserId = userId,
-                RoleId = roleId
+                User = user,
+                RoleId = (int)role
             };
 
             await _appDbContext.UserRoles.AddAsync(userRole);

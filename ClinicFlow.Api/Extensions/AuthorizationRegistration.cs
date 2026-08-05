@@ -11,12 +11,17 @@ namespace ClinicFlow.Api.Extensions
             {
                 options.AddPolicy(Policies.ManageUsers, policy =>
                 {
-                    policy.RequireRole("ClinicOwner", "Admin");
+                    policy.RequireRole("ClinicOwner", "SuperAdmin");
                 });
 
                 options.AddPolicy(Policies.ManageDoctors, policy =>
                 {
-                    policy.RequireRole("ClinicOwner", "Admin", "Doctor");
+                    policy.RequireRole("ClinicOwner", "SuperAdmin", "Doctor");
+                });
+
+                options.AddPolicy(Policies.ManageReceptionist, policy =>
+                {
+                    policy.RequireRole("ClinicOwner", "SuperAdmin", "Receptionist");
                 });
 
                 options.AddPolicy(Policies.ManageAppointments, policy =>

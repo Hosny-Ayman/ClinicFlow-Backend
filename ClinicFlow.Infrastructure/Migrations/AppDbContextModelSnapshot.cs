@@ -247,7 +247,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Clinics", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetups", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -279,6 +279,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentDurationInMinutes")
+                        .HasColumnType("int");
 
                     b.Property<int>("ClinicId")
                         .HasColumnType("int");
@@ -1054,11 +1057,11 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetups", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Clinic", "clinic")
-                        .WithOne("ClinicSetups")
-                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetups", "ClinicId")
+                        .WithOne("ClinicSetup")
+                        .HasForeignKey("ClinicFlow.Domain.Entities.ClinicSetup", "ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1289,7 +1292,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Clinic", b =>
                 {
-                    b.Navigation("ClinicSetups")
+                    b.Navigation("ClinicSetup")
                         .IsRequired();
 
                     b.Navigation("ClinicWorkingHours");

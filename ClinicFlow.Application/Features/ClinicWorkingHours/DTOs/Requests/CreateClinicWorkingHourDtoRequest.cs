@@ -3,7 +3,6 @@
     public sealed record CreateClinicWorkingHourDtoRequest
     {
        
-        public int ClinicId { get; init; }
 
         public DayOfWeek Day { get; init; }
 
@@ -12,6 +11,8 @@
         public TimeOnly CloseTime { get; init; }
 
         public bool IsClosed { get; init; }
+
+        public int AppointmentDurationInMinutes { get; init; }
 
 
     }
