@@ -21,7 +21,7 @@ namespace ClinicFlow.Api.Controllers
 
         [Authorize(policy:(Policies.ManageUsers))]
         [HttpPost("steps")]
-        public async Task<IActionResult> CreateDoctorSteps(CreateAndEditDoctorDtoRequest docterDto)
+        public async Task<IActionResult> CreateDoctorSteps([FromForm] CreateAndEditDoctorDtoRequest docterDto)
         {
             var result = await _doctorService.CreateDoctorStepsAsync(docterDto);
 
@@ -30,7 +30,7 @@ namespace ClinicFlow.Api.Controllers
 
         [Authorize(policy: (Policies.ManageUsers))]
         [HttpPost]
-        public async Task<IActionResult> CreateDoctor(CreateAndEditDoctorWithUserDtoRequest Request)
+        public async Task<IActionResult> CreateDoctor([FromForm] CreateAndEditDoctorWithUserDtoRequest Request)
         {
             var result = await _doctorService.CreateDoctorAsync(Request.Doctor, Request.User);
 

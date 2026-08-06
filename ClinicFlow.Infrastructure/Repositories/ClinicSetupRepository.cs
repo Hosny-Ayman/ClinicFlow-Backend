@@ -22,7 +22,20 @@ namespace ClinicFlow.Infrastructure.Repositories
             return clinicSetup.Id;
         }
 
-       
+        public async Task<ClinicSetup?> GetClinicSetupAsync(int clinicId, bool treacking = false)
+        {
+            var query = _appDbContext.ClinicSetups.AsQueryable();
+
+            if (!treacking)
+                query = query.AsNoTracking();
+
+            return await query.SingleOrDefaultAsync(x => x.ClinicId == clinicId);
+        }
+
+        public async Task<bool> IsClinicSetupExistsAsync(int clinicId)
+        {
+            return await _appDbContext.ClinicSetups.AnyAsync(x => x.ClinicId == clinicId);
+        }
 
         public async Task UpdateClinicSetupStatusAsync(ClinicSetup clinicSetup)
         {

@@ -2,6 +2,8 @@
 {
     public sealed record GetClinicSetupStatusDtoResponse
     {
+       
+
         public bool IsSetupCompleted { get; init; }
 
         public bool HasSkippedSetup { get; init; }

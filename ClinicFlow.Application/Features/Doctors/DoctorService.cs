@@ -115,7 +115,7 @@ namespace ClinicFlow.Application.Features.Doctors
                     return OperationResult<int>.Conflict(GeneralErrors.Conflict("User Is Already Exists"));
                 }
 
-                if (await _userRoleRepository.HasRoleAsync(_currentUserService.UserId!.Value, RoleEnum.Doctor))
+                if (await _userRoleRepository.HasRoleAsync(user.Id, RoleEnum.Doctor))
                 {
                     return OperationResult<int>.Conflict(GeneralErrors.Conflict("User Already Has This Role"));
                 }
@@ -131,7 +131,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
                 var doctor = _mapper.Map<Doctor>(doctorDto);
 
-                doctor.UserId = _currentUserService.UserId!.Value;
+                doctor.User = user;
 
                 doctor.ClinicId = _currentUserService.ClinicId!.Value;
 

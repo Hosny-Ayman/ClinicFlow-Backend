@@ -29,9 +29,15 @@ namespace ClinicFlow.Application.Features.ClinicSetups
         }
 
 
-        public async Task<OperationResult<int>> CreateClinicSetupAsync(CreateClinicSetupDtoRequest setupDto)
+        public async Task<OperationResult<int>> CreateClinicSetupAsync(CreateAndEditClinicSetupDtoRequest request)
         {
-            var setup = _mapper.Map<ClinicSetup>(setupDto);
+
+            if(await _clinicSetupRepository.IsClinicSetupExistsAsync(_currentUserService.ClinicId!.Value))
+            {
+                return OperationResult<int>.Success(0);
+            }
+
+            var setup = _mapper.Map<ClinicSetup>(request);
 
             setup.ClinicId = _currentUserService.ClinicId!.Value;
 
@@ -43,13 +49,34 @@ namespace ClinicFlow.Application.Features.ClinicSetups
 
         }
 
+       
+
+        public async Task<OperationResult<bool>> UpdateClinicSetupAsync(CreateAndEditClinicSetupDtoRequest request)
+        {
+            var steup = await _clinicSetupRepository.GetClinicSetupAsync(_currentUserService.ClinicId!.Value,true);
+
+            if(steup == null)
+            {
+                return OperationResult<bool>.NotFound();
+            }
+
+            _mapper.Map(request, steup);
+
+            steup.ClinicId = _currentUserService.ClinicId!.Value;
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
+
+        }
+
         public async Task<OperationResult<GetClinicSetupStatusDtoResponse>> GetClinicSetupStatusAsync()
         {
             var steup = await _clinicSetupService.GetClinicSetupStatusAsync(_currentUserService.ClinicId!.Value);
 
             if(steup == null)
             {
-                return OperationResult<GetClinicSetupStatusDtoResponse>.Success(null);
+                return OperationResult<GetClinicSetupStatusDtoResponse>.NotFound();
             }
 
             var steupDto = _mapper.Map<GetClinicSetupStatusDtoResponse>(steup);

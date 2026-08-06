@@ -22,16 +22,16 @@ namespace ClinicFlow.Api.Controllers
             _clinicSetupService = clinicSetupService;
         }
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(policy: (Policies.ManageDoctors))]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateClinicSetupDtoRequest SetupDto)
+        public async Task<IActionResult> Create(CreateAndEditClinicSetupDtoRequest request)
         {
-            var result = await _clinicSetupService.CreateClinicSetupAsync(SetupDto);
+            var result = await _clinicSetupService.CreateClinicSetupAsync(request);
 
             return this.ToHttpResponse(result);
         }
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(policy: (Policies.ManageDoctors))]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -39,6 +39,18 @@ namespace ClinicFlow.Api.Controllers
 
             return this.ToHttpResponse(result);
         }
+
+
+        [Authorize(policy: (Policies.ManageDoctors))]
+        [HttpPut]
+        public async Task<IActionResult> Update(CreateAndEditClinicSetupDtoRequest request)
+        {
+            var result = await _clinicSetupService.UpdateClinicSetupAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
+        
 
 
     }

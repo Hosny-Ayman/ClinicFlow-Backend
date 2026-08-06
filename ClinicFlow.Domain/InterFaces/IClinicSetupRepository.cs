@@ -9,6 +9,10 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task UpdateClinicSetupStatusAsync(ClinicSetup clinicSetup);
 
+        Task<ClinicSetup?> GetClinicSetupAsync(int clinicId,bool treacking = false);
+
+        Task<bool> IsClinicSetupExistsAsync(int clinicId);
+
 
     }
 }

@@ -12,7 +12,7 @@ namespace ClinicFlow.Application.Features.ClinicSetups
         public ClinicSetupProfile() 
         {
 
-            CreateMap<CreateClinicSetupDtoRequest, ClinicSetup>().ReverseMap();
+            CreateMap<CreateAndEditClinicSetupDtoRequest, ClinicSetup>().ReverseMap();
             CreateMap<GetClinicSetupStatusDtoResponse, ClinicSetup>().ReverseMap();
 
         }
