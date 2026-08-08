@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using ClinicFlow.Application.Common.ValidationRules;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
+using ClinicFlow.Application.Features.Users.UserValidators;
 
 namespace ClinicFlow.Application.Features.Clinics.ClinicValidators
 {
@@ -8,24 +9,9 @@ namespace ClinicFlow.Application.Features.Clinics.ClinicValidators
     {
         public CreateClinicWithOwnerDtoRequestValidator()
         {
+            RuleFor(x => x.Clinic).SetValidator(new CreateAndEditClinicDtoRequestValidator());
 
-            RuleFor(x => x.Clinic.Name).NameRule();
-
-            RuleFor(x => x.Clinic.Phone).PhoneRule();
-
-            RuleFor(x => x.Clinic.Email).EmailRule();
-
-            RuleFor(x => x.Clinic.Address).AddressRule();
-
-            RuleFor(x => x.User.FirstName).FirtsNameRule();
-
-            RuleFor(x => x.User.LastName).LastNameRule();
-
-            RuleFor(x => x.User.Email).EmailRule();
-
-            RuleFor(x => x.User.PhoneNumber).PhoneRule();
-
-            RuleFor(x => x.User.Password).PasswordRule();
+            RuleFor(x => x.User).SetValidator(new CreateUserDtoRequestValidator());
 
         }
 

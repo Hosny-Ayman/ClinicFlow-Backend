@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ClinicFlow.Application.Features.Clinics.DTOs.Requests
 {
-    public sealed record CreateClinicDtoRequest
+    public sealed record CreateAndEditClinicDtoRequest
     {
 
         public string Name { get; set; } = null!;
@@ -19,6 +20,10 @@ namespace ClinicFlow.Application.Features.Clinics.DTOs.Requests
         public string Address { get; set; } = null!;
 
         public string? Description { get; set; }
+
+        public IFormFile? LogoUrl { get; set; }
+
+        public bool IsImageDelted { get; set; } = false;
 
 
     }

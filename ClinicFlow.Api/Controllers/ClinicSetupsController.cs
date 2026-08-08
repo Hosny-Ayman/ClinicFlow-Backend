@@ -2,10 +2,7 @@
 using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.ClinicSetups;
 using ClinicFlow.Application.Features.ClinicSetups.DTOs.Requests;
-using ClinicFlow.Application.Features.ClinicWorkingHours;
-using ClinicFlow.Application.Features.ClinicWorkingHours.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicFlow.Api.Controllers

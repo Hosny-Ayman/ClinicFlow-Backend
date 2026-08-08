@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Api.Extensions;
+using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -17,12 +18,30 @@ namespace ClinicFlow.Api.Controllers
             _clinicService = ClinicService;
         }
 
-        //[Authorize(policy:Policies.ManageDoctors)]
+        
         [AllowAnonymous]
         [HttpPost]
-        public async Task <IActionResult> Create(CreateClinicWithOwnerDtoRequest requst)
+        public async Task <IActionResult> Create([FromForm]CreateClinicWithOwnerDtoRequest requst)
         {
             var resul = await _clinicService.CreateClinicAsync(requst.Clinic, requst.User);
+
+            return this.ToHttpResponse(resul);
+        }
+
+        [Authorize(policy:Policies.ManageUsers)]
+        [HttpPut]
+        public async Task<IActionResult> Update([FromForm]CreateAndEditClinicDtoRequest request)
+        {
+            var resul = await _clinicService.UpdateClinicAsync(request);
+
+            return this.ToHttpResponse(resul);
+        }
+
+        [Authorize(policy: Policies.ManageUsers)]
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var resul = await _clinicService.GetClinicAsync();
 
             return this.ToHttpResponse(resul);
         }

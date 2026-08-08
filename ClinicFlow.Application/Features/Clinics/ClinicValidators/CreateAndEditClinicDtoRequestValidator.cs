@@ -4,9 +4,9 @@ using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
 
 namespace ClinicFlow.Application.Features.Clinics.ClinicValidators
 {
-    public class CreateClinicDtoRequestValidator: AbstractValidator<CreateClinicDtoRequest>
+    public class CreateAndEditClinicDtoRequestValidator: AbstractValidator<CreateAndEditClinicDtoRequest>
     {
-        public CreateClinicDtoRequestValidator()
+        public CreateAndEditClinicDtoRequestValidator()
         {
 
             RuleFor(x => x.Name).NameRule();

@@ -3,6 +3,7 @@ using ClinicFlow.Application.Common.Interfaces;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ClinicFlow.Infrastructure.Storage
@@ -11,24 +12,36 @@ namespace ClinicFlow.Infrastructure.Storage
     {
 
         private readonly Cloudinary _cloudinary;
+        private readonly ILogger<CloudinaryFileStorageService> _logger;
 
-        public CloudinaryFileStorageService(IOptions<CloudinarySettings> options)
+        public CloudinaryFileStorageService(IOptions<CloudinarySettings> options, ILogger<CloudinaryFileStorageService> logger)
         {
             var settings = options.Value;
 
             var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
 
-            _cloudinary = new Cloudinary (account); 
+            _cloudinary = new Cloudinary (account);
+
+            _logger = logger;
         }
 
 
-        public async Task<bool> DeleteImageAsync(string publicId)
+        public async Task DeleteImageAsync(string publicId)
         {
+
+            if (string.IsNullOrWhiteSpace(publicId))
+                return;
+
             var deleteParams = new DeletionParams(publicId);
 
             var result = await _cloudinary.DestroyAsync(deleteParams);
 
-            return result.Result == "ok";
+            if(result.Result != "ok")
+            {
+                _logger.LogWarning("Failed to delete image {Image}", publicId);
+            }
+
+           
         }
 
         public string GetFileUrl(string publicId)

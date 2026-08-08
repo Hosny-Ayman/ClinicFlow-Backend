@@ -86,7 +86,12 @@ namespace ClinicFlow.Application.Features.Users
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-            user.ClinicId = _currentUserService.ClinicId!.Value;
+            if (_currentUserService.ClinicId is int clinicId)
+            {
+                user.ClinicId = clinicId;
+            }
+
+           
 
             await _userRepository.AddAsync(user);
 
@@ -129,7 +134,7 @@ namespace ClinicFlow.Application.Features.Users
                 return OperationResult<bool>.NotFound(GeneralErrors.NotFound("Update Failed User Not Found"));
             }
 
-            await UpdateUserInsideProjectOnlyAsync(user, userDto);
+            UpdateUserInsideProjectOnlyAsync(user, userDto);
 
             await _UnitOfWork.SaveChangesAsync();
 
@@ -137,7 +142,7 @@ namespace ClinicFlow.Application.Features.Users
 
         }
 
-        public async Task UpdateUserInsideProjectOnlyAsync(User user, UpdateUserInformationDtoRequest dto)
+        public void UpdateUserInsideProjectOnlyAsync(User user, UpdateUserInformationDtoRequest dto)
         {
             var oldPassword = user.PasswordHash;
 

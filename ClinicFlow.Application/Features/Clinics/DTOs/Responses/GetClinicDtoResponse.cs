@@ -1,9 +1,8 @@
 ﻿namespace ClinicFlow.Application.Features.Clinics.DTOs.Responses
 {
-    public sealed record GetClinicDtoResponses
+    public sealed record GetClinicDtoResponse
     {
 
-        public int Id { get; set; }
 
         public string Name { get; set; } = null!;
 

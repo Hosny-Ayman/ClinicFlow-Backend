@@ -4,10 +4,13 @@ using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
 using ClinicFlow.Application.Features.Clinics.DTOs.Responses;
+using ClinicFlow.Application.Features.Users;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.InterFaces;
+using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ClinicFlow.Application.Features.Clinics
 {
@@ -21,10 +24,15 @@ namespace ClinicFlow.Application.Features.Clinics
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClinicQueryService _queryService;
         private readonly IUserRoleRepository _roleRepository;
+        private readonly UserService _userService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IFileStorageService _fileStorageService;
+        private readonly IClinicSetupRepository _clinicSetupRepository;
 
 
         public ClinicService(IClinicRepository clinicRepository,IUserRepository userRepository,IMapper mapper, IOwnershipService ownershipService
-            , IUnitOfWork unitOfWork, IClinicQueryService QueryService, IUserRoleRepository RoleRepository)
+            , IUnitOfWork unitOfWork, IClinicQueryService QueryService, IUserRoleRepository RoleRepository,UserService userService
+            , ICurrentUserService currentUserService, IFileStorageService fileStorageService, IClinicSetupRepository clinicSetupRepository)
         {
             _clinicRepository = clinicRepository;
             _userRepository = userRepository;
@@ -33,35 +41,47 @@ namespace ClinicFlow.Application.Features.Clinics
             _unitOfWork = unitOfWork;
             _queryService = QueryService;
             _roleRepository = RoleRepository;
+            _userService = userService;
+            _currentUserService = currentUserService;
+            _fileStorageService = fileStorageService;
+            _clinicSetupRepository = clinicSetupRepository;
         }
 
       
 
-        public async Task<OperationResult<CreateClinicResponse>> CreateClinicAsync(CreateClinicDtoRequest clinicDto, CreateAndEditUserDtoRequest userDto)
+        public async Task<OperationResult<CreateClinicResponse>> CreateClinicAsync(CreateAndEditClinicDtoRequest clinicDto, CreateAndEditUserDtoRequest userDto)
         {
-            if(await _userRepository.IsEmailExitsAsync(userDto.Email))
-            {
-                return OperationResult<CreateClinicResponse>.Conflict(GeneralErrors.Conflict("Email Is Already Exits"));
-            }
+            string? imageId = null;
+            var user = await _userService.AddUserInsideProjectOnlyAsync(userDto);
 
-            if (await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber))
+            if(user == null)
             {
-                return OperationResult<CreateClinicResponse>.Conflict(GeneralErrors.Conflict("Phone Number Is Already Exits"));
+                return OperationResult<CreateClinicResponse>.BadRequest();
             }
 
             var clinic = _mapper.Map<Clinic>(clinicDto);
 
-            var user = _mapper.Map<User>(userDto);
+            if (clinicDto.LogoUrl != null)
+            {
+                imageId = await _fileStorageService.UploadImageAsync(clinicDto.LogoUrl);
+            }
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+            clinic.LogoUrl = imageId;
+            user.Clinic = clinic;
+
+            var clinicSetup = new ClinicSetup
+            {
+                HasSkippedSetup = false,
+                clinic = clinic
+            };
 
             await _roleRepository.AssignRoleAsync(user, RoleEnum.ClinicOwner);
-
-            user.Clinic = clinic;
 
             await _clinicRepository.AddAsync(clinic);
 
             await _userRepository.AddAsync(user);
+
+            await _clinicSetupRepository.AddClinicSetupStatusAsync(clinicSetup);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -74,6 +94,82 @@ namespace ClinicFlow.Application.Features.Clinics
 
             return OperationResult<CreateClinicResponse>.Success(requst);
 
+        }
+
+        public async Task<OperationResult<bool>> UpdateClinicAsync(CreateAndEditClinicDtoRequest clinicDto)
+        {
+
+            string? oldImage = null;
+            string? newImage = null;
+
+            try
+            {
+                var clinic = await _clinicRepository.GetClinicByIdAsync(_currentUserService.ClinicId!.Value, true);
+
+                if (clinic == null)
+                {
+                    return OperationResult<bool>.NotFound();
+                }
+
+                oldImage = clinic.LogoUrl;
+
+                _mapper.Map(clinicDto, clinic);
+
+                if(clinicDto.LogoUrl!=null)
+                {
+                    newImage = await _fileStorageService.UploadImageAsync(clinicDto.LogoUrl);
+                    clinic.LogoUrl = newImage;
+                }
+                else
+                {
+                    if (clinicDto.IsImageDelted)
+                    {
+                        clinic.LogoUrl = null;
+                    }
+
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                if(clinicDto.IsImageDelted && !string.IsNullOrEmpty(oldImage))
+                {
+                    await _fileStorageService.DeleteImageAsync(oldImage);
+                }
+
+                return OperationResult<bool>.Success(true);
+            }
+            catch
+            {
+
+                if(clinicDto.LogoUrl!=null)
+                {
+                    await _fileStorageService.DeleteImageAsync(newImage!);
+                }
+               
+                throw;
+            }
+           
+        }
+
+        public async Task<OperationResult<GetClinicDtoResponse>> GetClinicAsync()
+        {
+
+            var clinic = await _clinicRepository.GetClinicByIdAsync(_currentUserService.ClinicId!.Value);
+
+            if (clinic == null)
+            {
+                return OperationResult<GetClinicDtoResponse>.NotFound();
+            }
+
+            var response =  _mapper.Map<GetClinicDtoResponse>(clinic);
+
+            if(!string.IsNullOrEmpty(clinic.LogoUrl))
+            {
+                response.LogoUrl = _fileStorageService.GetFileUrl(clinic.LogoUrl!);
+            }
+
+
+            return OperationResult<GetClinicDtoResponse>.Success(response);
         }
 
 

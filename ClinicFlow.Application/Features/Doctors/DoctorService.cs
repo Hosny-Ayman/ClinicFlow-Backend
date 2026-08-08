@@ -229,7 +229,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
                 oldImage = doctor.ProfileImageUrl;
 
-                await _userService.UpdateUserInsideProjectOnlyAsync(user, userDto);
+                 _userService.UpdateUserInsideProjectOnlyAsync(user, userDto);
 
                 _mapper.Map(doctorDto, doctor);
 
@@ -254,7 +254,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
                 if (doctorDto.IsImageDeleted)
                 {
-                    await DeleteOldImageAsync(oldImage);
+                    await _fileStorageService.DeleteImageAsync(oldImage!);
                 }
                     
                 
@@ -264,36 +264,16 @@ namespace ClinicFlow.Application.Features.Doctors
             }
             catch
             {
-                await RollbackUploadedImage(newImage);
+                if(doctorDto.ProfileImageUrl != null)
+                {
+                    await _fileStorageService.DeleteImageAsync(newImage!);
+                }
+               
                 throw;
             }
 
 
         }
-
-
-        private async Task DeleteOldImageAsync(string? oldImage)
-        {
-            if (string.IsNullOrWhiteSpace(oldImage))
-                return;
-
-            var deleted = await _fileStorageService.DeleteImageAsync(oldImage);
-
-            if (!deleted)
-            {
-                _logger.LogWarning( "Failed to delete image {Image}",oldImage);
-            }
-        }
-
-        private async Task RollbackUploadedImage(string? newImage)
-        {
-            if (string.IsNullOrWhiteSpace(newImage))
-                return;
-
-            await _fileStorageService.DeleteImageAsync(newImage);
-        }
-
-
 
     }
 }

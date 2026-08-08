@@ -7,7 +7,7 @@ namespace ClinicFlow.Application.Common.Interfaces
 
         Task<string> UploadImageAsync(IFormFile file);
 
-        Task<bool> DeleteImageAsync(string publicId);
+        Task DeleteImageAsync(string publicId);
 
         string GetFileUrl(string publicId);
 
