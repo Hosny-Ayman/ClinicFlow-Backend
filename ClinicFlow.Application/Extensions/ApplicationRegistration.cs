@@ -26,7 +26,7 @@ namespace ClinicFlow.Application.Extensions
             services.AddScoped<ClinicWorkingHoursService>();
             services.AddScoped<ClinicSetupService>();
             services.AddScoped<SpecialityService>();
-            services.AddScoped<AuthorizationService>();
+            services.AddScoped<CheckService>();
             services.AddAutoMapper(typeof(ApplicationRegistration).Assembly);
 
             services.AddValidatorsFromAssembly(typeof(ApplicationRegistration).Assembly);

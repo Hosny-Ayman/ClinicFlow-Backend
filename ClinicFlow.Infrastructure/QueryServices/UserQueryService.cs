@@ -2,6 +2,7 @@
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Security;
 
 namespace ClinicFlow.Infrastructure.QueryServices
 {
@@ -17,15 +18,42 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
         public async Task<CurrentUserDto?> GetUserProfilByEmaileAsync(string Email)
         {
-           return await _appDbContext.Users.Where(x=>x.Email == Email).Select(x=> new CurrentUserDto
-           {
-              Id = x.Id,
-              FullName = x.FirstName +" "+x.LastName,
-              Email = x.Email,
-              ClinicId = x.ClinicId,
-              Roles = x.UserRoles.Select(x=> x.Role.Name).ToList()
-           }).SingleOrDefaultAsync();
-         
+            var user = await _appDbContext.Users
+                .Where(x => x.Email == Email)
+                .Select(x => new
+                {
+                    x.Id,
+                    FullName = x.FirstName + " " + x.LastName,
+                    x.Email,
+                    x.ClinicId,
+
+                    Roles = x.UserRoles
+                        .Select(ur => ur.Role.Name)
+                        .ToList(),
+
+                    Permissions = x.UserRoles
+                        .Select(ur => ur.Role.Permissions)
+                        .ToList()
+                })
+                .SingleOrDefaultAsync();
+
+
+            if (user == null)
+                return null;
+
+
+            return new CurrentUserDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                ClinicId = user.ClinicId,
+
+                Roles = user.Roles,
+
+                Permissions = user.Permissions
+                    .Aggregate(0L, (current, permission) => current | permission)
+            };
         }
     }
 }

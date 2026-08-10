@@ -1,6 +1,7 @@
 ﻿using ClinicFlow.Api.Extensions;
 using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.Specialties;
+using ClinicFlow.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace ClinicFlow.Api.Controllers
         }
 
 
-        [Authorize(policy: (Policies.ManageDoctors))]
+        [Authorize(policy: nameof(PermissionEnum.DoctorsView))]
         [HttpGet("")]
         public async Task<IActionResult> GetAllSpecialites()
         {

@@ -1,7 +1,9 @@
 using ClinicFlow.Api.Extensions;
+using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Extensions;
 using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -29,6 +31,7 @@ namespace ClinicFlow.Api
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
            
+
             builder.Services.AddRateLimitingServices();
 
             builder.Services.AddAuthorizationServices();

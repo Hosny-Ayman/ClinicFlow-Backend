@@ -8,6 +8,7 @@
         public string Email { get; init; } = string.Empty;
         public int ClinicId { get; init; } 
         public IReadOnlyList<string> Roles { get; init; } = [];
+        public long Permissions { get; init; }
 
     }
 }

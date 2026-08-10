@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Application.Common.Authorization;
+using ClinicFlow.Domain.Enums;
 
 namespace ClinicFlow.Api.Extensions
 {
@@ -9,25 +10,21 @@ namespace ClinicFlow.Api.Extensions
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Policies.ManageUsers, policy =>
+                foreach (var permission in Enum.GetValues<PermissionEnum>())
                 {
-                    policy.RequireRole("ClinicOwner", "SuperAdmin");
-                });
+                    if (permission == PermissionEnum.None || permission == PermissionEnum.All)
+                        continue;
 
-                options.AddPolicy(Policies.ManageDoctors, policy =>
-                {
-                    policy.RequireRole("ClinicOwner", "SuperAdmin", "Doctor");
-                });
 
-                options.AddPolicy(Policies.ManageReceptionist, policy =>
-                {
-                    policy.RequireRole("ClinicOwner", "SuperAdmin", "Receptionist");
-                });
-
-                options.AddPolicy(Policies.ManageAppointments, policy =>
-                {
-                    policy.RequireRole("ClinicOwner", "Doctor", "Receptionist");
-                });
+                    options.AddPolicy(
+                        permission.ToString(),
+                        policy =>
+                        {
+                            policy.Requirements.Add(
+                                new PermissionRequirement(permission)
+                            );
+                        });
+                }
             });
 
             return services;

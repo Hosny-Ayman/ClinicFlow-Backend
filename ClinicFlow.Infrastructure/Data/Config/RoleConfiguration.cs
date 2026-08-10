@@ -16,6 +16,10 @@ namespace ClinicFlow.Infrastructure.Data.Config
                 .IsRequired()
                 .HasMaxLength(100);
 
+            builder.Property(r => r.Permissions)
+               .IsRequired();
+               
+
             builder.Property(r => r.Description)
               .IsRequired(false)
               .HasMaxLength(500);

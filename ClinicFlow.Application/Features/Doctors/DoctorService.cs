@@ -27,12 +27,12 @@ namespace ClinicFlow.Application.Features.Doctors
         private readonly ICurrentUserService _currentUserService;
         private readonly UserService _userService;
         private readonly ILogger<DoctorService> _logger;
-        private readonly IAuthorizationService _authorizationService;
+        private readonly ICheckService _authorizationService;
 
         public DoctorService(IDoctorRepository doctorRepository, IUnitOfWork unitOfWork, IMapper mapper,
             IFileStorageService FileStorageService, IUserRepository userRepository,
             IUserRoleRepository userRoleRepository, ICurrentUserService currentUserService,
-            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, IAuthorizationService authorizationService)
+            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, ICheckService authorizationService)
         {
             _doctorRepository = doctorRepository;
             _unitOfWork = unitOfWork;

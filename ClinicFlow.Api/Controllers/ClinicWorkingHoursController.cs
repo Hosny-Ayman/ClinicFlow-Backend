@@ -2,6 +2,7 @@
 using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.ClinicWorkingHours;
 using ClinicFlow.Application.Features.ClinicWorkingHours.DTOs.Requests;
+using ClinicFlow.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace ClinicFlow.Api.Controllers
         }
 
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(Policy = nameof(PermissionEnum.ClinicsCreate))]
         [HttpPost]
         public async Task<IActionResult> Create(List<CreateClinicWorkingHourDtoRequest> DaysDto)
         {
@@ -29,7 +30,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(policy: nameof(PermissionEnum.ClinicsUpdate))]
         [HttpPut]
         public async Task<IActionResult> Update(List<UpdateClinicWorkingHoursAndDaysDtoRequest> request)
         {
@@ -38,7 +39,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(policy: nameof(PermissionEnum.ClinicsView))]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

@@ -4,6 +4,7 @@ using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809163334_Update-ClinicOwner-Permations")]
+    partial class UpdateClinicOwnerPermations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -853,8 +856,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<long>("Permissions")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Permissions")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -871,28 +874,28 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 1,
                             IsActive = true,
                             Name = "SuperAdmin",
-                            Permissions = -1L
+                            Permissions = -1
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 1441791L
+                            Permissions = 1441791
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             Name = "Doctor",
-                            Permissions = 9L
+                            Permissions = 9
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
                             Name = "Receptionist",
-                            Permissions = 9249L
+                            Permissions = 9249
                         });
                 });
 

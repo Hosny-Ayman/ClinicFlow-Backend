@@ -35,6 +35,10 @@ namespace ClinicFlow.Infrastructure.Authentication
 
             claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role.Name)));
 
+            var permissions = user.UserRoles.Select(x => x.Role.Permissions).Aggregate(0L, (current, permission) => current | permission);
+
+            claims.Add(new Claim("Permissions", permissions.ToString()));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 
             var credentials = new SigningCredentials( key,SecurityAlgorithms.HmacSha256);

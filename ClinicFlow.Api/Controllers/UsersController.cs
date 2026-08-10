@@ -1,9 +1,7 @@
 ﻿using ClinicFlow.Api.Extensions;
-using ClinicFlow.Application.Common.Authorization;
-using ClinicFlow.Application.Features.Doctors;
-using ClinicFlow.Application.Features.Doctors.DTOs.Requests;
 using ClinicFlow.Application.Features.Users;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
+using ClinicFlow.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +31,7 @@ namespace ClinicFlow.Api.Controllers
         }
 
 
-        [Authorize(policy: (Policies.ManageUsers))]
+        [Authorize(policy: nameof(PermissionEnum.ReceptionistsCreate))]
         [HttpPost("CreateReceptionists")]
         public async Task<IActionResult> CreateReceptionists(CreateAndEditUserDtoRequest userDto)
         {
@@ -43,7 +41,7 @@ namespace ClinicFlow.Api.Controllers
         }
 
 
-        [Authorize(policy: (Policies.ManageReceptionist))]
+        [Authorize(policy: nameof(PermissionEnum.ReceptionistsUpdate))]
         [HttpPut("UpdateUsers")]
         public async Task<IActionResult> UpdateUsers(UpdateUserInformationDtoRequest userDto)
         {
@@ -52,7 +50,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
-        [Authorize(policy: (Policies.ManageReceptionist))]
+        [Authorize(policy: nameof(PermissionEnum.ReceptionistsView))]
         [HttpGet("{userId:int}")]
         public async Task<IActionResult> GetUsers(int userId)
         {

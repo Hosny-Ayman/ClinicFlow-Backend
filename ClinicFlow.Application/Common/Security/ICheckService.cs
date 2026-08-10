@@ -1,6 +1,6 @@
 ﻿namespace ClinicFlow.Application.Common.Security
 {
-    public interface IAuthorizationService
+    public interface ICheckService
     {
 
         bool EnsureCanManageUser(int targetUserId);

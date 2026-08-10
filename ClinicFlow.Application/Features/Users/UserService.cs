@@ -22,11 +22,11 @@ namespace ClinicFlow.Application.Features.Users
         private readonly IMapper _mapper;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IUnitOfWork _UnitOfWork;
-        private readonly IAuthorizationService _authorizationService;
+        private readonly ICheckService _authorizationService;
 
         public UserService(IUserQueryService userQueryService, ICurrentUserService currentUserService,
           IUserRepository userRepository, IMapper mapper, IUserRoleRepository userRoleRepository,
-          IUnitOfWork unitOfWork, IAuthorizationService authorizationService)
+          IUnitOfWork unitOfWork, ICheckService authorizationService)
         {
             _userQueryService = userQueryService;
             _currentUserService = currentUserService;

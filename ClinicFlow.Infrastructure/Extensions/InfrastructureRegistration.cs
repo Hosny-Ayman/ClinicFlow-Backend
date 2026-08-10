@@ -1,4 +1,5 @@
-﻿using ClinicFlow.Application.Common.Interfaces;
+﻿using ClinicFlow.Application.Common.Authorization;
+using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Domain.InterFaces;
 using ClinicFlow.Infrastructure.Authentication;
@@ -6,6 +7,7 @@ using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.QueryServices;
 using ClinicFlow.Infrastructure.Repositories;
 using ClinicFlow.Infrastructure.Storage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicFlow.Infrastructure.Extensions
@@ -36,8 +38,9 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IClinicWorkingHourRepository, ClinicWorkingHourRepository>();
             services.AddScoped<IClinicSetupQueryService, ClinicSetupQueryService>();
             services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
-            services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddScoped<ICheckService, CheckService>();
             services.AddHttpContextAccessor();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
 
 

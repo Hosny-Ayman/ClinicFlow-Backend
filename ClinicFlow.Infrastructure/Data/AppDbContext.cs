@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Infrastructure.Data.Seed;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow.Infrastructure.Data
@@ -58,7 +59,10 @@ namespace ClinicFlow.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+            RoleSeed.Seed(modelBuilder);
         }
 
     }

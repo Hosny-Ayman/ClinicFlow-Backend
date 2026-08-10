@@ -3,12 +3,12 @@ using ClinicFlow.Domain.Enums;
 
 namespace ClinicFlow.Application.Common.Security
 {
-    public class AuthorizationService: IAuthorizationService
+    public class CheckService: ICheckService
     {
 
         private readonly ICurrentUserService _currentUser;
 
-        public AuthorizationService(ICurrentUserService currentUser)
+        public CheckService(ICurrentUserService currentUser)
         {
             _currentUser = currentUser;
         }

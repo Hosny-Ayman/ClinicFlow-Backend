@@ -11,6 +11,8 @@
 
         public bool IsActive { get; set; } = true;
 
+        public long Permissions { get; set; }
+
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
     }

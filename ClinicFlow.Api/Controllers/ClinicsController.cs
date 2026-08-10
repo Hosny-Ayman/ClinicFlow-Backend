@@ -2,6 +2,7 @@
 using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.Clinics.DTOs.Requests;
+using ClinicFlow.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(resul);
         }
 
-        [Authorize(policy:Policies.ManageUsers)]
+        [Authorize(policy:nameof(PermissionEnum.ClinicsUpdate))]
         [HttpPut]
         public async Task<IActionResult> Update([FromForm]CreateAndEditClinicDtoRequest request)
         {
@@ -37,7 +38,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(resul);
         }
 
-        [Authorize(policy: Policies.ManageUsers)]
+        [Authorize(policy: nameof(PermissionEnum.ClinicsView))]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
