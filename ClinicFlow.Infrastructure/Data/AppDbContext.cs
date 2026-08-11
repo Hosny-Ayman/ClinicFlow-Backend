@@ -1,6 +1,7 @@
 ﻿using ClinicFlow.Domain.Entities;
 using ClinicFlow.Infrastructure.Data.Seed;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace ClinicFlow.Infrastructure.Data
 {
@@ -63,6 +64,7 @@ namespace ClinicFlow.Infrastructure.Data
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
             RoleSeed.Seed(modelBuilder);
+
         }
 
     }

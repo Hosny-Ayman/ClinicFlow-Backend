@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClinicFlow.Application.Common.Errors;
+using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Common.Security;
@@ -28,11 +29,13 @@ namespace ClinicFlow.Application.Features.Doctors
         private readonly UserService _userService;
         private readonly ILogger<DoctorService> _logger;
         private readonly ICheckService _authorizationService;
+        private readonly IDoctorQueryService _queryService;
 
         public DoctorService(IDoctorRepository doctorRepository, IUnitOfWork unitOfWork, IMapper mapper,
             IFileStorageService FileStorageService, IUserRepository userRepository,
             IUserRoleRepository userRoleRepository, ICurrentUserService currentUserService,
-            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, ICheckService authorizationService)
+            UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, ICheckService authorizationService
+            , IDoctorQueryService queryService)
         {
             _doctorRepository = doctorRepository;
             _unitOfWork = unitOfWork;
@@ -44,7 +47,7 @@ namespace ClinicFlow.Application.Features.Doctors
             _userService = userService;
             _logger = logger;
             _authorizationService = authorizationService;
-
+            _queryService = queryService;
         }
 
 
@@ -272,6 +275,15 @@ namespace ClinicFlow.Application.Features.Doctors
                 throw;
             }
 
+
+        }
+
+        public async Task<OperationResult<PagedResponse<GetAllDoctorsInformationsDtoResponse>>> GetAllDoctorsInformationsAsync(DoctorSearchDtoRequest request)
+        {
+
+            var respons = await _queryService.GetAllDoctorsInformationsAsync(request,_currentUserService.ClinicId!.Value);
+
+            return OperationResult<PagedResponse<GetAllDoctorsInformationsDtoResponse>>.Success(respons);
 
         }
 

@@ -59,5 +59,14 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: nameof(PermissionEnum.ClinicsUpdate))]
+        [HttpPut("ToggleUserStatus")]
+        public async Task<IActionResult> ToggleUserStatus(int userId)
+        {
+            var result = await _userService.ToggleUserStatusAsync(userId);
+
+            return this.ToHttpResponse(result);
+        }
+
     }
 }

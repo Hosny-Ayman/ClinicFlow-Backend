@@ -77,7 +77,7 @@ namespace ClinicFlow.Application.Features.Users
         public async Task<User?> AddUserInsideProjectOnlyAsync(CreateAndEditUserDtoRequest userDto)
         {
 
-            if(await _userRepository.IsEmailExitsAsync(userDto.Email) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber))
+            if(await _userRepository.IsEmailExitsAsync(userDto.Email,_currentUserService.ClinicId!.Value) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber, _currentUserService.ClinicId!.Value))
             {
                 return null;
             }
@@ -151,6 +151,23 @@ namespace ClinicFlow.Application.Features.Users
             user.PasswordHash = string.IsNullOrWhiteSpace(dto.Password)? oldPassword: BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
           
+        }
+
+        public async Task<OperationResult<bool>> ToggleUserStatusAsync(int userId)
+        {
+            if(! await _userRepository.IsUserExistsByIdAsync(userId,_currentUserService.ClinicId!.Value))
+            {
+                return OperationResult<bool>.BadRequest();
+            }
+
+            var result = await _userRepository.ToggleUserStatusAsync(userId, _currentUserService.ClinicId!.Value);
+
+            if(!result)
+            {
+                return OperationResult<bool>.Failure(GeneralErrors.Failure($"Deactivate Use By Id:{userId} Failed"));
+            }
+
+            return OperationResult<bool>.Success(result);
         }
     }
 }

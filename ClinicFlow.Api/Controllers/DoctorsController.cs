@@ -56,6 +56,15 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: nameof(PermissionEnum.DoctorsViewAll))]
+        [HttpPost("GetAllDoctors")]
+        public async Task<IActionResult> GetAllDoctorsInformations([FromBody]DoctorSearchDtoRequest request)
+        {
+            var result = await _doctorService.GetAllDoctorsInformationsAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
 
     }
 }

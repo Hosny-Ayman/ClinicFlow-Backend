@@ -15,11 +15,13 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<int> AddAsync(User user);
 
-        Task<bool> IsUserExistsByIdAsync(int userId);
+        Task<bool> IsUserExistsByIdAsync(int userId ,int clinicId);
 
-        Task<bool> IsEmailExitsAsync(string email);
+        Task<bool> IsEmailExitsAsync(string email, int clinicId);
 
-        Task<bool> IsPhoneExitsAsync(string phone);
+        Task<bool> IsPhoneExitsAsync(string phone, int clinicId);
+
+        Task<bool> ToggleUserStatusAsync(int userId, int clinicId);
 
 
 

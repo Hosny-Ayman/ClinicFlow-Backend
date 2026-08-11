@@ -58,19 +58,19 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Email == Email );
         }
 
-        public async Task<bool> IsUserExistsByIdAsync(int userId)
+        public async Task<bool> IsUserExistsByIdAsync(int userId, int clinicId)
         {
-            return await _appDbContext.Users.AnyAsync(x => x.Id == userId);
+            return await _appDbContext.Users.AnyAsync(x => x.Id == userId && x.ClinicId == clinicId);
         }
 
-        public async Task<bool> IsEmailExitsAsync(string email)
+        public async Task<bool> IsEmailExitsAsync(string email, int clinicId)
         {
-            return await _appDbContext.Users.AnyAsync(x => x.Email == email);
+            return await _appDbContext.Users.AnyAsync(x => x.Email == email && x.ClinicId == clinicId);
         }
 
-        public async Task<bool> IsPhoneExitsAsync(string phone)
+        public async Task<bool> IsPhoneExitsAsync(string phone, int clinicId)
         {
-            return await _appDbContext.Users.AnyAsync(x => x.PhoneNumber == phone);
+            return await _appDbContext.Users.AnyAsync(x => x.PhoneNumber == phone && x.ClinicId == clinicId);
         }
 
         public async Task<User?> GetUserByDoctorIdAsync(int DoctorId, int clinicId, bool Tracking = false)
@@ -84,6 +84,12 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await query.SingleOrDefaultAsync(x => x.Doctor!.Id == DoctorId && x.ClinicId == clinicId);
         }
 
-      
+        public async Task<bool> ToggleUserStatusAsync(int userId ,int clinicId)
+        {
+            var affectedRows = await _appDbContext.Users.Where(x => x.Id == userId && x.ClinicId == clinicId).ExecuteUpdateAsync(setters =>
+            setters.SetProperty(x => x.IsActive, x => !x.IsActive));
+
+            return affectedRows > 0;
+        }
     }
 }
