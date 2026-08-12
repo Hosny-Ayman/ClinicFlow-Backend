@@ -68,5 +68,14 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: nameof(PermissionEnum.ReceptionistsViewAll))]
+        [HttpPost("GetAllReceptionistsformations")]
+        public async Task<IActionResult> GetAllReceptionistsformations([FromBody]ReceptionistsSearchDtoRequest request)
+        {
+            var result = await _userService.GetAllReceptionistsformationsAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
     }
 }

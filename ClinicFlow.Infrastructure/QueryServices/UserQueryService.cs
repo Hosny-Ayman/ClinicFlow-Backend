@@ -1,8 +1,11 @@
-﻿using ClinicFlow.Application.Common.Interfaces;
+﻿using ClinicFlow.Application.Common.Helper;
+using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
+using ClinicFlow.Application.Features.Users.DTOs.Requests;
+using ClinicFlow.Application.Features.Users.DTOs.Responses;
+using ClinicFlow.Domain.Enums;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Security;
 
 namespace ClinicFlow.Infrastructure.QueryServices
 {
@@ -14,6 +17,87 @@ namespace ClinicFlow.Infrastructure.QueryServices
         {
             _appDbContext = appDbContext;
 
+        }
+
+        public async Task<PagedResponse<GetAllReceptionistsDtoRequest>> GetAllReceptionistsformationsAsync(ReceptionistsSearchDtoRequest request, int clinicId)
+        {
+            var query = _appDbContext.Users.Where(x => x.ClinicId == clinicId && x.UserRoles.Any(x=>x.RoleId ==(int) RoleEnum.Receptionist)).AsNoTracking().AsQueryable();
+
+
+
+            if (!string.IsNullOrWhiteSpace(request.FullNameSearch))
+            {
+                var search = request.FullNameSearch.Trim();
+                query = query.Where(x => x.FirstName.Contains(search) || x.LastName.Contains(search) ||
+                (x.FirstName + " " + x.LastName).Contains(search));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.EmailSearch))
+            {
+                query = query.Where(x => x.Email.Contains(request.EmailSearch));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumberSearch))
+            {
+                query = query.Where(x => x.PhoneNumber.Contains(request.PhoneNumberSearch));
+            }
+
+            if (request.Status.HasValue)
+            {
+                query = query.Where(x => x.IsActive == request.Status);
+            }
+
+
+
+
+            var totalrecords = await query.CountAsync();
+
+            if (!string.IsNullOrEmpty(request.SortField))
+            {
+                switch (request.SortField.ToLower())
+                {
+                    case "fullname":
+                        query = request.SortOrder == -1 ?
+                            query.OrderByDescending(x => (x.FirstName + " " + x.LastName)) :
+                            query.OrderBy(x => (x.FirstName + " " + x.LastName));
+                        break;
+
+
+                    case "email":
+                        query = request.SortOrder == -1 ?
+                            query.OrderByDescending(x => x.Email) :
+                            query.OrderBy(x => x.Email);
+                        break;
+
+                    case "phonenumber":
+                        query = request.SortOrder == -1 ?
+                            query.OrderByDescending(x => x.PhoneNumber) :
+                            query.OrderBy(x => x.PhoneNumber);
+                        break;
+
+                    case "status":
+                        query = request.SortOrder == -1 ?
+                            query.OrderByDescending(x => x.IsActive) :
+                            query.OrderBy(x => x.IsActive);
+                        break;
+                }
+            }
+
+            var data = await query.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize).Select(x => new GetAllReceptionistsDtoRequest
+            {
+
+                Id = x.Id,
+                FullName = $"{x.FirstName} {x.LastName}",
+                Email = x.Email,
+                PhoneNumber = x.PhoneNumber,
+                Status = x.IsActive ? "Active" : "Inactive",
+
+            }
+            ).ToListAsync();
+
+           
+
+            return new PagedResponse<GetAllReceptionistsDtoRequest>(data, totalrecords, request.PageNumber, request.PageSize);
         }
 
         public async Task<CurrentUserDto?> GetUserProfilByEmaileAsync(string Email)

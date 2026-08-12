@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClinicFlow.Application.Common.Errors;
+using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Common.Security;
@@ -168,6 +169,15 @@ namespace ClinicFlow.Application.Features.Users
             }
 
             return OperationResult<bool>.Success(result);
+        }
+
+
+        public async Task<OperationResult<PagedResponse<GetAllReceptionistsDtoRequest>>> GetAllReceptionistsformationsAsync(ReceptionistsSearchDtoRequest request)
+        {
+            var data = await _userQueryService.GetAllReceptionistsformationsAsync(request, _currentUserService.ClinicId!.Value);
+
+            return OperationResult<PagedResponse<GetAllReceptionistsDtoRequest>>.Success(data);
+
         }
     }
 }
