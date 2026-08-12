@@ -24,9 +24,9 @@ namespace ClinicFlow.Infrastructure.Authentication
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
 
-            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Email, user.Person.Email ?? ""),
 
-            new(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
+            new(JwtRegisteredClaimNames.Name, $"{user.Person.FirstName} {user.Person.LastName}"),
 
             new Claim("ClinicId", user.ClinicId.ToString()),
 

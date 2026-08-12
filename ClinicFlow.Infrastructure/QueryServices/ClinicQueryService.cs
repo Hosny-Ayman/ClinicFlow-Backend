@@ -26,7 +26,7 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 ClinicPhone = x.Phone,
                 ClinicAddress = x.Address,
                 CreatedAt = x.CreatedAt,
-                OwnerFullName = x.Users.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleEnum.ClinicOwner.ToString())).Select(x=>$"{x.FirstName} {x.LastName}" ).First()
+                OwnerFullName = x.Users.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleEnum.ClinicOwner.ToString())).Select(x=>$"{x.Person.FirstName} {x.Person.LastName}" ).First()
 
            }).FirstOrDefaultAsync();
         }

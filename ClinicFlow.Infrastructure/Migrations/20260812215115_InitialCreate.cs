@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ClinicFlow.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -46,6 +48,23 @@ namespace ClinicFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -53,7 +72,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Permissions = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,7 +116,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClinicId = table.Column<int>(type: "int", nullable: false),
-                    IsSetupCompleted = table.Column<bool>(type: "bit", nullable: false),
                     HasSkippedSetup = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -140,13 +159,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClinicId = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     BloodType = table.Column<int>(type: "int", nullable: true),
@@ -159,9 +174,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Patients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Patients_Clinics_ClinicId",
-                        column: x => x.ClinicId,
-                        principalTable: "Clinics",
+                        name: "FK_Patients_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -172,12 +187,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<int>(type: "int", nullable: false),
                     ClinicId = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
@@ -188,6 +200,41 @@ namespace ClinicFlow.Infrastructure.Migrations
                         name: "FK_Users_Clinics_ClinicId",
                         column: x => x.ClinicId,
                         principalTable: "Clinics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicPatients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClinicId = table.Column<int>(type: "int", nullable: false),
+                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    FirstVisitDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicPatients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClinicPatients_Clinics_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Clinics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClinicPatients_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -565,6 +612,17 @@ namespace ClinicFlow.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Description", "IsActive", "Name", "Permissions" },
+                values: new object[,]
+                {
+                    { 1, null, true, "SuperAdmin", -1L },
+                    { 2, null, true, "ClinicOwner", 1441791L },
+                    { 3, null, true, "Doctor", 9L },
+                    { 4, null, true, "Receptionist", 9249L }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_AppointmentDate",
                 table: "Appointments",
@@ -664,6 +722,26 @@ namespace ClinicFlow.Infrastructure.Migrations
                 name: "IX_AuditLogs_UserId_CreatedAt",
                 table: "AuditLogs",
                 columns: new[] { "UserId", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPatients_ClinicId",
+                table: "ClinicPatients",
+                column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPatients_CreatedAt",
+                table: "ClinicPatients",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPatients_IsActive",
+                table: "ClinicPatients",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPatients_PatientId",
+                table: "ClinicPatients",
+                column: "PatientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clinics_CreatedAt",
@@ -846,11 +924,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                 columns: new[] { "PatientId", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_ClinicId",
-                table: "Patients",
-                column: "ClinicId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Patients_CreatedAt",
                 table: "Patients",
                 column: "CreatedAt");
@@ -861,34 +934,15 @@ namespace ClinicFlow.Infrastructure.Migrations
                 column: "DateOfBirth");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_Email",
-                table: "Patients",
-                column: "Email");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Patients_FirstName",
-                table: "Patients",
-                column: "FirstName");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Patients_FirstName_LastName",
-                table: "Patients",
-                columns: new[] { "FirstName", "LastName" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Patients_Gender",
                 table: "Patients",
                 column: "Gender");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_LastName",
+                name: "IX_Patients_PersonId",
                 table: "Patients",
-                column: "LastName");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Patients_PhoneNumber",
-                table: "Patients",
-                column: "PhoneNumber");
+                column: "PersonId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_IsActive",
@@ -932,6 +986,38 @@ namespace ClinicFlow.Infrastructure.Migrations
                 column: "TransactionId",
                 unique: true,
                 filter: "[TransactionId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_CreatedAt",
+                table: "Persons",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_Email",
+                table: "Persons",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_FirstName",
+                table: "Persons",
+                column: "FirstName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_FirstName_LastName",
+                table: "Persons",
+                columns: new[] { "FirstName", "LastName" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_LastName",
+                table: "Persons",
+                column: "LastName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_PhoneNumber",
+                table: "Persons",
+                column: "PhoneNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionItems_MedicationName",
@@ -1033,35 +1119,14 @@ namespace ClinicFlow.Infrastructure.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_FirstName",
-                table: "Users",
-                column: "FirstName");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_FirstName_LastName",
-                table: "Users",
-                columns: new[] { "FirstName", "LastName" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_IsActive",
                 table: "Users",
                 column: "IsActive");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_LastName",
+                name: "IX_Users_PersonId",
                 table: "Users",
-                column: "LastName");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_PhoneNumber",
-                table: "Users",
-                column: "PhoneNumber",
+                column: "PersonId",
                 unique: true);
         }
 
@@ -1073,6 +1138,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AuditLogs");
+
+            migrationBuilder.DropTable(
+                name: "ClinicPatients");
 
             migrationBuilder.DropTable(
                 name: "ClinicSetups");
@@ -1133,6 +1201,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clinics");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
         }
     }
 }

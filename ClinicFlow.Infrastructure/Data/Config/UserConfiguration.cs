@@ -12,27 +12,15 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
             builder.HasKey(u => u.Id);
 
-            builder.Property(u => u.FirstName)
-                .IsRequired()
-                .HasMaxLength(100);
+            builder.Property(u => u.PersonId)
+                .IsRequired();
 
-            builder.Property(u => u.LastName)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(u => u.Email)
-                .IsRequired()
-                .HasMaxLength(255);
+            builder.Property(u => u.ClinicId)
+                .IsRequired();
 
             builder.Property(u => u.PasswordHash)
                 .IsRequired()
                 .HasMaxLength(500);
-
-            builder.Property(u => u.PhoneNumber)
-                .IsRequired()
-                .HasMaxLength(20);
-
-          
 
             builder.Property(u => u.IsActive)
                 .HasDefaultValue(true);
@@ -42,21 +30,14 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
             builder.HasIndex(u => u.ClinicId);
 
-            builder.HasIndex(u => u.Email)
-                .IsUnique();
-
-            builder.HasIndex(u => u.PhoneNumber)
-                .IsUnique();
-
-            builder.HasIndex(u => u.FirstName);
-
-            builder.HasIndex(u => u.LastName);
-
-            builder.HasIndex(u => new { u.FirstName, u.LastName });
-
             builder.HasIndex(u => u.IsActive);
 
             builder.HasIndex(u => u.CreatedAt);
+
+            builder.HasOne(u => u.Person)
+                .WithOne()
+                .HasForeignKey<User>(u => u.PersonId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(u => u.Clinic)
                 .WithMany(c => c.Users)
@@ -73,9 +54,12 @@ namespace ClinicFlow.Infrastructure.Data.Config
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(r => r.UserRoles)
-                 .WithOne(u => u.User)
-                 .HasForeignKey(r => r.RoleId);
+            builder.HasMany(u => u.UserRoles)
+                 .WithOne(ur => ur.User)
+                 .HasForeignKey(ur => ur.UserId);
+                 
+
+         
         }
     }
 

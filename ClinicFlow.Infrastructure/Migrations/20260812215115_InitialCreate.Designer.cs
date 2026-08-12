@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260809141426_AddRolesSeed-And-Permations")]
-    partial class AddRolesSeedAndPermations
+    [Migration("20260812215115_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,6 +248,46 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("Phone");
 
                     b.ToTable("Clinics", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicPatient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("FirstVisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClinicId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("ClinicPatients", (string)null);
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
@@ -562,9 +602,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int?>("BloodType")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClinicId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -572,10 +609,6 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("EmergencyContactName")
                         .HasMaxLength(200)
@@ -585,18 +618,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("Gender")
                         .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NationalId")
                         .HasMaxLength(14)
@@ -606,30 +629,19 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClinicId");
 
                     b.HasIndex("CreatedAt");
 
                     b.HasIndex("DateOfBirth");
 
-                    b.HasIndex("Email");
-
-                    b.HasIndex("FirstName");
-
                     b.HasIndex("Gender");
 
-                    b.HasIndex("LastName");
-
-                    b.HasIndex("PhoneNumber");
-
-                    b.HasIndex("FirstName", "LastName");
+                    b.HasIndex("PersonId")
+                        .IsUnique();
 
                     b.ToTable("Patients", (string)null);
                 });
@@ -709,6 +721,56 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("PaymentMethods", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
+                    b.HasIndex("FirstName");
+
+                    b.HasIndex("LastName");
+
+                    b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("FirstName", "LastName");
+
+                    b.ToTable("Persons", (string)null);
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Prescription", b =>
@@ -856,8 +918,8 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Permissions")
-                        .HasColumnType("int");
+                    b.Property<long>("Permissions")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -874,28 +936,28 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 1,
                             IsActive = true,
                             Name = "SuperAdmin",
-                            Permissions = -1
+                            Permissions = -1L
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 65535
+                            Permissions = 1441791L
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             Name = "Doctor",
-                            Permissions = 9
+                            Permissions = 9L
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
                             Name = "Receptionist",
-                            Permissions = 9249
+                            Permissions = 9249L
                         });
                 });
 
@@ -973,35 +1035,18 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1009,19 +1054,10 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("FirstName");
-
                     b.HasIndex("IsActive");
 
-                    b.HasIndex("LastName");
-
-                    b.HasIndex("PhoneNumber")
+                    b.HasIndex("PersonId")
                         .IsUnique();
-
-                    b.HasIndex("FirstName", "LastName");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -1088,6 +1124,25 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicPatient", b =>
+                {
+                    b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
+                        .WithMany("ClinicPatients")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClinicFlow.Domain.Entities.Patient", "Patient")
+                        .WithMany("ClinicPatients")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicSetup", b =>
@@ -1217,13 +1272,13 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Patient", b =>
                 {
-                    b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
-                        .WithMany("Patients")
-                        .HasForeignKey("ClinicId")
+                    b.HasOne("ClinicFlow.Domain.Entities.Person", "Person")
+                        .WithOne()
+                        .HasForeignKey("ClinicFlow.Domain.Entities.Patient", "PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Clinic");
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Payment", b =>
@@ -1294,7 +1349,15 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ClinicFlow.Domain.Entities.Person", "Person")
+                        .WithOne()
+                        .HasForeignKey("ClinicFlow.Domain.Entities.User", "PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Clinic");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.UserRole", b =>
@@ -1325,6 +1388,8 @@ namespace ClinicFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Clinic", b =>
                 {
+                    b.Navigation("ClinicPatients");
+
                     b.Navigation("ClinicSetup")
                         .IsRequired();
 
@@ -1333,8 +1398,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Doctors");
 
                     b.Navigation("Invoices");
-
-                    b.Navigation("Patients");
 
                     b.Navigation("Users");
                 });
@@ -1367,6 +1430,8 @@ namespace ClinicFlow.Infrastructure.Migrations
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("ClinicPatients");
 
                     b.Navigation("Invoices");
 

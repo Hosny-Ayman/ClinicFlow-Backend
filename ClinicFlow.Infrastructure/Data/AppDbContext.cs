@@ -14,6 +14,8 @@ namespace ClinicFlow.Infrastructure.Data
 
         public DbSet<Clinic> Clinics => Set<Clinic>();
 
+        public DbSet<Person> Persons => Set<Person>();
+
         public DbSet<User> Users => Set<User>();
 
         public DbSet<Role> Roles => Set<Role>();
@@ -27,6 +29,8 @@ namespace ClinicFlow.Infrastructure.Data
         public DbSet<DoctorVacation> DoctorVacations => Set<DoctorVacation>();
 
         public DbSet<Patient> Patients => Set<Patient>();
+
+        public DbSet<ClinicPatient> ClinicPatients => Set<ClinicPatient>();
 
         public DbSet<Appointment> Appointments => Set<Appointment>();
 

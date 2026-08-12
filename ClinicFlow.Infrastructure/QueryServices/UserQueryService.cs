@@ -21,25 +21,25 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
         public async Task<PagedResponse<GetAllReceptionistsDtoRequest>> GetAllReceptionistsformationsAsync(ReceptionistsSearchDtoRequest request, int clinicId)
         {
-            var query = _appDbContext.Users.Where(x => x.ClinicId == clinicId && x.UserRoles.Any(x=>x.RoleId ==(int) RoleEnum.Receptionist)).AsNoTracking().AsQueryable();
+            var query = _appDbContext.Users.Include(x => x.Person).Where(x => x.ClinicId == clinicId && x.UserRoles.Any(x=>x.RoleId ==(int) RoleEnum.Receptionist)).AsNoTracking().AsQueryable();
 
 
 
             if (!string.IsNullOrWhiteSpace(request.FullNameSearch))
             {
                 var search = request.FullNameSearch.Trim();
-                query = query.Where(x => x.FirstName.Contains(search) || x.LastName.Contains(search) ||
-                (x.FirstName + " " + x.LastName).Contains(search));
+                query = query.Where(x => x.Person.FirstName.Contains(search) || x.Person.LastName.Contains(search) ||
+                (x.Person.FirstName + " " + x.Person.LastName).Contains(search));
             }
 
             if (!string.IsNullOrWhiteSpace(request.EmailSearch))
             {
-                query = query.Where(x => x.Email.Contains(request.EmailSearch));
+                query = query.Where(x => x.Person.Email != null && x.Person.Email.Contains(request.EmailSearch));
             }
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumberSearch))
             {
-                query = query.Where(x => x.PhoneNumber.Contains(request.PhoneNumberSearch));
+                query = query.Where(x => x.Person.PhoneNumber != null && x.Person.PhoneNumber.Contains(request.PhoneNumberSearch));
             }
 
             if (request.Status.HasValue)
@@ -58,21 +58,21 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 {
                     case "fullname":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => (x.FirstName + " " + x.LastName)) :
-                            query.OrderBy(x => (x.FirstName + " " + x.LastName));
+                            query.OrderByDescending(x => (x.Person.FirstName + " " + x.Person.LastName)) :
+                            query.OrderBy(x => (x.Person.FirstName + " " + x.Person.LastName));
                         break;
 
 
                     case "email":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => x.Email) :
-                            query.OrderBy(x => x.Email);
+                            query.OrderByDescending(x => x.Person.Email) :
+                            query.OrderBy(x => x.Person.Email);
                         break;
 
                     case "phonenumber":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => x.PhoneNumber) :
-                            query.OrderBy(x => x.PhoneNumber);
+                            query.OrderByDescending(x => x.Person.PhoneNumber) :
+                            query.OrderBy(x => x.Person.PhoneNumber);
                         break;
 
                     case "status":
@@ -87,9 +87,9 @@ namespace ClinicFlow.Infrastructure.QueryServices
             {
 
                 Id = x.Id,
-                FullName = $"{x.FirstName} {x.LastName}",
-                Email = x.Email,
-                PhoneNumber = x.PhoneNumber,
+                FullName = $"{x.Person.FirstName} {x.Person.LastName}",
+                Email = x.Person.Email ?? "",
+                PhoneNumber = x.Person.PhoneNumber ?? "",
                 Status = x.IsActive ? "Active" : "Inactive",
 
             }
@@ -103,12 +103,13 @@ namespace ClinicFlow.Infrastructure.QueryServices
         public async Task<CurrentUserDto?> GetUserProfilByEmaileAsync(string Email)
         {
             var user = await _appDbContext.Users
-                .Where(x => x.Email == Email)
+                .Include(x => x.Person)
+                .Where(x => x.Person.Email == Email)
                 .Select(x => new
                 {
                     x.Id,
-                    FullName = x.FirstName + " " + x.LastName,
-                    x.Email,
+                    FullName = x.Person.FirstName + " " + x.Person.LastName,
+                    Email = x.Person.Email,
                     x.ClinicId,
 
                     Roles = x.UserRoles
@@ -130,7 +131,7 @@ namespace ClinicFlow.Infrastructure.QueryServices
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Email = user.Email,
+                Email = user.Email ?? "",
                 ClinicId = user.ClinicId,
 
                 Roles = user.Roles,

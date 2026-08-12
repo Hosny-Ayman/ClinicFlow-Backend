@@ -24,7 +24,7 @@
 
         public ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
 
-        public ICollection<Patient> Patients { get; set; } = new List<Patient>();
+        public ICollection<ClinicPatient> ClinicPatients { get; set; } = new List<ClinicPatient>();
 
         public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 

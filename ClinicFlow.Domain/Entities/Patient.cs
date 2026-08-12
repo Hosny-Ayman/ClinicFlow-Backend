@@ -7,19 +7,11 @@ namespace ClinicFlow.Domain.Entities
 
         public int Id { get; set; }
 
-        public int ClinicId { get; set; }
-
-        public string FirstName { get; set; } = null!;
-
-        public string LastName { get; set; } = null!;
+        public int PersonId { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
 
         public GenderEnum Gender { get; set; }
-
-        public string PhoneNumber { get; set; } = null!;
-
-        public string? Email { get; set; }
 
         public string? Notes { get; set; }
 
@@ -35,7 +27,9 @@ namespace ClinicFlow.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Clinic Clinic { get; set; } = null!;
+        public Person Person { get; set; } = null!;
+
+        public ICollection<ClinicPatient> ClinicPatients { get; set; } = new List<ClinicPatient>();
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 

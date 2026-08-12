@@ -27,7 +27,7 @@ namespace ClinicFlow.Infrastructure.Repositories
 
         public async Task<User?> GetUserByIdAsync(int userId, int clinicId, bool Tracking = false)
         {
-            var query = _appDbContext.Users.AsQueryable();
+            var query = _appDbContext.Users.Include(x => x.Person).AsQueryable();
 
             if (!Tracking)
                 query = query.AsNoTracking();
@@ -38,24 +38,24 @@ namespace ClinicFlow.Infrastructure.Repositories
 
         public async Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, int clinicId, bool Tracking = false)
         {
-            var query = _appDbContext.Users.AsQueryable();
+            var query = _appDbContext.Users.Include(x => x.Person).AsQueryable();
 
             if (!Tracking)
                 query = query.AsNoTracking();
 
 
-            return await query.SingleOrDefaultAsync(x => x.PhoneNumber == PhoneNumber && x.ClinicId == clinicId);
+            return await query.SingleOrDefaultAsync(x => x.Person.PhoneNumber == PhoneNumber && x.ClinicId == clinicId);
         }
 
         public async Task<User?> GetUserByEmailAsync(string Email, bool Tracking = false)
         {
-            var query = _appDbContext.Users.AsQueryable();
+            var query = _appDbContext.Users.Include(x => x.Person).AsQueryable();
 
             if (!Tracking)
                 query = query.AsNoTracking();
 
 
-            return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Email == Email );
+            return await query.Include(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.Person.Email == Email );
         }
 
         public async Task<bool> IsUserExistsByIdAsync(int userId, int clinicId)
@@ -65,17 +65,17 @@ namespace ClinicFlow.Infrastructure.Repositories
 
         public async Task<bool> IsEmailExitsAsync(string email, int clinicId)
         {
-            return await _appDbContext.Users.AnyAsync(x => x.Email == email && x.ClinicId == clinicId);
+            return await _appDbContext.Users.AnyAsync(x => x.Person.Email == email && x.ClinicId == clinicId);
         }
 
         public async Task<bool> IsPhoneExitsAsync(string phone, int clinicId)
         {
-            return await _appDbContext.Users.AnyAsync(x => x.PhoneNumber == phone && x.ClinicId == clinicId);
+            return await _appDbContext.Users.AnyAsync(x => x.Person.PhoneNumber == phone && x.ClinicId == clinicId);
         }
 
         public async Task<User?> GetUserByDoctorIdAsync(int DoctorId, int clinicId, bool Tracking = false)
         {
-            var query = _appDbContext.Users.AsQueryable();
+            var query = _appDbContext.Users.Include(x => x.Person).AsQueryable();
 
             if (!Tracking)
                 query = query.AsNoTracking();

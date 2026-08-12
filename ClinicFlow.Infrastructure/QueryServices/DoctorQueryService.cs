@@ -21,25 +21,25 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
         public async Task<PagedResponse<GetAllDoctorsInformationsDtoResponse>> GetAllDoctorsInformationsAsync(DoctorSearchDtoRequest request,int clinicId)
         {
-            var query = _appDbContext.Doctors.Where(x=>x.ClinicId == clinicId).AsNoTracking().AsQueryable();
+            var query = _appDbContext.Doctors.Include(x => x.User).ThenInclude(x => x.Person).Where(x=>x.ClinicId == clinicId).AsNoTracking().AsQueryable();
 
             
 
             if (!string.IsNullOrWhiteSpace(request.FullNameSearch))
             {
                 var search = request.FullNameSearch.Trim();
-                query = query.Where(x =>x.User.FirstName.Contains(search) ||x.User.LastName.Contains(search) ||
-                (x.User.FirstName + " " + x.User.LastName).Contains(search));
+                query = query.Where(x =>x.User.Person.FirstName.Contains(search) ||x.User.Person.LastName.Contains(search) ||
+                (x.User.Person.FirstName + " " + x.User.Person.LastName).Contains(search));
             }
 
             if (!string.IsNullOrWhiteSpace(request.EmailSearch))
             {
-                query = query.Where(x => x.User.Email.Contains(request.EmailSearch));
+                query = query.Where(x => x.User.Person.Email != null && x.User.Person.Email.Contains(request.EmailSearch));
             }
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumberSearch))
             {
-                query = query.Where(x => x.User.PhoneNumber.Contains(request.PhoneNumberSearch));
+                query = query.Where(x => x.User.Person.PhoneNumber != null && x.User.Person.PhoneNumber.Contains(request.PhoneNumberSearch));
             }
 
             if (request.Gender.HasValue)
@@ -61,21 +61,21 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 {
                     case "fullname":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => (x.User.FirstName + " " + x.User.LastName)):
-                            query.OrderBy(x => (x.User.FirstName + " " + x.User.LastName));
+                            query.OrderByDescending(x => (x.User.Person.FirstName + " " + x.User.Person.LastName)):
+                            query.OrderBy(x => (x.User.Person.FirstName + " " + x.User.Person.LastName));
                         break;
 
 
                     case "email":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => x.User.Email):
-                            query.OrderBy(x => x.User.Email);
+                            query.OrderByDescending(x => x.User.Person.Email):
+                            query.OrderBy(x => x.User.Person.Email);
                         break;
 
                     case "phonenumber":
                         query = request.SortOrder == -1 ?
-                            query.OrderByDescending(x => x.User.PhoneNumber):
-                            query.OrderBy(x => x.User.PhoneNumber);
+                            query.OrderByDescending(x => x.User.Person.PhoneNumber):
+                            query.OrderBy(x => x.User.Person.PhoneNumber);
                         break;
 
                     case "specialty":
@@ -103,9 +103,9 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
                 Id = x.Id,
                 UserId = x.UserId,
-                FullName = $"{x.User.FirstName} {x.User.LastName}",
-                Email = x.User.Email,
-                PhoneNumber = x.User.PhoneNumber,
+                FullName = $"{x.User.Person.FirstName} {x.User.Person.LastName}",
+                Email = x.User.Person.Email ?? "",
+                PhoneNumber = x.User.Person.PhoneNumber ?? "",
                 Gender = x.Gender.ToString(),
                 Specialty = x.Specialty.Name,
                 Experience = x.ExperienceYears,

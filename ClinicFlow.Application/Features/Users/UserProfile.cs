@@ -9,11 +9,38 @@ namespace ClinicFlow.Application.Features.Users
     {
         public UserProfile()
         {
-            CreateMap<CreateAndEditUserDtoRequest, User>().ReverseMap();
+            // CreateAndEditUserDtoRequest -> User: manually set Person fields via code, not mapper
+            CreateMap<CreateAndEditUserDtoRequest, User>()
+                .ForMember(dest => dest.PersonId, opt => opt.Ignore())
+                .ForMember(dest => dest.Person, opt => opt.Ignore())
+                .ForMember(dest => dest.ClinicId, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Person.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Person.PhoneNumber))
+                .ForMember(dest => dest.Password, opt => opt.Ignore());
 
-            CreateMap<GetUserInformationDtoResponse, User>().ReverseMap();
+            CreateMap<GetUserInformationDtoResponse, User>()
+                .ForMember(dest => dest.PersonId, opt => opt.Ignore())
+                .ForMember(dest => dest.Person, opt => opt.Ignore())
+                .ForMember(dest => dest.ClinicId, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Person.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Person.PhoneNumber));
 
-            CreateMap<UpdateUserInformationDtoRequest, User>().ReverseMap();
+            CreateMap<UpdateUserInformationDtoRequest, User>()
+                .ForMember(dest => dest.PersonId, opt => opt.Ignore())
+                .ForMember(dest => dest.Person, opt => opt.Ignore())
+                .ForMember(dest => dest.ClinicId, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Person.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Person.PhoneNumber));
         }
 
 

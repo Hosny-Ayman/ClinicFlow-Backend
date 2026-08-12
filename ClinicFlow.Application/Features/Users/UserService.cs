@@ -75,30 +75,38 @@ namespace ClinicFlow.Application.Features.Users
            
         }
 
-        public async Task<User?> AddUserInsideProjectOnlyAsync(CreateAndEditUserDtoRequest userDto)
-        {
+      public async Task<User?> AddUserInsideProjectOnlyAsync(CreateAndEditUserDtoRequest userDto)
+{
+    var clinicId = _currentUserService.ClinicId!.Value;
 
-            if(await _userRepository.IsEmailExitsAsync(userDto.Email,_currentUserService.ClinicId!.Value) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber, _currentUserService.ClinicId!.Value))
-            {
-                return null;
-            }
+    if (await _userRepository.IsEmailExitsAsync(userDto.Email, clinicId) ||
+        await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber, clinicId))
+    {
+        return null;
+    }
 
-            var user = _mapper.Map<User>(userDto);
+    var person = new Person
+    {
+        FirstName = userDto.FirstName,
+        LastName = userDto.LastName,
+        Email = userDto.Email,
+        PhoneNumber = userDto.PhoneNumber,
+        CreatedAt = DateTime.UtcNow
+    };
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+    var user = new User
+    {
+        Person = person,
+        ClinicId = clinicId,
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+        IsActive = true,
+        CreatedAt = DateTime.UtcNow
+    };
 
-            if (_currentUserService.ClinicId is int clinicId)
-            {
-                user.ClinicId = clinicId;
-            }
+    await _userRepository.AddAsync(user);
 
-           
-
-            await _userRepository.AddAsync(user);
-
-            return user;
-
-        }
+    return user;
+}
 
         public async Task<OperationResult<GetUserInformationDtoResponse>> GetUserInformationByIdAsync(int userId)
         {
@@ -147,8 +155,14 @@ namespace ClinicFlow.Application.Features.Users
         {
             var oldPassword = user.PasswordHash;
 
-            _mapper.Map(dto, user);
+            // Update Person fields
+            user.Person.FirstName = dto.FirstName;
+            user.Person.LastName = dto.LastName;
+            user.Person.Email = dto.Email;
+            user.Person.PhoneNumber = dto.PhoneNumber;
 
+            // Update User fields
+            user.IsActive = dto.IsActive;
             user.PasswordHash = string.IsNullOrWhiteSpace(dto.Password)? oldPassword: BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
           
