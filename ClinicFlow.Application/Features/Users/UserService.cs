@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ClinicFlow.Application.Common.Errors;
 using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
@@ -67,6 +67,8 @@ namespace ClinicFlow.Application.Features.Users
                 return OperationResult<int>.Conflict(GeneralErrors.Conflict("The User Is Already Exists"));
             }
 
+            user.ClinicId = _currentUserService.ClinicId!.Value;
+
             await _userRoleRepository.AssignRoleAsync(user, RoleEnum.Receptionist);
            
             await _UnitOfWork.SaveChangesAsync();
@@ -75,38 +77,36 @@ namespace ClinicFlow.Application.Features.Users
            
         }
 
-      public async Task<User?> AddUserInsideProjectOnlyAsync(CreateAndEditUserDtoRequest userDto)
-{
-    var clinicId = _currentUserService.ClinicId!.Value;
+        public async Task<User?> AddUserInsideProjectOnlyAsync( CreateAndEditUserDtoRequest userDto)
+        {
+          
 
-    if (await _userRepository.IsEmailExitsAsync(userDto.Email, clinicId) ||
-        await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber, clinicId))
-    {
-        return null;
-    }
+            if (await _userRepository.IsEmailExitsAsync(userDto.Email) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber))
+            {
+                return null;
+            }
 
-    var person = new Person
-    {
-        FirstName = userDto.FirstName,
-        LastName = userDto.LastName,
-        Email = userDto.Email,
-        PhoneNumber = userDto.PhoneNumber,
-        CreatedAt = DateTime.UtcNow
-    };
+            var person = new Person
+            {
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                PhoneNumber = userDto.PhoneNumber,
+                CreatedAt = DateTime.UtcNow
+            };
 
-    var user = new User
-    {
-        Person = person,
-        ClinicId = clinicId,
-        PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
-        IsActive = true,
-        CreatedAt = DateTime.UtcNow
-    };
+            var user = new User
+            {
+                Person = person,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
 
-    await _userRepository.AddAsync(user);
+            await _userRepository.AddAsync(user);
 
-    return user;
-}
+            return user;
+        }
 
         public async Task<OperationResult<GetUserInformationDtoResponse>> GetUserInformationByIdAsync(int userId)
         {

@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Application.Common.Authorization;
+using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Domain.InterFaces;
@@ -33,6 +33,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<ICookieService, CookieService>();
             services.AddScoped<IClinicQueryService, ClinicQueryService>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             services.AddScoped<IClinicSetupRepository, ClinicSetupRepository>();
             services.AddScoped<IClinicWorkingHourRepository, ClinicWorkingHourRepository>();
@@ -40,6 +41,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
             services.AddScoped<ICheckService, CheckService>();
             services.AddScoped<IDoctorQueryService, DoctorQueryService>();
+            services.AddScoped<IPatientQueryService, PatientQueryService>();
             services.AddHttpContextAccessor();
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

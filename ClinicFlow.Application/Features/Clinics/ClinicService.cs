@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ClinicFlow.Application.Common.Errors;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
@@ -78,8 +78,6 @@ namespace ClinicFlow.Application.Features.Clinics
             await _roleRepository.AssignRoleAsync(user, RoleEnum.ClinicOwner);
 
             await _clinicRepository.AddAsync(clinic);
-
-            await _userRepository.AddAsync(user);
 
             await _clinicSetupRepository.AddClinicSetupStatusAsync(clinicSetup);
 

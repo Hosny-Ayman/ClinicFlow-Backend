@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.InterFaces;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +37,10 @@ namespace ClinicFlow.Infrastructure.Repositories
             if (!tracking)
                 query = query.AsNoTracking();
 
-            return await query.Include(x=>x.User).ThenInclude(x=>x.UserRoles).ThenInclude(x=>x.Role).SingleOrDefaultAsync(x => x.TokenHash == tokenHash);
+            return await query
+                .Include(x => x.User).ThenInclude(x => x.Person)
+                .Include(x => x.User).ThenInclude(x => x.UserRoles).ThenInclude(x => x.Role)
+                .SingleOrDefaultAsync(x => x.TokenHash == tokenHash);
         }
 
        

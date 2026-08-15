@@ -306,7 +306,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("ClinicId")
                         .IsUnique();
 
-                    b.ToTable("ClinicSetups");
+                    b.ToTable("ClinicSetups", (string)null);
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
@@ -339,7 +339,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasIndex("ClinicId");
 
-                    b.ToTable("ClinicWorkingHours");
+                    b.ToTable("ClinicWorkingHours", (string)null);
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Doctor", b =>

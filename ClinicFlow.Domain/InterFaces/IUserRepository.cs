@@ -21,6 +21,10 @@ namespace ClinicFlow.Domain.InterFaces
 
         Task<bool> IsPhoneExitsAsync(string phone, int clinicId);
 
+        Task<bool> IsEmailExitsAsync(string email);
+
+        Task<bool> IsPhoneExitsAsync(string phone);
+
         Task<bool> ToggleUserStatusAsync(int userId, int clinicId);
 
 

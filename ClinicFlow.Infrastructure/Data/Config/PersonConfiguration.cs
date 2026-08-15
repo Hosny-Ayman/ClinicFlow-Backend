@@ -29,7 +29,9 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.Property(p => p.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasIndex(p => p.Email).IsUnique(true);
+            builder.HasIndex(p => p.Email)
+                .IsUnique(true)
+                .HasFilter("[Email] IS NOT NULL");
 
             builder.HasIndex(p => p.PhoneNumber);
 
