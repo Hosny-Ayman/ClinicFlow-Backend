@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260812215115_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260815173911_refactor-DoctorSchedule")]
+    partial class refactorDoctorSchedule
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -398,7 +398,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Doctors", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorSchedules", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -412,15 +412,15 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("EndTime")
+                    b.Property<TimeOnly?>("EndTime")
                         .HasColumnType("time");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsAvailable")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(true);
 
-                    b.Property<TimeOnly>("StartTime")
+                    b.Property<TimeOnly?>("StartTime")
                         .HasColumnType("time");
 
                     b.HasKey("Id");
@@ -428,8 +428,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("DayOfWeek");
 
                     b.HasIndex("DoctorId");
-
-                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("DoctorId", "DayOfWeek");
 
@@ -1194,7 +1192,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorSchedules", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorSchedule", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Doctor", "Doctor")
                         .WithMany("DoctorSchedules")

@@ -8,7 +8,7 @@ using ClinicFlow.Application.Features.Users;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using System.Numerics;
 using static System.Net.Mime.MediaTypeNames;
 

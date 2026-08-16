@@ -1,7 +1,7 @@
 ﻿using ClinicFlow.Domain.Entities;
 using System.ComponentModel;
 
-namespace ClinicFlow.Domain.InterFaces
+namespace ClinicFlow.Domain.Interfaces
 {
     public interface IClinicWorkingHourRepository
     {

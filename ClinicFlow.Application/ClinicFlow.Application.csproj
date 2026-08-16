@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Features\ClinicSetups\ClinicSetupValidators\" />
+    <Folder Include="Features\DoctorSchedules\DTOs\Responses\" />
     <Folder Include="Features\Specialties\DTOs\Responses\" />
     <Folder Include="Features\SysteamSettings\DTOs\Responses\" />
   </ItemGroup>

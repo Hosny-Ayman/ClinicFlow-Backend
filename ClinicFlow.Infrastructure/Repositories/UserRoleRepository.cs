@@ -1,7 +1,7 @@
 ﻿using ClinicFlow.Application.Common.ValidationRules;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

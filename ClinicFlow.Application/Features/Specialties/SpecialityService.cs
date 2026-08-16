@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.Specialties.DTOs.Requests;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.Specialties
 {

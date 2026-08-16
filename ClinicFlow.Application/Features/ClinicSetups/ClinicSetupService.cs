@@ -4,7 +4,7 @@ using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.ClinicSetups.DTOs.Requests;
 using ClinicFlow.Application.Features.ClinicSetups.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.ClinicSetups
 {

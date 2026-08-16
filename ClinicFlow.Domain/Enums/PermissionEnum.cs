@@ -32,7 +32,12 @@
         ClinicsUpdate = 1L << 18,
         ClinicsDelete = 1L << 19,
         ClinicsSettings = 1L << 20,
-        
+
+        DoctorSchedulesView = 1 << 21,
+        DoctorSchedulesCreate = 1 << 22,
+        DoctorSchedulesUpdate = 1 << 23,
+        DoctorSchedulesDelete = 1 << 24,
+
 
         All = -1
     }

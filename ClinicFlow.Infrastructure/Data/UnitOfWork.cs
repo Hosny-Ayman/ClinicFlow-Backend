@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Domain.InterFaces;
+﻿using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Infrastructure.Data
 {

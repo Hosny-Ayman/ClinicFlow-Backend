@@ -1,0 +1,257 @@
+erDiagram
+
+    PERSON {
+        int Id PK
+        string FirstName
+        string LastName
+        string Email
+        string PhoneNumber
+    }
+
+    USER {
+        int Id PK
+        int PersonId FK
+        int ClinicId FK
+        string PasswordHash
+        bool IsActive
+    }
+
+    CLINIC {
+        int Id PK
+        string Name
+        string Phone
+        string Email
+        string Address
+        bool IsActive
+    }
+
+    PATIENT {
+        int Id PK
+        int PersonId FK
+        DateOnly DateOfBirth
+        int Gender
+        int BloodType
+        string NationalId
+        string Address
+    }
+
+    DOCTOR {
+        int Id PK
+        int UserId FK
+        int ClinicId FK
+        int SpecialtyId FK
+        decimal ConsultationFee
+        int ExperienceYears
+    }
+
+    SPECIALTY {
+        int Id PK
+        string Name
+        bool IsActive
+    }
+
+
+    CLINIC_PATIENT {
+        int Id PK
+        int ClinicId FK
+        int PatientId FK
+        bool IsActive
+    }
+
+
+    APPOINTMENT {
+        int Id PK
+        int PatientId FK
+        int DoctorId FK
+        DateOnly AppointmentDate
+        TimeOnly StartTime
+        TimeOnly EndTime
+        int Status
+    }
+
+
+    MEDICAL_RECORD {
+        int Id PK
+        int PatientId FK
+        int DoctorId FK
+        int AppointmentId FK
+        string Diagnosis
+        string TreatmentPlan
+    }
+
+
+    ATTACHMENT {
+        int Id PK
+        int MedicalRecordId FK
+        string FileName
+        string FileUrl
+    }
+
+
+    PRESCRIPTION {
+        int Id PK
+        int MedicalRecordId FK
+        int DoctorId FK
+        datetime IssuedAt
+    }
+
+
+    PRESCRIPTION_ITEM {
+        int Id PK
+        int PrescriptionId FK
+        string MedicationName
+        string Dosage
+        string Frequency
+    }
+
+
+    INVOICE {
+        int Id PK
+        int PatientId FK
+        int AppointmentId FK
+        int ClinicId FK
+        decimal TotalAmount
+    }
+
+
+    PAYMENT {
+        int Id PK
+        int InvoiceId FK
+        int PaymentMethodId FK
+        decimal Amount
+    }
+
+
+    PAYMENT_METHOD {
+        int Id PK
+        string Name
+        bool IsActive
+    }
+
+
+    USER_ROLE {
+        int Id PK
+        int UserId FK
+        int RoleId FK
+    }
+
+
+    ROLE {
+        int Id PK
+        string Name
+        long Permissions
+    }
+
+
+    REFRESH_TOKEN {
+        int Id PK
+        int UserId FK
+        string TokenHash
+        datetime ExpiresAt
+    }
+
+
+    AUDIT_LOG {
+        int Id PK
+        int UserId FK
+        string Action
+        string EntityName
+    }
+
+
+    CLINIC_SETUP {
+        int Id PK
+        int ClinicId FK
+        bool HasSkippedSetup
+    }
+
+
+    CLINIC_WORKING_HOUR {
+        int Id PK
+        int ClinicId FK
+        int Day
+        TimeOnly OpenTime
+        TimeOnly CloseTime
+    }
+
+
+    DOCTOR_SCHEDULE {
+        int Id PK
+        int DoctorId FK
+        int DayOfWeek
+        TimeOnly StartTime
+        TimeOnly EndTime
+    }
+
+
+    DOCTOR_VACATION {
+        int Id PK
+        int DoctorId FK
+        DateOnly StartDate
+        DateOnly EndDate
+    }
+
+
+    SYSTEAM_SETTING {
+        int Id PK
+        string SettingKey
+        string SettingValue
+    }
+
+
+
+    PERSON ||--o| USER : has
+    PERSON ||--o| PATIENT : has
+
+    CLINIC ||--o{ USER : contains
+    CLINIC ||--o{ DOCTOR : contains
+
+    USER ||--o| DOCTOR : profile
+
+    SPECIALTY ||--o{ DOCTOR : has
+
+
+    CLINIC ||--o{ CLINIC_PATIENT : has
+    PATIENT ||--o{ CLINIC_PATIENT : belongs
+
+
+    PATIENT ||--o{ APPOINTMENT : books
+    DOCTOR ||--o{ APPOINTMENT : handles
+
+
+    PATIENT ||--o{ MEDICAL_RECORD : owns
+    DOCTOR ||--o{ MEDICAL_RECORD : creates
+    APPOINTMENT ||--o| MEDICAL_RECORD : generates
+
+
+    MEDICAL_RECORD ||--o{ ATTACHMENT : contains
+
+    MEDICAL_RECORD ||--o{ PRESCRIPTION : has
+    DOCTOR ||--o{ PRESCRIPTION : writes
+
+    PRESCRIPTION ||--o{ PRESCRIPTION_ITEM : contains
+
+
+    PATIENT ||--o{ INVOICE : has
+    APPOINTMENT ||--o| INVOICE : creates
+    CLINIC ||--o{ INVOICE : owns
+
+
+    INVOICE ||--o{ PAYMENT : receives
+    PAYMENT_METHOD ||--o{ PAYMENT : used
+
+
+    USER ||--o{ USER_ROLE : has
+    ROLE ||--o{ USER_ROLE : assigned
+
+
+    USER ||--o{ REFRESH_TOKEN : owns
+    USER ||--o{ AUDIT_LOG : creates
+
+
+    CLINIC ||--o| CLINIC_SETUP : has
+    CLINIC ||--o{ CLINIC_WORKING_HOUR : has
+
+
+    DOCTOR ||--o{ DOCTOR_SCHEDULE : has
+    DOCTOR ||--o{ DOCTOR_VACATION : has

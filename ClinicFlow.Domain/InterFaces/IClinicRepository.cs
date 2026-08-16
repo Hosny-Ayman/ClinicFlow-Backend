@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace ClinicFlow.Domain.InterFaces
+namespace ClinicFlow.Domain.Interfaces
 {
     public interface IClinicRepository
     {

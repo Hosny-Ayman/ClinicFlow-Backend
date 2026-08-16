@@ -1,7 +1,7 @@
 ﻿using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.SysteamSettings.DTOs.Requests;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.SysteamSettings
 {

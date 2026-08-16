@@ -39,7 +39,7 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
-        [Authorize(policy: nameof(PermissionEnum.ClinicsView))]
+        [Authorize(policy: nameof(PermissionEnum.DoctorsUpdate))]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

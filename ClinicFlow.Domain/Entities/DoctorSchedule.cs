@@ -15,11 +15,11 @@ namespace ClinicFlow.Domain.Entities
 
         public DayOfWeek DayOfWeek { get; set; }
 
-        public TimeOnly StartTime { get; set; }
+        public TimeOnly? StartTime { get; set; }
 
-        public TimeOnly EndTime { get; set; }
+        public TimeOnly? EndTime { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsAvailable { get; set; } = false;
 
         public Doctor Doctor { get; set; } = null!;
 

@@ -6,7 +6,6 @@ namespace ClinicFlow.Application.Common.Interfaces
 {
     public interface IDoctorQueryService
     {
-
         Task<PagedResponse<GetAllDoctorsInformationsDtoResponse>> GetAllDoctorsInformationsAsync(DoctorSearchDtoRequest request, int clinicId);
 
 

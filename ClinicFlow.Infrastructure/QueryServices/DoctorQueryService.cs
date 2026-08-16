@@ -128,5 +128,7 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
 
         }
+
+     
     }
 }

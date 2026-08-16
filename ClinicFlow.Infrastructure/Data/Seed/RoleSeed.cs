@@ -33,7 +33,8 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                         | PermissionEnum.PatientsViewAll | PermissionEnum.PatientsCreate | PermissionEnum.PatientsUpdate | PermissionEnum.PatientsDelete
                         | PermissionEnum.ReceptionistsView | PermissionEnum.ReceptionistsViewAll | PermissionEnum.ReceptionistsCreate | PermissionEnum.ReceptionistsUpdate 
                         | PermissionEnum.ReceptionistsDelete| PermissionEnum.ClinicsSettings | PermissionEnum.ClinicsView | PermissionEnum.ClinicsUpdate
-                        | PermissionEnum.ClinicsCreate
+                        | PermissionEnum.ClinicsCreate | PermissionEnum.DoctorSchedulesView | PermissionEnum.DoctorSchedulesCreate | PermissionEnum.DoctorSchedulesUpdate 
+                        | PermissionEnum.DoctorSchedulesDelete
 
                     )
                 },
@@ -45,7 +46,8 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     IsActive = true,
                     Permissions =
                     (int)(
-                        PermissionEnum.DoctorsView | PermissionEnum.DoctorsUpdate
+                        PermissionEnum.DoctorsView | PermissionEnum.DoctorsUpdate | PermissionEnum.DoctorSchedulesView |
+                        PermissionEnum.DoctorSchedulesUpdate | PermissionEnum.DoctorSchedulesDelete
                     )
                 },
 

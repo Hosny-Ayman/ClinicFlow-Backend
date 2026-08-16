@@ -16,19 +16,18 @@ namespace ClinicFlow.Infrastructure.Data.Config
                 .IsRequired();
 
             builder.Property(ds => ds.StartTime)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(ds => ds.EndTime)
-                .IsRequired();
+                .IsRequired(false);
 
-            builder.Property(ds => ds.IsDeleted)
-                .HasDefaultValue(false);
+            builder.Property(ds => ds.IsAvailable)
+                .HasDefaultValue(true);
 
             builder.HasIndex(ds => ds.DoctorId);
 
             builder.HasIndex(ds => ds.DayOfWeek);
 
-            builder.HasIndex(ds => ds.IsDeleted);
 
             builder.HasIndex(ds => new
             {

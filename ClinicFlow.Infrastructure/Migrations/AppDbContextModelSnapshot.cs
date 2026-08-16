@@ -306,7 +306,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("ClinicId")
                         .IsUnique();
 
-                    b.ToTable("ClinicSetups", (string)null);
+                    b.ToTable("ClinicSetups");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.ClinicWorkingHour", b =>
@@ -339,7 +339,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.HasIndex("ClinicId");
 
-                    b.ToTable("ClinicWorkingHours", (string)null);
+                    b.ToTable("ClinicWorkingHours");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Doctor", b =>
@@ -409,15 +409,15 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("EndTime")
+                    b.Property<TimeOnly?>("EndTime")
                         .HasColumnType("time");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsAvailable")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(true);
 
-                    b.Property<TimeOnly>("StartTime")
+                    b.Property<TimeOnly?>("StartTime")
                         .HasColumnType("time");
 
                     b.HasKey("Id");
@@ -425,8 +425,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("DayOfWeek");
 
                     b.HasIndex("DoctorId");
-
-                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("DoctorId", "DayOfWeek");
 
@@ -940,14 +938,14 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 1441791L
+                            Permissions = 32899071L
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             Name = "Doctor",
-                            Permissions = 9L
+                            Permissions = 27262985L
                         },
                         new
                         {

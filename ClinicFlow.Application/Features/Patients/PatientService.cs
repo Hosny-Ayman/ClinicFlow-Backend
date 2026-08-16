@@ -6,7 +6,7 @@ using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.Patients.DTOs.Requests;
 using ClinicFlow.Application.Features.Patients.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace ClinicFlow.Application.Features.Patients

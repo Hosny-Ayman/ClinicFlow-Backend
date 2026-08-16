@@ -1,4 +1,4 @@
-﻿namespace ClinicFlow.Domain.InterFaces
+﻿namespace ClinicFlow.Domain.Interfaces
 {
     public interface IUnitOfWork
     {

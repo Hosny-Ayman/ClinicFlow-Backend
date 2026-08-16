@@ -6,12 +6,13 @@ using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Application.Features.Doctors.DTOs.Requests;
 using ClinicFlow.Application.Features.Doctors.DTOs.Responses;
+using ClinicFlow.Application.Features.DoctorSchedules;
 using ClinicFlow.Application.Features.Users;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using ClinicFlow.Application.Features.Users.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace ClinicFlow.Application.Features.Doctors
@@ -30,12 +31,13 @@ namespace ClinicFlow.Application.Features.Doctors
         private readonly ILogger<DoctorService> _logger;
         private readonly ICheckService _authorizationService;
         private readonly IDoctorQueryService _queryService;
+        private readonly DoctorScheduleService _doctorScheduleService;
 
         public DoctorService(IDoctorRepository doctorRepository, IUnitOfWork unitOfWork, IMapper mapper,
             IFileStorageService FileStorageService, IUserRepository userRepository,
             IUserRoleRepository userRoleRepository, ICurrentUserService currentUserService,
             UserService userService, ISpecialtyRepository specialtyRepository, ILogger<DoctorService> logger, ICheckService authorizationService
-            , IDoctorQueryService queryService)
+            , IDoctorQueryService queryService, DoctorScheduleService doctorScheduleService)
         {
             _doctorRepository = doctorRepository;
             _unitOfWork = unitOfWork;
@@ -48,6 +50,7 @@ namespace ClinicFlow.Application.Features.Doctors
             _logger = logger;
             _authorizationService = authorizationService;
             _queryService = queryService;
+            _doctorScheduleService = doctorScheduleService;
         }
 
 
@@ -88,6 +91,8 @@ namespace ClinicFlow.Application.Features.Doctors
 
                 
                 await _doctorRepository.AddDoctorAsync(doctor);
+
+                await _doctorScheduleService.AddDoctorSchedulesInsideProjectAsync(doctor);
 
                 await _unitOfWork.SaveChangesAsync();
 
@@ -142,6 +147,8 @@ namespace ClinicFlow.Application.Features.Doctors
 
 
                 await _doctorRepository.AddDoctorAsync(doctor);
+
+                await _doctorScheduleService.AddDoctorSchedulesInsideProjectAsync(doctor);
 
                 await _unitOfWork.SaveChangesAsync();
 

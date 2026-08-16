@@ -8,7 +8,7 @@ using ClinicFlow.Application.Features.Authentication.DTOs.Requests;
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

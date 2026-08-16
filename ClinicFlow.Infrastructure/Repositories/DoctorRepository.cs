@@ -1,5 +1,5 @@
 ﻿using ClinicFlow.Domain.Entities;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +32,20 @@ namespace ClinicFlow.Infrastructure.Repositories
 
 
             return await query.Include(x=>x.Specialty).SingleOrDefaultAsync(x => x.Id == id && x.ClinicId == ClinicId);
+        }
+
+        public async Task<int?> GetDoctorIdByUserId(int UserId, int ClinicId)
+        {
+           int? doctorId = null;
+
+           doctorId = await _appDbContext.Doctors.Where(x => x.UserId == UserId && x.ClinicId == ClinicId).Select(x => (int?)x.Id).FirstOrDefaultAsync();
+
+           return doctorId;
+        }
+
+        public async Task<bool> IsDoctorBelongToClinic(int doctorId, int clinicId)
+        {
+           return await _appDbContext.Doctors.AnyAsync(x => x.Id == doctorId && x.ClinicId == clinicId);
         }
     }
 }

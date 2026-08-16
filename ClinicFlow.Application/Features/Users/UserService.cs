@@ -10,7 +10,7 @@ using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using ClinicFlow.Application.Features.Users.DTOs.Responses;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
-using ClinicFlow.Domain.InterFaces;
+using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.Users
 {
@@ -99,6 +99,7 @@ namespace ClinicFlow.Application.Features.Users
             {
                 Person = person,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+                ClinicId = _currentUserService.ClinicId!.Value,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };

@@ -1,7 +1,7 @@
 ﻿using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 
-namespace ClinicFlow.Domain.InterFaces
+namespace ClinicFlow.Domain.Interfaces
 {
     public interface IUserRoleRepository
     {
