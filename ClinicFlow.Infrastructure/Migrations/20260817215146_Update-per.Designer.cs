@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260815173911_refactor-DoctorSchedule")]
-    partial class refactorDoctorSchedule
+    [Migration("20260817215146_Update-per")]
+    partial class Updateper
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -436,7 +436,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("DoctorSchedules", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacations", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -456,6 +456,9 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -941,14 +944,14 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 1441791L
+                            Permissions = 1073086463L
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             Name = "Doctor",
-                            Permissions = 9L
+                            Permissions = 27262985L
                         },
                         new
                         {
@@ -1203,7 +1206,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Doctor");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacations", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacation", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Doctor", "Doctor")
                         .WithMany("DoctorVacations")

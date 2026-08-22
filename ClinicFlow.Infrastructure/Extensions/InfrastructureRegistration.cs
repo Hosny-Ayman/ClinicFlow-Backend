@@ -1,11 +1,13 @@
 using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Common.Interfaces;
+using ClinicFlow.Application.Common.Interfaces.Jobs;
 using ClinicFlow.Application.Common.Security;
 using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.QueryServices;
 using ClinicFlow.Infrastructure.Repositories;
+using ClinicFlow.Infrastructure.Services.Jobs;
 using ClinicFlow.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +45,11 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IDoctorQueryService, DoctorQueryService>();
             services.AddScoped<IPatientQueryService, PatientQueryService>();
             services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
+            services.AddScoped<IDoctorVacationQueryService, DoctorVacationQueryService>();
+            services.AddScoped<IDoctorVacationRepository, DoctorVacationRepository>();
+            services.AddScoped<IDoctorVacationJobService, DoctorVacationJobService>();
+
+
             services.AddHttpContextAccessor();
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

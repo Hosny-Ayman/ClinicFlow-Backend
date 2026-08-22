@@ -34,7 +34,8 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                         | PermissionEnum.ReceptionistsView | PermissionEnum.ReceptionistsViewAll | PermissionEnum.ReceptionistsCreate | PermissionEnum.ReceptionistsUpdate 
                         | PermissionEnum.ReceptionistsDelete| PermissionEnum.ClinicsSettings | PermissionEnum.ClinicsView | PermissionEnum.ClinicsUpdate
                         | PermissionEnum.ClinicsCreate | PermissionEnum.DoctorSchedulesView | PermissionEnum.DoctorSchedulesCreate | PermissionEnum.DoctorSchedulesUpdate 
-                        | PermissionEnum.DoctorSchedulesDelete
+                        | PermissionEnum.DoctorSchedulesDelete | PermissionEnum.DoctorVacationsView | PermissionEnum.DoctorVacationsViewAll
+                        | PermissionEnum.DoctorVacationsCreate | PermissionEnum.DoctorVacationsUpdate | PermissionEnum.DoctorVacationsDelete
 
                     )
                 },

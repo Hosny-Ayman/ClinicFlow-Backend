@@ -436,7 +436,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("DoctorSchedules", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacation", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacations", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1203,7 +1203,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Doctor");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacation", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.DoctorVacations", b =>
                 {
                     b.HasOne("ClinicFlow.Domain.Entities.Doctor", "Doctor")
                         .WithMany("DoctorVacations")

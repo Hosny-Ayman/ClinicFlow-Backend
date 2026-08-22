@@ -454,6 +454,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
@@ -938,7 +941,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 32899071L
+                            Permissions = 1073086463L
                         },
                         new
                         {

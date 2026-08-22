@@ -1,9 +1,8 @@
 using ClinicFlow.Api.Extensions;
-using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Extensions;
 using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Authorization;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -43,11 +42,16 @@ namespace ClinicFlow.Api
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
-            
+
+            builder.Services.AddHangfire(config => config.UseSqlServerStorage(ConnectionString));
+
+            builder.Services.AddHangfireServer();
+
 
             var app = builder.Build();
 
-          
+        
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -63,10 +67,19 @@ namespace ClinicFlow.Api
 
             app.UseAuthentication();
 
-            app.UseRateLimiter();
-
             app.UseAuthorization();
 
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[]
+                {
+                  new HangfireAuthorizationFilter()
+                }
+            });
+
+            app.AddHangfireJobs();
+
+            app.UseRateLimiter();
 
             app.MapControllers();
 
