@@ -4,6 +4,7 @@ using ClinicFlow.Application.Common.Specifications;
 using ClinicFlow.Application.Features.DoctorVacations.DTOs.Requests;
 using ClinicFlow.Application.Features.DoctorVacations.DTOs.Responses;
 using ClinicFlow.Application.Features.DoctorVacations.DTOs.Specifications;
+using ClinicFlow.Domain.Enums;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,9 +72,9 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 .Select(d => new GetDoctorVacationDashboardInformationDtoResponse
                 {
                     TotalLeavesCount = d.Count(),
-                    UpcomingLeavesCount = d.Count(s => s.StartDate > today),
-                    ActiveLeavesCount = d.Count(s => s.StartDate <= today && s.EndDate >= today),
-                    CompletedLeavesCount = d.Count(s => s.EndDate < today)
+                    UpcomingLeavesCount = d.Count(s => s.Status == DoctorVacationStatusEnum.NotStarted),
+                    ActiveLeavesCount = d.Count(s => s.Status == DoctorVacationStatusEnum.InProgress),
+                    CompletedLeavesCount = d.Count(s => s.Status == DoctorVacationStatusEnum.Completed)
                 })
                 .FirstOrDefaultAsync();
 
