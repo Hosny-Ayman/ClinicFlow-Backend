@@ -31,5 +31,21 @@ namespace ClinicFlow.Infrastructure.Services.Jobs
 
             await _appDbContext.SaveChangesAsync();
         }
+
+        public async Task UpdateNotStartedVacations()
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+
+            var vacations = await _appDbContext.DoctorVacations
+                .Where(x => x.StartDate >= today &&x.Status == DoctorVacationStatusEnum.NotStarted).ToListAsync();
+
+
+            foreach (var vacation in vacations)
+            {
+                vacation.Status = DoctorVacationStatusEnum.InProgress;
+            }
+
+            await _appDbContext.SaveChangesAsync();
+        }
     }
 }

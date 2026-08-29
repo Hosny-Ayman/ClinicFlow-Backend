@@ -8,7 +8,9 @@ namespace ClinicFlow.Api.Extensions
 
         public static void AddHangfireJobs(this IApplicationBuilder app)
         {
-            RecurringJob.AddOrUpdate<IDoctorVacationJobService>("update-vacations", x => x.UpdateExpiredVacations(), Cron.Daily);
+            RecurringJob.AddOrUpdate<IDoctorVacationJobService>("update-Expired-vacations", x => x.UpdateExpiredVacations(), Cron.Daily);
+
+            RecurringJob.AddOrUpdate<IDoctorVacationJobService>("update-NotStarted-vacations", x => x.UpdateNotStartedVacations(), Cron.Daily);
         }
 
     }

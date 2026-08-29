@@ -9,7 +9,7 @@ namespace ClinicFlow.Application.Features.Patients.DTOs.Requests
         public string FirstName { get; init; } = null!;
         public string LastName { get; init; } = null!;
         public string? Email { get; init; }
-        public string? PhoneNumber { get; init; }
+        public string PhoneNumber { get; init; } = string.Empty;
         public DateOnly DateOfBirth { get; init; }
         public GenderEnum Gender { get; init; }
         public string? Notes { get; init; }

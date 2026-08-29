@@ -33,17 +33,21 @@
         ClinicsDelete = 1L << 19,
         ClinicsSettings = 1L << 20,
 
-        DoctorSchedulesView = 1 << 21,
-        DoctorSchedulesCreate = 1 << 22,
-        DoctorSchedulesUpdate = 1 << 23,
-        DoctorSchedulesDelete = 1 << 24,
+        DoctorSchedulesView = 1L << 21,
+        DoctorSchedulesCreate = 1L << 22,
+        DoctorSchedulesUpdate = 1L << 23,
+        DoctorSchedulesDelete = 1L << 24,
 
-        DoctorVacationsView = 1 << 25,
-        DoctorVacationsViewAll = 1 << 26,
-        DoctorVacationsCreate = 1 << 27,
-        DoctorVacationsUpdate = 1 << 28,
-        DoctorVacationsDelete = 1 << 29,
+        DoctorVacationsView = 1L << 25,
+        DoctorVacationsViewAll = 1L << 26,
+        DoctorVacationsCreate = 1L << 27,
+        DoctorVacationsUpdate = 1L << 28,
+        DoctorVacationsDelete = 1L << 29,
 
+        AppointmentsCreate = 1L << 30,
+        AppointmentsView = 1L << 31,
+        AppointmentsViewAll = 1L << 32,
+        AppointmentsUpdate = 1L << 33,
 
         All = -1
     }

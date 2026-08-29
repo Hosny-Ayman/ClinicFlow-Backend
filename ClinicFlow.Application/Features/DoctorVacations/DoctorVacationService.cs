@@ -125,5 +125,14 @@ namespace ClinicFlow.Application.Features.DoctorVacations
             return OperationResult<GetDoctorVacationDashboardInformationDtoResponse>.Success(respons);
         }
 
+        public async Task<bool> HasDoctorVacationOnDate(DateOnly AppointmentDate, int doctorId)
+        {
+            var vacations = await _doctorVacationRepository.GetDoctorVacationsNotStartedAndInProgressAsync(doctorId, _currentUserService.ClinicId!.Value);
+            if (vacations == null || vacations.Count == 0)
+                return false;
+
+           return vacations.Any(v => AppointmentDate >= v.StartDate && AppointmentDate <= v.EndDate);
+        }
+
     }
 }

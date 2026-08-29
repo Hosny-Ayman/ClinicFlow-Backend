@@ -48,7 +48,7 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IDoctorVacationQueryService, DoctorVacationQueryService>();
             services.AddScoped<IDoctorVacationRepository, DoctorVacationRepository>();
             services.AddScoped<IDoctorVacationJobService, DoctorVacationJobService>();
-
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
             services.AddHttpContextAccessor();
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();

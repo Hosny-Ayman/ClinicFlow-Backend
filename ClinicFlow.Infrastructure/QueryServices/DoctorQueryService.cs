@@ -20,6 +20,26 @@ namespace ClinicFlow.Infrastructure.QueryServices
             _fileStorageService = fileStorageService;
         }
 
+        public async Task<List<GetAllDoctorsInformationsDtoResponse>> GetAllDoctorsBySpecialtyAsync(int specialtyId, int clinicId)
+        {
+
+            return await _appDbContext.Doctors
+                .AsNoTracking()
+                .Where(d => d.SpecialtyId == specialtyId && d.ClinicId == clinicId)
+                .Select(x => new GetAllDoctorsInformationsDtoResponse
+                {
+                    Id = x.Id,
+                    FullName = $"{x.User.Person.FirstName} {x.User.Person.LastName}",
+                    PhoneNumber = x.User.Person.PhoneNumber ?? "",
+                    Gender = x.Gender.ToString(),
+                    Specialty = x.Specialty.Name,
+                    Experience = x.ExperienceYears,
+                    Image = x.ProfileImageUrl,
+                    ConsultationFee = x.ConsultationFee
+
+                }).ToListAsync();
+        }
+
         public async Task<PagedResponse<GetAllDoctorsInformationsDtoResponse>> GetAllDoctorsInformationsAsync(DoctorSearchDtoRequest request, int clinicId)
         {
             var query = _appDbContext.Doctors.AsNoTracking().AsQueryable();

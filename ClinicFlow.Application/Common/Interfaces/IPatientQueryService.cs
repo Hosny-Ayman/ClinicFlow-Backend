@@ -9,5 +9,7 @@ namespace ClinicFlow.Application.Common.Interfaces
 
         Task<PagedResponse<GetAllPatientsDtoResponse>> GetAllPatientsAsync(PatientSearchDtoRequest request, int clinicId);
 
+        Task<GetPatientInformationForAppointmentDtoResponse?> GetPatientInformationForAppointmentAsync(PatientAppointmentSearchDtoRequest search,int clinicId);
+
     }
 }

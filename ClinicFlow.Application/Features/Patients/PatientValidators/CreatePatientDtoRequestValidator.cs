@@ -11,6 +11,7 @@ namespace ClinicFlow.Application.Features.Patients.PatientValidators
         {
             RuleFor(x => x.FirstName).FirtsNameRule();
             RuleFor(x => x.LastName).LastNameRule();
+            RuleFor(x => x.PhoneNumber).PhoneRule();
             RuleFor(x => x.DateOfBirth)
                 .NotEmpty().WithMessage("DateOfBirth Is Required")
                 .LessThan(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("DateOfBirth Must Be In The Past");

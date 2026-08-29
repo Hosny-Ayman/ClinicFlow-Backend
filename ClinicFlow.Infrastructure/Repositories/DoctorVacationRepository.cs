@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,18 @@ namespace ClinicFlow.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
             return await query.FirstOrDefaultAsync(x => x.Id == id && x.DoctorId == doctorId && x.Doctor.ClinicId == clinicId);
+        }
+
+        public async Task<List<DoctorVacation>> GetDoctorVacationsNotStartedAndInProgressAsync(int doctorId, int clinicId, bool tracking = false)
+        {
+            var query = _appDbContext.DoctorVacations.AsQueryable();
+
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.Where(x => x.DoctorId == doctorId && x.Doctor.ClinicId == clinicId &&
+                                           (x.Status == DoctorVacationStatusEnum.NotStarted ||
+                                           x.Status == DoctorVacationStatusEnum.InProgress)).ToListAsync();
         }
     }
 }

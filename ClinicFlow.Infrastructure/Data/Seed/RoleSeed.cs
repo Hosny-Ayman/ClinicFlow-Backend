@@ -27,7 +27,7 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     Name = "ClinicOwner",
                     IsActive = true,
                     Permissions =
-                    (int)(
+                    (long)(
                           PermissionEnum.DoctorsView | PermissionEnum.DoctorsCreate | PermissionEnum.DoctorsUpdate |PermissionEnum.DoctorsDelete 
                         | PermissionEnum.DoctorsDelete | PermissionEnum.DoctorsDelete| PermissionEnum.DoctorsViewAll| PermissionEnum.PatientsView
                         | PermissionEnum.PatientsViewAll | PermissionEnum.PatientsCreate | PermissionEnum.PatientsUpdate | PermissionEnum.PatientsDelete
@@ -36,6 +36,7 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                         | PermissionEnum.ClinicsCreate | PermissionEnum.DoctorSchedulesView | PermissionEnum.DoctorSchedulesCreate | PermissionEnum.DoctorSchedulesUpdate 
                         | PermissionEnum.DoctorSchedulesDelete | PermissionEnum.DoctorVacationsView | PermissionEnum.DoctorVacationsViewAll
                         | PermissionEnum.DoctorVacationsCreate | PermissionEnum.DoctorVacationsUpdate | PermissionEnum.DoctorVacationsDelete
+                        | PermissionEnum.AppointmentsCreate | PermissionEnum.AppointmentsView | PermissionEnum.AppointmentsViewAll | PermissionEnum.AppointmentsUpdate
 
                     )
                 },
@@ -46,7 +47,7 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     Name = "Doctor",
                     IsActive = true,
                     Permissions =
-                    (int)(
+                    (long)(
                         PermissionEnum.DoctorsView | PermissionEnum.DoctorsUpdate | PermissionEnum.DoctorSchedulesView |
                         PermissionEnum.DoctorSchedulesUpdate | PermissionEnum.DoctorSchedulesDelete
                     )
@@ -58,8 +59,10 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     Name = "Receptionist",
                     IsActive = true,
                     Permissions =
-                    (int)(
+                    (long)(
                         PermissionEnum.DoctorsView | PermissionEnum.ReceptionistsView | PermissionEnum.ReceptionistsUpdate | PermissionEnum.PatientsView
+                        | PermissionEnum.PatientsCreate | PermissionEnum.PatientsUpdate | PermissionEnum.AppointmentsCreate | PermissionEnum.AppointmentsView
+                        | PermissionEnum.AppointmentsUpdate | PermissionEnum.AppointmentsViewAll 
                     )
                 }
             );

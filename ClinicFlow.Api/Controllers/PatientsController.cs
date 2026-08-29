@@ -53,5 +53,14 @@ namespace ClinicFlow.Api.Controllers
 
             return this.ToHttpResponse(result);
         }
+
+        [Authorize(policy: nameof(PermissionEnum.PatientsView))]
+        [HttpGet("GetPatientInformationForAppointment")]
+        public async Task<IActionResult> GetPatientInformationForAppointment([FromQuery]PatientAppointmentSearchDtoRequest search)
+        {
+            var result = await _patientService.GetPatientInformationForAppointmentAsync(search);
+
+            return this.ToHttpResponse(result);
+        }
     }
 }

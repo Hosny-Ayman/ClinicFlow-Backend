@@ -148,5 +148,19 @@ namespace ClinicFlow.Application.Features.DoctorSchedules
 
         }
 
+        public async Task<bool> IsDoctorScheduleAvailableAsync(DayOfWeek day, int doctorId, TimeOnly appointmentTime)
+        {
+            var doctorSchedule = await _doctorScheduleRepository.GetDoctorScheduleAsync(day, doctorId, _currentUserService.ClinicId!.Value);
+            if (doctorSchedule == null)
+            {
+                return false;
+            }
+            if (appointmentTime >= doctorSchedule.StartTime && appointmentTime <= doctorSchedule.EndTime)
+            {
+                return doctorSchedule.IsAvailable;
+            }
+            return false;
+        }
+
     }
 }

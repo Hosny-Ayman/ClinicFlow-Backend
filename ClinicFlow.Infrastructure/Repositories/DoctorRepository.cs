@@ -23,6 +23,8 @@ namespace ClinicFlow.Infrastructure.Repositories
             return doctor.Id;
         }
 
+       
+
         public async Task<Doctor?> GetDoctorByIdAsync(int id, int ClinicId, bool Tracking = false)
         {
             var query = _appDbContext.Doctors.AsQueryable();

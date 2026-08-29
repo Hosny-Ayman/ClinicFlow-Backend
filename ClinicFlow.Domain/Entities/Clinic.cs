@@ -22,6 +22,8 @@
 
         public ICollection<User> Users { get; set; } = new List<User>();
 
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
         public ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
 
         public ICollection<ClinicPatient> ClinicPatients { get; set; } = new List<ClinicPatient>();

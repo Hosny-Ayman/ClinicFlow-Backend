@@ -10,5 +10,7 @@ namespace ClinicFlow.Domain.Interfaces
 
         Task<List<ClinicWorkingHour>> GetAllWorkingHoursAndDaysAsync(int clinicId,bool tracking = false);
 
+        Task<ClinicWorkingHour?> GetWorkingHoursAndDaysByDayOfWeekAsync(int clinicId, DayOfWeek day, bool tracking = false);
+
     }
 }

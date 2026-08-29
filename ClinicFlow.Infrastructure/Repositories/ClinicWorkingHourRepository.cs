@@ -29,5 +29,15 @@ namespace ClinicFlow.Infrastructure.Repositories
 
             return await query.Where(x => x.ClinicId == clinicId).ToListAsync();
         }
+
+        public async Task<ClinicWorkingHour?> GetWorkingHoursAndDaysByDayOfWeekAsync(int clinicId, DayOfWeek day, bool tracking = false)
+        {
+            var query = _appDbContext.ClinicWorkingHours.AsQueryable();
+
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.SingleOrDefaultAsync(x => x.ClinicId == clinicId && x.Day == day);
+        }
     }
 }

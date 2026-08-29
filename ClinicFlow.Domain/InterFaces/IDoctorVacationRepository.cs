@@ -8,6 +8,7 @@ namespace ClinicFlow.Domain.Interfaces
         Task AddDoctorVacationAsync(DoctorVacation doctorVacation);
 
         Task<DoctorVacation?> GetDoctorVacationByIdAsync(int id,int doctorId, int clinicId,bool tracking=false);
-      
+
+        Task<List<DoctorVacation>> GetDoctorVacationsNotStartedAndInProgressAsync(int doctorId, int clinicId, bool tracking = false);
     }
 }

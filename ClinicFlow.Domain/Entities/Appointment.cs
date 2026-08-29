@@ -10,6 +10,8 @@ namespace ClinicFlow.Domain.Entities
 
         public int DoctorId { get; set; }
 
+        public int ClinicId { get; set; }
+
         public DateOnly AppointmentDate { get; set; }
 
         public TimeOnly StartTime { get; set; }
@@ -29,6 +31,8 @@ namespace ClinicFlow.Domain.Entities
         public Invoice? Invoice { get; set; }
 
         public MedicalRecord? MedicalRecord { get; set; }
+
+        public Clinic Clinic { get; set; } = null!;
     }
 
 

@@ -45,5 +45,28 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
             return new PagedResponse<GetAllPatientsDtoResponse>(data, totalRecords, request.PageNumber, request.PageSize);
         }
+
+        public async Task<GetPatientInformationForAppointmentDtoResponse?> GetPatientInformationForAppointmentAsync(PatientAppointmentSearchDtoRequest search, int clinicId)
+        {
+            var searcnName = search.Name.Trim().ToLower();
+
+            return await _appDbContext.Patients.AsNoTracking()
+            .Where(p => p.Person.PhoneNumber == search.PhoneNumber&&
+                (
+                    p.Person.FirstName.ToLower().Contains(searcnName)
+                    || p.Person.LastName.ToLower().Contains(searcnName)
+                    || (p.Person.FirstName + " " + p.Person.LastName)
+                        .ToLower()
+                        .Contains(searcnName)
+                )&& p.ClinicPatients.Any(cp => cp.ClinicId == clinicId && cp.PatientId == p.Id))
+            .Select(p => new GetPatientInformationForAppointmentDtoResponse
+            {
+                Id = p.Id,
+                FullName = $"{p.Person.FirstName} {p.Person.LastName}",
+                PhoneNumber = p.Person.PhoneNumber!,
+                Gender = p.Gender.ToString(),
+            })
+            .SingleOrDefaultAsync();
+                }
     }
 }

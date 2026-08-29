@@ -14,10 +14,10 @@ namespace ClinicFlow.Application.Common.Authorization
                 return Task.CompletedTask;
 
 
-            var userPermissions = int.Parse(permissionClaim.Value);
+            var userPermissions = long.Parse(permissionClaim.Value);
 
 
-            if ((userPermissions & (int)requirement.Permission) == (int)requirement.Permission)
+            if ((userPermissions & (long)requirement.Permission) == (long)requirement.Permission)
             {
                 context.Succeed(requirement);
             }

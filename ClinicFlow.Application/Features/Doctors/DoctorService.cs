@@ -169,8 +169,6 @@ namespace ClinicFlow.Application.Features.Doctors
         public async Task<OperationResult<GetDoctorFullInforamtionDtoResponse>> GetDoctorFullInforamtionByIdAsync(int DoctorId)
         {
 
-            
-
             var user = await _userRepository.GetUserByDoctorIdAsync(DoctorId, _currentUserService.ClinicId!.Value);
 
             if (user == null )
@@ -294,5 +292,21 @@ namespace ClinicFlow.Application.Features.Doctors
 
         }
 
+        public async Task<OperationResult<List<GetAllDoctorsInformationsDtoResponse>>> GetAllDoctorsBySpecialtyAsync(int specialtyId)
+        {
+
+            var respons = await _queryService.GetAllDoctorsBySpecialtyAsync(specialtyId, _currentUserService.ClinicId!.Value);
+
+            foreach(var respon in respons)
+            {
+                if (respon.Image is not null)
+                {
+                    respon.Image = _fileStorageService.GetFileUrl(respon.Image);
+                }
+            }
+
+            return OperationResult<List<GetAllDoctorsInformationsDtoResponse>>.Success(respons);
+
+        }
     }
 }

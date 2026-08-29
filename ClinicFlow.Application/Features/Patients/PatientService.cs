@@ -122,5 +122,18 @@ namespace ClinicFlow.Application.Features.Patients
             return OperationResult<PagedResponse<GetAllPatientsDtoResponse>>.Success(response);
         }
 
+
+       public async Task<OperationResult<GetPatientInformationForAppointmentDtoResponse>> GetPatientInformationForAppointmentAsync(PatientAppointmentSearchDtoRequest search)
+        {
+            var response = await _queryService.GetPatientInformationForAppointmentAsync(search, _currentUserService.ClinicId!.Value);
+
+            if (response == null)
+            {
+                return OperationResult<GetPatientInformationForAppointmentDtoResponse>.NotFound(GeneralErrors.NotFound("Patient"));
+            }
+
+            return OperationResult<GetPatientInformationForAppointmentDtoResponse>.Success(response);
+        }
+
     }
 }

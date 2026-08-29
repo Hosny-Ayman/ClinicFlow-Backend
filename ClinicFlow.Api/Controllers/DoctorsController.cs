@@ -65,6 +65,15 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsView))]
+        [HttpGet("GetAllDoctorsBySpecialty")]
+        public async Task<IActionResult> GetAllDoctorsBySpecialty(int specialtyId)
+        {
+            var result = await _doctorService.GetAllDoctorsBySpecialtyAsync(specialtyId);
+
+            return this.ToHttpResponse(result);
+        }
+
 
     }
 }

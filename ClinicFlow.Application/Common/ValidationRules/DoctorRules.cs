@@ -41,6 +41,13 @@ namespace ClinicFlow.Application.Common.ValidationRules
                 .WithMessage($"{name} Is Required");
         }
 
+        public static IRuleBuilderOptions<T, string> RequiredRule<T>(this IRuleBuilder<T, string> rule, string name)
+        {
+            return rule
+                .NotEmpty()
+                .WithMessage($"{name} Is Required");
+        }
+
 
 
     }

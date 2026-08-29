@@ -31,5 +31,18 @@ namespace ClinicFlow.Infrastructure.Repositories
 
             return await query.Where(ds => ds.DoctorId == doctotrId && ds.Doctor.ClinicId == clinicId).ToListAsync();
         }
+
+        public async Task<DoctorSchedule?> GetDoctorScheduleAsync(DayOfWeek day, int doctorId, int clinicId, bool tracking = false)
+        {
+            var query = _appDbContext.DoctorSchedules.AsQueryable();
+
+            if (!tracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.SingleOrDefaultAsync(ds => ds.DayOfWeek == day && ds.DoctorId == doctorId && ds.Doctor.ClinicId == clinicId);
+
+        }
     }
 }

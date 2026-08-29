@@ -4,6 +4,7 @@ using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260824192530_Add-ClinicId-To-Appointments")]
+    partial class AddClinicIdToAppointments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -946,7 +949,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 17179213823L
+                            Permissions = 1073086463L
                         },
                         new
                         {
@@ -960,7 +963,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 4,
                             IsActive = true,
                             Name = "Receptionist",
-                            Permissions = 16106136993L
+                            Permissions = 9249L
                         });
                 });
 

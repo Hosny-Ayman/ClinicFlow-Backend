@@ -25,6 +25,8 @@ namespace ClinicFlow.Application.Features.Doctors.DTOs.Responses
 
         public string? Image { get; set; } = string.Empty;
 
+        public decimal? ConsultationFee { get; set; }
+
 
     }
 }

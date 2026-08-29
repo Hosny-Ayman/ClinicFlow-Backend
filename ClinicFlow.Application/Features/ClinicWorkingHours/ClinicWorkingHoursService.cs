@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClinicFlow.Application.Common.DTOs;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.ClinicWorkingHours.DTOs.Requests;
@@ -105,6 +106,24 @@ namespace ClinicFlow.Application.Features.ClinicWorkingHours
             await _unitOfWork.SaveChangesAsync();
 
             return OperationResult<bool>.Success(true);
+        }
+
+        public async Task <bool> IsTheClinicOpenAtThisAppointmentInsideProject(Bookappointment appointment)
+        {
+            var workingHours = await _clinicWorkingHourRepository.GetWorkingHoursAndDaysByDayOfWeekAsync(_currentUserService.ClinicId!.Value, appointment.Day, false);
+
+            if (workingHours == null)
+            {
+                return false;
+            }
+
+            var appointmentTime = appointment.StartTime;
+
+            var appointmentEndTime = appointmentTime.Add(TimeSpan.FromMinutes(workingHours.AppointmentDurationInMinutes));
+
+            var isInsideWorkingHours = workingHours.OpenTime <= appointmentTime && appointmentEndTime <= workingHours.CloseTime;
+
+            return isInsideWorkingHours;
         }
     }
 }

@@ -1,5 +1,6 @@
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Security;
+using ClinicFlow.Application.Features.Appointments;
 using ClinicFlow.Application.Features.Authentication;
 using ClinicFlow.Application.Features.Clinics;
 using ClinicFlow.Application.Features.ClinicSetups;
@@ -33,8 +34,12 @@ namespace ClinicFlow.Application.Extensions
             services.AddScoped<CheckService>();
             services.AddScoped<DoctorScheduleService>();
             services.AddScoped<DoctorVacationService>();
-            services.AddAutoMapper(typeof(ApplicationRegistration).Assembly);
+            services.AddScoped<AppointmentService>();
 
+
+
+
+            services.AddAutoMapper(typeof(ApplicationRegistration).Assembly);
             services.AddValidatorsFromAssembly(typeof(ApplicationRegistration).Assembly);
 
             return services;

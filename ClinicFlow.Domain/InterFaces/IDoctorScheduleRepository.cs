@@ -8,6 +8,7 @@ namespace ClinicFlow.Domain.Interfaces
 
         Task<List<DoctorSchedule>> GetAllDoctorSchedulesAsync(int doctotrId,int clinicId,bool tracking = false);
 
+        Task<DoctorSchedule?> GetDoctorScheduleAsync(DayOfWeek day,int doctorId, int clinicId, bool tracking = false);
 
     }
 }
