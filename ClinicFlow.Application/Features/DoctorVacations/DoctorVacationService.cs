@@ -11,7 +11,7 @@ using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.DoctorVacations
 {
-    public class DoctorVacationService
+    public class DoctorVacationService: IDoctorVacationService
     {
 
         private readonly IDoctorVacationRepository _doctorVacationRepository;

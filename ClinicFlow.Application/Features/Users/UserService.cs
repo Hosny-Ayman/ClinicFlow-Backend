@@ -156,13 +156,11 @@ namespace ClinicFlow.Application.Features.Users
         {
             var oldPassword = user.PasswordHash;
 
-            // Update Person fields
             user.Person.FirstName = dto.FirstName;
             user.Person.LastName = dto.LastName;
             user.Person.Email = dto.Email;
             user.Person.PhoneNumber = dto.PhoneNumber;
 
-            // Update User fields
             user.IsActive = dto.IsActive;
             user.PasswordHash = string.IsNullOrWhiteSpace(dto.Password)? oldPassword: BCrypt.Net.BCrypt.HashPassword(dto.Password);
 

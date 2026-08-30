@@ -486,9 +486,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClinicId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("DiscountAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -497,9 +494,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -517,17 +511,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("AppointmentId")
                         .IsUnique();
 
-                    b.HasIndex("ClinicId");
-
                     b.HasIndex("IssuedAt");
 
-                    b.HasIndex("PatientId");
-
                     b.HasIndex("Status");
-
-                    b.HasIndex("ClinicId", "Status");
-
-                    b.HasIndex("PatientId", "IssuedAt");
 
                     b.ToTable("Invoices", (string)null);
                 });
@@ -1235,23 +1221,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
-                        .WithMany("Invoices")
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ClinicFlow.Domain.Entities.Patient", "Patient")
-                        .WithMany("Invoices")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Appointment");
-
-                    b.Navigation("Clinic");
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.MedicalRecord", b =>
@@ -1410,8 +1380,6 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("Doctors");
 
-                    b.Navigation("Invoices");
-
                     b.Navigation("Users");
                 });
 
@@ -1445,8 +1413,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("ClinicPatients");
-
-                    b.Navigation("Invoices");
 
                     b.Navigation("MedicalRecords");
                 });

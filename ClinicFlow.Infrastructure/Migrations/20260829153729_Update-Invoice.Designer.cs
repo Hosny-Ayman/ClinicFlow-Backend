@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260824192530_Add-ClinicId-To-Appointments")]
-    partial class AddClinicIdToAppointments
+    [Migration("20260829153729_Update-Invoice")]
+    partial class UpdateInvoice
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -489,9 +489,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClinicId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("DiscountAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -500,9 +497,6 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -520,17 +514,9 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.HasIndex("AppointmentId")
                         .IsUnique();
 
-                    b.HasIndex("ClinicId");
-
                     b.HasIndex("IssuedAt");
 
-                    b.HasIndex("PatientId");
-
                     b.HasIndex("Status");
-
-                    b.HasIndex("ClinicId", "Status");
-
-                    b.HasIndex("PatientId", "IssuedAt");
 
                     b.ToTable("Invoices", (string)null);
                 });
@@ -701,7 +687,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                     b.ToTable("Payments", (string)null);
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.PaymentMethodEnum", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.PaymentMethod", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -949,7 +935,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 1073086463L
+                            Permissions = 17179213823L
                         },
                         new
                         {
@@ -963,7 +949,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 4,
                             IsActive = true,
                             Name = "Receptionist",
-                            Permissions = 9249L
+                            Permissions = 16106136993L
                         });
                 });
 
@@ -1238,23 +1224,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow.Domain.Entities.Clinic", "Clinic")
-                        .WithMany("Invoices")
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ClinicFlow.Domain.Entities.Patient", "Patient")
-                        .WithMany("Invoices")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Appointment");
-
-                    b.Navigation("Clinic");
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.MedicalRecord", b =>
@@ -1303,7 +1273,7 @@ namespace ClinicFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow.Domain.Entities.PaymentMethodEnum", "PaymentMethodEnum")
+                    b.HasOne("ClinicFlow.Domain.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1311,7 +1281,7 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("Invoice");
 
-                    b.Navigation("PaymentMethodEnum");
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("ClinicFlow.Domain.Entities.Prescription", b =>
@@ -1413,8 +1383,6 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("Doctors");
 
-                    b.Navigation("Invoices");
-
                     b.Navigation("Users");
                 });
 
@@ -1449,12 +1417,10 @@ namespace ClinicFlow.Infrastructure.Migrations
 
                     b.Navigation("ClinicPatients");
 
-                    b.Navigation("Invoices");
-
                     b.Navigation("MedicalRecords");
                 });
 
-            modelBuilder.Entity("ClinicFlow.Domain.Entities.PaymentMethodEnum", b =>
+            modelBuilder.Entity("ClinicFlow.Domain.Entities.PaymentMethod", b =>
                 {
                     b.Navigation("Payments");
                 });

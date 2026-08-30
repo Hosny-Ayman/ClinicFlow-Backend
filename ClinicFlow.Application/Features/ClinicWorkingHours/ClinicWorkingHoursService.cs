@@ -9,7 +9,7 @@ using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.ClinicWorkingHours
 {
-    public class ClinicWorkingHoursService
+    public class ClinicWorkingHoursService: IClinicWorkingHoursService
     {
 
         private readonly IClinicWorkingHourRepository _clinicWorkingHourRepository;

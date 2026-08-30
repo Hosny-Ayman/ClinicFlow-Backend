@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Doctors\" />
-    <Folder Include="Appointments\" />
     <Folder Include="Patients\" />
   </ItemGroup>
 

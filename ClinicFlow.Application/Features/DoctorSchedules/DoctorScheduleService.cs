@@ -8,7 +8,7 @@ using ClinicFlow.Domain.Interfaces;
 
 namespace ClinicFlow.Application.Features.DoctorSchedules
 {
-    public class DoctorScheduleService
+    public class DoctorScheduleService: IDoctorScheduleService
     {
         private readonly IDoctorScheduleRepository _doctorScheduleRepository;
         private readonly IUnitOfWork _unitOfWork;

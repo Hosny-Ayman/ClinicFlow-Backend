@@ -6,11 +6,7 @@ namespace ClinicFlow.Domain.Entities
     {
         public int Id { get; set; }
 
-        public int PatientId { get; set; }
-
         public int AppointmentId { get; set; }
-
-        public int ClinicId { get; set; }
 
         public decimal SubTotal { get; set; }
 
@@ -22,11 +18,7 @@ namespace ClinicFlow.Domain.Entities
 
         public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
 
-        public Patient Patient { get; set; } = null!;
-
         public Appointment Appointment { get; set; } = null!;
-
-        public Clinic Clinic { get; set; } = null!;
 
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }

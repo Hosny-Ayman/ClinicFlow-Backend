@@ -1,16 +1,19 @@
 ﻿using AutoMapper;
 using ClinicFlow.Application.Common.DTOs;
 using ClinicFlow.Application.Common.Errors;
+using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Responses;
 using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
+using ClinicFlow.Application.Features.Appointments.DTOs.Responses;
 using ClinicFlow.Application.Features.ClinicWorkingHours;
 using ClinicFlow.Application.Features.DoctorSchedules;
 using ClinicFlow.Application.Features.DoctorVacations;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.Interfaces;
+using System.Numerics;
 
 namespace ClinicFlow.Application.Features.Appointments
 {
@@ -25,17 +28,21 @@ namespace ClinicFlow.Application.Features.Appointments
         private readonly IClinicRepository _clinicRepository;
         private readonly IDoctorScheduleRepository _doctorScheduleRepository;
         private readonly IDoctorVacationRepository _doctorVacationRepository;
-        private readonly ClinicWorkingHoursService _clinicWorkingHoursService;
-        private readonly DoctorVacationService _doctorVacationService;
-        private readonly DoctorScheduleService _doctorScheduleService;
+        private readonly IClinicWorkingHoursService _clinicWorkingHoursService;
+        private readonly IDoctorVacationService _doctorVacationService;
+        private readonly IDoctorScheduleService _doctorScheduleService;
         private readonly IClinicWorkingHourRepository _clinicWorkingHourRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IAppointmentQueryService _appointmentQueryService;
 
         public AppointmentService(IAppointmentRepository appointmentRepository, IUnitOfWork unitOfWork, IMapper mapper,
             ICurrentUserService currentUserService, IPatientRepository patientRepository, IDoctorRepository doctorRepository,
             IClinicRepository clinicRepository, IDoctorScheduleRepository doctorScheduleRepository,
-            IDoctorVacationRepository doctorVacationRepository, ClinicWorkingHoursService clinicWorkingHoursService,
-            DoctorScheduleService doctorScheduleService , DoctorVacationService doctorVacationService
-            , IClinicWorkingHourRepository clinicWorkingHourRepository)
+            IDoctorVacationRepository doctorVacationRepository, IClinicWorkingHoursService clinicWorkingHoursService,
+            IDoctorScheduleService doctorScheduleService , IDoctorVacationService doctorVacationService
+            , IClinicWorkingHourRepository clinicWorkingHourRepository, IInvoiceRepository invoiceRepository,
+            IPaymentRepository PaymentRepository, IAppointmentQueryService appointmentQueryService)
         {
             _appointmentRepository = appointmentRepository;
             _unitOfWork = unitOfWork;
@@ -50,9 +57,13 @@ namespace ClinicFlow.Application.Features.Appointments
             _doctorVacationService = doctorVacationService;
             _doctorScheduleService = doctorScheduleService;
             _clinicWorkingHourRepository = clinicWorkingHourRepository;
+            _invoiceRepository = invoiceRepository;
+            _paymentRepository = PaymentRepository;
+            _appointmentQueryService = appointmentQueryService;
 
         }
 
+       
         public async Task<OperationResult<int>> AddAppointmentAsync(CreateAndEditAppointmentDto request)
         {
 
@@ -69,10 +80,55 @@ namespace ClinicFlow.Application.Features.Appointments
 
             await _appointmentRepository.AddAppointmentAsync(appointment);
 
-            await _unitOfWork.SaveChangesAsync();
+            if(request.Status == AppointmentStatusEnum.CheckedIn)
+            {
+                var result = await CreateInvoiceAndPayment<int>(request.DoctorId, appointment);
 
+                if(!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            
             return OperationResult<int>.Success(appointment.Id);
 
+        }
+
+        private async Task<OperationResult<T>> CreateInvoiceAndPayment<T>(int DoctorId, Appointment appointment)
+        {
+
+            var doctor = await _doctorRepository.GetDoctorByIdAsync(DoctorId, _currentUserService.ClinicId!.Value);
+
+            if (doctor == null)
+            {
+                return OperationResult<T>.NotFound(GeneralErrors.NotFound("الطبيب غير موجود في هذة العيادة"));
+            }
+
+            var invoice = new Invoice
+            {
+                Appointment = appointment,
+                SubTotal = doctor.ConsultationFee,
+                DiscountAmount = 0,
+                TotalAmount = doctor.ConsultationFee,
+                Status = PaymentStatusEnum.Paid,
+                IssuedAt = DateTime.UtcNow
+            };
+
+            var payment = new Payment
+            {
+                Invoice = invoice,
+                Amount = doctor.ConsultationFee,
+                Status = PaymentStatusEnum.Paid,
+                PaidAt = DateTime.UtcNow,
+                PaymentMethodId = (int)PaymentMethodEnum.Cash
+            };
+
+            await _invoiceRepository.AddInvoiceAsync(invoice);
+            await _paymentRepository.AddPaymentAsync(payment);
+
+            return OperationResult<T>.Success(default!);
         }
 
         private async Task<OperationResult<T>> ValidateAppointmentBookingAsync<T>(CreateAndEditAppointmentDto request, int clinicId)
@@ -86,11 +142,6 @@ namespace ClinicFlow.Application.Features.Appointments
             if (!await _patientRepository.IsPatientInClinicAsync(request.PatientId, clinicId))
             {
                 return OperationResult<T>.NotFound(GeneralErrors.NotFound("المريض غير مسجل في العيادة"));
-            }
-
-            if (!await _doctorRepository.IsDoctorBelongToClinic(request.DoctorId, clinicId))
-            {
-                return OperationResult<T>.NotFound(GeneralErrors.NotFound("الطبيب غير مسجل في العيادة"));
             }
 
             if (!await _clinicWorkingHoursService.IsTheClinicOpenAtThisAppointmentInsideProject(new Bookappointment
@@ -156,7 +207,7 @@ namespace ClinicFlow.Application.Features.Appointments
                     .NotFound(GeneralErrors.NotFound("لا يوجد عمل اليوم للعيادة"));
             }
 
-            var appointmentsDictionary = appointments.ToDictionary(x => x.StartTime, x => x);
+            var appointmentsDictionary = appointments.Where(x=>x.Status != AppointmentStatusEnum.Cancelled).ToDictionary(x => x.StartTime, x => x);
 
             List<SlotDto> slots = new();
             var currentTime = doctorSchedule.StartTime!.Value;
@@ -195,6 +246,49 @@ namespace ClinicFlow.Application.Features.Appointments
 
             return SlotStatus.Available;
         }
+
+        public async Task<OperationResult<PagedResponse<GetAllAppointmentDtoResponse>>> GetAllAppointmentAsync(AppointmentSearchDtoRequest request)
+        {
+            var respons = await _appointmentQueryService.GetAllAppointmentAsync(request, _currentUserService.ClinicId!.Value);
+
+            return  OperationResult<PagedResponse<GetAllAppointmentDtoResponse>>.Success(respons);
+        }
+
+        public async Task<OperationResult<bool>> UpdateAppointmentStatusAsync(int appointmentId, AppointmentStatusEnum status)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId, _currentUserService.ClinicId!.Value,true);
+
+            if(appointment == null)
+            {
+                return OperationResult<bool>.NotFound(GeneralErrors.NotFound("لايوجد موعد"));
+            }
+
+            if (status == AppointmentStatusEnum.CheckedIn)
+            {
+                var result = await CreateInvoiceAndPayment<bool>(appointment.DoctorId, appointment);
+
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+
+            appointment.Status = status;
+
+            await _unitOfWork.SaveChangesAsync();
+
+
+            return OperationResult<bool>.Success(true);
+
+        }
+
+        public async Task<OperationResult<GetAppointmentDashboardDtoResponse>> GetAppointmentDashboardAsync(DateOnly date)
+        {
+            var respons = await _appointmentQueryService.GetAppointmentDashboardAsync(date, _currentUserService.ClinicId!.Value);
+
+            return OperationResult<GetAppointmentDashboardDtoResponse>.Success(respons);
+        }
+
 
     }
 }

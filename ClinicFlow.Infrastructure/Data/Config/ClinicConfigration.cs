@@ -69,10 +69,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
     .HasForeignKey(cp => cp.ClinicId)
     .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(c => c.Invoices)
-                .WithOne()
-                .HasForeignKey(i => i.ClinicId)
-                .OnDelete(DeleteBehavior.Restrict);
+          
 
 
         }

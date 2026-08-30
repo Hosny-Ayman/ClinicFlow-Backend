@@ -10,5 +10,7 @@ namespace ClinicFlow.Domain.Interfaces
         Task<bool> IsAppointmentReservedAsync(DateOnly appointmentDate, TimeOnly startTime ,int clinicId,int doctorId);
 
         Task<List<Appointment>> GetAllAppointmentsAsync(DateOnly appointmentDate, int clinicId, int doctorId);
+
+        Task<Appointment?> GetAppointmentByIdAsync(int id, int clinicId,bool tracking = false);
     }
 }

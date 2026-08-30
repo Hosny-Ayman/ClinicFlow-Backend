@@ -2,6 +2,9 @@ using ClinicFlow.Application.Common.Authorization;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Interfaces.Jobs;
 using ClinicFlow.Application.Common.Security;
+using ClinicFlow.Application.Features.ClinicWorkingHours;
+using ClinicFlow.Application.Features.DoctorSchedules;
+using ClinicFlow.Application.Features.DoctorVacations;
 using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
@@ -49,6 +52,15 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IDoctorVacationRepository, DoctorVacationRepository>();
             services.AddScoped<IDoctorVacationJobService, DoctorVacationJobService>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+            services.AddScoped<IAppointmentQueryService, AppointmentQueryService>();
+            services.AddScoped<IClinicWorkingHoursService, ClinicWorkingHoursService>();
+            services.AddScoped<IDoctorScheduleService, DoctorScheduleService>();
+            services.AddScoped<IDoctorVacationService, DoctorVacationService>();
+
+
 
             services.AddHttpContextAccessor();
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();

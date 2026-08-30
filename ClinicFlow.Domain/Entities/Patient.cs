@@ -35,7 +35,6 @@ namespace ClinicFlow.Domain.Entities
 
         public ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 
-        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 
 

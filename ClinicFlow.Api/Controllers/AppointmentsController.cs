@@ -2,8 +2,6 @@
 using ClinicFlow.Application.Features.Appointments;
 using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
-using ClinicFlow.Application.Features.Doctors;
-using ClinicFlow.Application.Features.Doctors.DTOs.Requests;
 using ClinicFlow.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +32,33 @@ namespace ClinicFlow.Api.Controllers
         public async Task<IActionResult> GetDoctorAvailableSlots([FromQuery]DoctorAvailableSlotsDtoRequest request)
         {
             var result = await _appointmentService.GetDoctorAvailableSlotsByDateAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsViewAll))]
+        [HttpPost("GetAllAppointment")]
+        public async Task<IActionResult> GetAllAppointmentAsync([FromBody]AppointmentSearchDtoRequest request)
+        {
+            var result = await _appointmentService.GetAllAppointmentAsync(request);
+
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsView))]
+        [HttpGet("GetAppointmentDashboard")]
+        public async Task<IActionResult> GetAppointmentDashboard(DateOnly date)
+        {
+            var result = await _appointmentService.GetAppointmentDashboardAsync(date);
+
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsUpdate))]
+        [HttpPut("UpdateAppointmentStatus")]
+        public async Task<IActionResult> UpdateAppointmentStatus(int appointmentId, AppointmentStatusEnum status)
+        {
+            var result = await _appointmentService.UpdateAppointmentStatusAsync(appointmentId, status);
 
             return this.ToHttpResponse(result);
         }

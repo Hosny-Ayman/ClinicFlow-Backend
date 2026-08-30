@@ -30,9 +30,7 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.Property(i => i.IssuedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasIndex(i => i.ClinicId);
-
-            builder.HasIndex(i => i.PatientId);
+           
 
             builder.HasIndex(i => i.AppointmentId)
                 .IsUnique();
@@ -43,25 +41,18 @@ namespace ClinicFlow.Infrastructure.Data.Config
 
             builder.HasIndex(i => new
             {
-                i.ClinicId,
+               
                 i.Status
             });
 
             builder.HasIndex(i => new
             {
-                i.PatientId,
                 i.IssuedAt
             });
 
-            builder.HasOne(i => i.Clinic)
-                .WithMany(c => c.Invoices)
-                .HasForeignKey(i => i.ClinicId)
-                .OnDelete(DeleteBehavior.Restrict);
+         
 
-            builder.HasOne(i => i.Patient)
-                .WithMany(p => p.Invoices)
-                .HasForeignKey(i => i.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
+          
 
             builder.HasOne(i => i.Appointment)
                 .WithOne(a => a.Invoice)
