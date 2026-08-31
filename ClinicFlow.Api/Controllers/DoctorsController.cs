@@ -47,6 +47,15 @@ namespace ClinicFlow.Api.Controllers
             return this.ToHttpResponse(result);
         }
 
+        [Authorize(policy: nameof(PermissionEnum.DoctorsView))]
+        [HttpGet("GetDoctor/{userId:int}")]
+        public async Task<IActionResult> GetDoctorByUserId(int userId)
+        {
+            var result = await _doctorService.GetDoctorFullInforamtionByUserIdAsync(userId);
+
+            return this.ToHttpResponse(result);
+        }
+
         [Authorize(policy: nameof(PermissionEnum.DoctorsUpdate))]
         [HttpPut]
         public async Task<IActionResult> UpdateDoctor([FromForm] UpdateDoctorFullInforamtionDtoRequest request)

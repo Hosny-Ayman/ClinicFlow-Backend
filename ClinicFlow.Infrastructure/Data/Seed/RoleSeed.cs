@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +37,8 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                         | PermissionEnum.DoctorSchedulesDelete | PermissionEnum.DoctorVacationsView | PermissionEnum.DoctorVacationsViewAll
                         | PermissionEnum.DoctorVacationsCreate | PermissionEnum.DoctorVacationsUpdate | PermissionEnum.DoctorVacationsDelete
                         | PermissionEnum.AppointmentsCreate | PermissionEnum.AppointmentsView | PermissionEnum.AppointmentsViewAll | PermissionEnum.AppointmentsUpdate
+                        | PermissionEnum.MedicalRecordsView | PermissionEnum.MedicalRecordsViewAll | PermissionEnum.MedicalRecordsCreate | PermissionEnum.MedicalRecordsUpdate
+                        | PermissionEnum.PrescriptionsView | PermissionEnum.PrescriptionsViewAll | PermissionEnum.PrescriptionsCreate | PermissionEnum.PrescriptionsUpdate
 
                     )
                 },
@@ -49,7 +51,12 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     Permissions =
                     (long)(
                         PermissionEnum.DoctorsView | PermissionEnum.DoctorsUpdate | PermissionEnum.DoctorSchedulesView |
-                        PermissionEnum.DoctorSchedulesUpdate | PermissionEnum.DoctorSchedulesDelete
+                        PermissionEnum.DoctorSchedulesUpdate | PermissionEnum.DoctorSchedulesDelete |
+                        PermissionEnum.MedicalRecordsView | PermissionEnum.MedicalRecordsCreate | PermissionEnum.MedicalRecordsUpdate |
+                        PermissionEnum.PrescriptionsView | PermissionEnum.PrescriptionsCreate | PermissionEnum.PrescriptionsUpdate |
+                        PermissionEnum.AppointmentsView | PermissionEnum.AppointmentsUpdate | PermissionEnum.AppointmentsViewAll |
+                        PermissionEnum.MedicalRecordsView | PermissionEnum.MedicalRecordsViewAll |PermissionEnum.PrescriptionsView |
+                        PermissionEnum.PrescriptionsViewAll | PermissionEnum.PatientsView
                     )
                 },
 
@@ -62,7 +69,9 @@ namespace ClinicFlow.Infrastructure.Data.Seed
                     (long)(
                         PermissionEnum.DoctorsView | PermissionEnum.ReceptionistsView | PermissionEnum.ReceptionistsUpdate | PermissionEnum.PatientsView
                         | PermissionEnum.PatientsCreate | PermissionEnum.PatientsUpdate | PermissionEnum.AppointmentsCreate | PermissionEnum.AppointmentsView
-                        | PermissionEnum.AppointmentsUpdate | PermissionEnum.AppointmentsViewAll 
+                        | PermissionEnum.AppointmentsUpdate | PermissionEnum.AppointmentsViewAll |
+                        PermissionEnum.MedicalRecordsView | PermissionEnum.MedicalRecordsViewAll |
+                        PermissionEnum.PrescriptionsView | PermissionEnum.PrescriptionsViewAll
                     )
                 }
             );

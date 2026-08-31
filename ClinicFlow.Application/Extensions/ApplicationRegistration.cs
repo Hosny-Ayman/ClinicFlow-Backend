@@ -8,6 +8,8 @@ using ClinicFlow.Application.Features.ClinicWorkingHours;
 using ClinicFlow.Application.Features.Doctors;
 using ClinicFlow.Application.Features.DoctorSchedules;
 using ClinicFlow.Application.Features.DoctorVacations;
+using ClinicFlow.Application.Features.MedicalRecords;
+using ClinicFlow.Application.Features.Prescriptions;
 using ClinicFlow.Application.Features.Patients;
 using ClinicFlow.Application.Features.Specialties;
 using ClinicFlow.Application.Features.SysteamSettings;
@@ -35,6 +37,8 @@ namespace ClinicFlow.Application.Extensions
             services.AddScoped<DoctorScheduleService>();
             services.AddScoped<DoctorVacationService>();
             services.AddScoped<AppointmentService>();
+            services.AddScoped<MedicalRecordService>();
+            services.AddScoped<PrescriptionService>();
 
 
 

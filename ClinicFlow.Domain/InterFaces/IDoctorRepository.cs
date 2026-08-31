@@ -9,6 +9,7 @@ namespace ClinicFlow.Domain.Interfaces
         Task<Doctor?> GetDoctorByIdAsync(int id,int ClinicId, bool Tracking = false);
         Task<bool> IsDoctorBelongToClinic(int doctorId, int clinicId);
         Task<int?> GetDoctorIdByUserId(int UserId, int ClinicId);
+        Task<Doctor?> GetDoctorByUserIdAsync(int UserId, int ClinicId, bool Tracking = false);
 
 
     }

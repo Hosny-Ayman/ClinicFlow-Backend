@@ -4,6 +4,7 @@ using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260830192752_Update-MedicalRecord-Permissions")]
+    partial class UpdateMedicalRecordPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -932,21 +935,21 @@ namespace ClinicFlow.Infrastructure.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "ClinicOwner",
-                            Permissions = 4398045855743L
+                            Permissions = 274877251583L
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             Name = "Doctor",
-                            Permissions = 4395926290473L
+                            Permissions = 223365562377L
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
                             Name = "Receptionist",
-                            Permissions = 892279465377L
+                            Permissions = 67645744545L
                         });
                 });
 

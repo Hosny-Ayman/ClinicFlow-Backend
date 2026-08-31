@@ -1,4 +1,4 @@
-﻿namespace ClinicFlow.Domain.Enums
+namespace ClinicFlow.Domain.Enums
 {
     [Flags]
     public enum PermissionEnum:long
@@ -48,6 +48,16 @@
         AppointmentsView = 1L << 31,
         AppointmentsViewAll = 1L << 32,
         AppointmentsUpdate = 1L << 33,
+
+        MedicalRecordsView = 1L << 34,
+        MedicalRecordsViewAll = 1L << 35,
+        MedicalRecordsCreate = 1L << 36,
+        MedicalRecordsUpdate = 1L << 37,
+
+        PrescriptionsView = 1L << 38,
+        PrescriptionsViewAll = 1L << 39,
+        PrescriptionsCreate = 1L << 40,
+        PrescriptionsUpdate = 1L << 41,
 
         All = -1
     }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ClinicFlow.Application.Common.DTOs;
 using ClinicFlow.Application.Common.Errors;
 using ClinicFlow.Application.Common.Helper;
@@ -254,6 +254,17 @@ namespace ClinicFlow.Application.Features.Appointments
             return  OperationResult<PagedResponse<GetAllAppointmentDtoResponse>>.Success(respons);
         }
 
+        public async Task<OperationResult<GetAdminDashboardStatisticsDtoResponse>> GetAdminDashboardStatisticsAsync()
+        {
+            var clinicId = _currentUserService.ClinicId!.Value;
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var response = await _appointmentQueryService.GetAdminDashboardStatisticsAsync(clinicId, today);
+
+
+            return OperationResult<GetAdminDashboardStatisticsDtoResponse>.Success(response);
+        }
+
         public async Task<OperationResult<bool>> UpdateAppointmentStatusAsync(int appointmentId, AppointmentStatusEnum status)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId, _currentUserService.ClinicId!.Value,true);
@@ -285,6 +296,20 @@ namespace ClinicFlow.Application.Features.Appointments
         public async Task<OperationResult<GetAppointmentDashboardDtoResponse>> GetAppointmentDashboardAsync(DateOnly date)
         {
             var respons = await _appointmentQueryService.GetAppointmentDashboardAsync(date, _currentUserService.ClinicId!.Value);
+
+            return OperationResult<GetAppointmentDashboardDtoResponse>.Success(respons);
+        }
+
+        public async Task<OperationResult<GetAppointmentDashboardDtoResponse>> GetDoctorAppointmentDashboardAsync(int doctorId, DateOnly date)
+        {
+            if (date < DateOnly.FromDateTime(DateTime.Now))
+            {
+                return OperationResult<GetAppointmentDashboardDtoResponse>.BadRequest(
+                    GeneralErrors.BadRequest("لا يمكن عرض لوحة المواعيد لتاريخ سابق لليوم")
+                );
+            }
+
+            var respons = await _appointmentQueryService.GetDoctorAppointmentDashboardAsync(doctorId, date, _currentUserService.ClinicId!.Value);
 
             return OperationResult<GetAppointmentDashboardDtoResponse>.Success(respons);
         }
