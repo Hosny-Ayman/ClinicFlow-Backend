@@ -52,6 +52,8 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IDoctorVacationRepository, DoctorVacationRepository>();
             services.AddScoped<IDoctorVacationJobService, DoctorVacationJobService>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
+            services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();

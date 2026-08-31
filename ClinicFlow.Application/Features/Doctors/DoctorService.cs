@@ -208,6 +208,30 @@ namespace ClinicFlow.Application.Features.Doctors
 
         }
 
+        public async Task<OperationResult<GetDoctorInforamtionDtoResponse>> GetDoctorFullInforamtionByUserIdAsync(int userId)
+        {
+
+            var doctor = await _doctorRepository.GetDoctorByUserIdAsync(userId, _currentUserService.ClinicId!.Value);
+
+            if (doctor == null)
+            {
+                OperationResult<GetDoctorInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
+            }
+
+            if (!_authorizationService.EnsureCanManageUser(userId))
+            {
+                return OperationResult<GetDoctorInforamtionDtoResponse>.Forbidden();
+            }
+
+            var doctorDto = _mapper.Map<GetDoctorInforamtionDtoResponse>(doctor);
+
+            doctorDto.Gender = doctor!.Gender.ToString();
+            doctorDto.SpecialtieName = doctor.Specialty.Name;
+            doctorDto.ProfileImageUrl = doctor.ProfileImageUrl is null ? null : _fileStorageService.GetFileUrl(doctorDto.ProfileImageUrl!);
+
+            return OperationResult<GetDoctorInforamtionDtoResponse>.Success(doctorDto);
+        }
+
         public async Task<OperationResult<bool>> UpdateDoctorAsync(UpdateUserInformationDtoRequest userDto, UpdateDoctorInforamtionDtoRequest doctorDto)
         {
 

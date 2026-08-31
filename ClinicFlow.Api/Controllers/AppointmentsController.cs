@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Api.Extensions;
+using ClinicFlow.Api.Extensions;
 using ClinicFlow.Application.Features.Appointments;
 using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
@@ -50,6 +50,23 @@ namespace ClinicFlow.Api.Controllers
         public async Task<IActionResult> GetAppointmentDashboard(DateOnly date)
         {
             var result = await _appointmentService.GetAppointmentDashboardAsync(date);
+
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsViewAll))]
+        [HttpGet("GetAdminDashboardStatistics")]
+        public async Task<IActionResult> GetAdminDashboardStatistics()
+        {
+            var result = await _appointmentService.GetAdminDashboardStatisticsAsync();
+            return this.ToHttpResponse(result);
+        }
+
+        [Authorize(policy: nameof(PermissionEnum.AppointmentsView))]
+        [HttpGet("GetDoctorAppointmentDashboard")]
+        public async Task<IActionResult> GetDoctorAppointmentDashboard(int doctorId, DateOnly date)
+        {
+            var result = await _appointmentService.GetDoctorAppointmentDashboardAsync(doctorId, date);
 
             return this.ToHttpResponse(result);
         }

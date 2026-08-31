@@ -1,7 +1,8 @@
-﻿using ClinicFlow.Application.Common.DTOs;
+using ClinicFlow.Application.Common.DTOs;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Features.Appointments;
 using ClinicFlow.Application.Features.Appointments.DTOs;
+using ClinicFlow.Application.Features.Appointments.DTOs.Responses;
 using ClinicFlow.Application.Features.ClinicWorkingHours;
 using ClinicFlow.Application.Features.DoctorSchedules;
 using ClinicFlow.Application.Features.DoctorVacations;
@@ -29,12 +30,12 @@ namespace ClinicFlow.UnitTests.Appointments
             Mock<IInvoiceRepository> invoiceRepo = null,
             Mock<IPaymentRepository> paymentRepo = null,
             Mock<IDoctorScheduleRepository> docScheduleRepo = null,
-            Mock<IClinicWorkingHourRepository> clinicHourRepo = null)
+            Mock<IClinicWorkingHourRepository> clinicHourRepo = null,
+            Mock<IAppointmentQueryService> queryService = null)
         {
             var mapper = CommonMocks.Mapper();
             var clinicRepo = AppointmentMocks.ClinicRepository();
             var docVacationRepo = AppointmentMocks.DoctorVacationRepository();
-            var queryService = AppointmentMocks.AppointmentQueryService();
 
             return new AppointmentService(
                 appRepo?.Object ?? AppointmentMocks.AppointmentRepository().Object,
@@ -52,7 +53,7 @@ namespace ClinicFlow.UnitTests.Appointments
                 clinicHourRepo?.Object ?? AppointmentMocks.ClinicWorkingHourRepository().Object,
                 invoiceRepo?.Object ?? AppointmentMocks.InvoiceRepository().Object,
                 paymentRepo?.Object ?? AppointmentMocks.PaymentRepository().Object,
-                queryService.Object
+                queryService?.Object ?? AppointmentMocks.AppointmentQueryService().Object
             );
         }
 
@@ -249,6 +250,65 @@ namespace ClinicFlow.UnitTests.Appointments
 
             Assert.Equal(new TimeOnly(10, 0), slots[2].StartTime);
             Assert.Equal(SlotStatus.Available, slots[2].Status);
+        }
+
+        [Fact]
+        public async Task GetAdminDashboardStatisticsAsync_ShouldReturnSuccessWithData()
+        {
+            // Arrange
+            int clinicId = 10;
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var currentUser = CommonMocks.CurrentUserService();
+            currentUser.Setup(c => c.ClinicId).Returns(clinicId);
+
+            var queryService = AppointmentMocks.AppointmentQueryService();
+            var expectedResponse = new GetAdminDashboardStatisticsDtoResponse
+            {
+                TotalAppointments = 15,
+                AttendedAppointments = 10,
+                WaitingAppointments = 3,
+                CancelledAppointments = 2,
+                AppointmentsByStatus = new List<AppointmentStatusBreakdownDto>(),
+                AppointmentsByTimePeriod = new List<AppointmentTimeBreakdownDto>(),
+                TopDoctors = new List<TopDoctorDto>()
+            };
+
+            queryService.Setup(q => q.GetAdminDashboardStatisticsAsync(clinicId, today))
+                        .ReturnsAsync(expectedResponse);
+
+            var service = CreateService(currentUser: currentUser, queryService: queryService);
+
+            // Act
+            var result = await service.GetAdminDashboardStatisticsAsync();
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal(expectedResponse, result.Data);
+            queryService.Verify(q => q.GetAdminDashboardStatisticsAsync(clinicId, today), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAdminDashboardStatisticsAsync_ShouldCallQueryServiceWithCorrectParameters()
+        {
+            // Arrange
+            int clinicId = 5;
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var currentUser = CommonMocks.CurrentUserService();
+            currentUser.Setup(c => c.ClinicId).Returns(clinicId);
+
+            var queryService = AppointmentMocks.AppointmentQueryService();
+            queryService.Setup(q => q.GetAdminDashboardStatisticsAsync(It.IsAny<int>(), It.IsAny<DateOnly>()))
+                        .ReturnsAsync(new GetAdminDashboardStatisticsDtoResponse());
+
+            var service = CreateService(currentUser: currentUser, queryService: queryService);
+
+            // Act
+            await service.GetAdminDashboardStatisticsAsync();
+
+            // Assert
+            queryService.Verify(q => q.GetAdminDashboardStatisticsAsync(clinicId, today), Times.Once);
         }
 
     }

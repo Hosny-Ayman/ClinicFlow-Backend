@@ -36,6 +36,17 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await query.Include(x=>x.Specialty).SingleOrDefaultAsync(x => x.Id == id && x.ClinicId == ClinicId);
         }
 
+        public async Task<Doctor?> GetDoctorByUserIdAsync(int UserId, int ClinicId, bool Tracking = false)
+        {
+            var query = _appDbContext.Doctors.AsQueryable();
+
+            if (!Tracking)
+                query = query.AsNoTracking();
+
+
+            return await query.Include(x => x.Specialty).SingleOrDefaultAsync(x => x.UserId == UserId && x.ClinicId == ClinicId);
+        }
+
         public async Task<int?> GetDoctorIdByUserId(int UserId, int ClinicId)
         {
            int? doctorId = null;
