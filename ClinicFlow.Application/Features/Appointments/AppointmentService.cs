@@ -274,6 +274,11 @@ namespace ClinicFlow.Application.Features.Appointments
                 return OperationResult<bool>.NotFound(GeneralErrors.NotFound("لايوجد موعد"));
             }
 
+            if(!IsStatusauthoritative(appointment.Status, status))
+            {
+                return OperationResult<bool>.BadRequest(GeneralErrors.BadRequest("الحاله غير صحيحة"));
+            }
+
             if (status == AppointmentStatusEnum.CheckedIn)
             {
                 var result = await CreateInvoiceAndPayment<bool>(appointment.DoctorId, appointment);
@@ -291,6 +296,23 @@ namespace ClinicFlow.Application.Features.Appointments
 
             return OperationResult<bool>.Success(true);
 
+        }
+
+        private bool IsStatusauthoritative(AppointmentStatusEnum oldStatus, AppointmentStatusEnum newStatus)
+        {
+            switch(newStatus)
+            {
+                case AppointmentStatusEnum.CheckedIn:
+                    return oldStatus == AppointmentStatusEnum.Scheduled;
+                case AppointmentStatusEnum.InProgress:
+                    return oldStatus == AppointmentStatusEnum.CheckedIn;               
+                case AppointmentStatusEnum.Cancelled:
+                    return oldStatus == AppointmentStatusEnum.Scheduled;
+                case AppointmentStatusEnum.NoShow:
+                    return oldStatus == AppointmentStatusEnum.Scheduled;
+                default: return false;
+
+            }
         }
 
         public async Task<OperationResult<GetAppointmentDashboardDtoResponse>> GetAppointmentDashboardAsync(DateOnly date)

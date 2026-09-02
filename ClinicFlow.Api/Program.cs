@@ -5,6 +5,7 @@ using ClinicFlow.Infrastructure.Extensions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ClinicFlow.Api
 {
@@ -29,7 +30,7 @@ namespace ClinicFlow.Api
             builder.Services.AddApiServices(builder.Configuration);
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
-           
+
 
             builder.Services.AddRateLimitingServices();
 
@@ -39,7 +40,7 @@ namespace ClinicFlow.Api
 
             builder.Services.AddInfrastructureServices();
 
-            builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddApplicationConfigurations(builder.Configuration);
 
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
 
@@ -50,7 +51,7 @@ namespace ClinicFlow.Api
 
             var app = builder.Build();
 
-        
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -84,6 +85,10 @@ namespace ClinicFlow.Api
             app.MapControllers();
 
             app.Run();
+
+
+
         }
     }
+      
 }

@@ -41,6 +41,8 @@ namespace ClinicFlow.Application.Features.Users
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Person.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Person.PhoneNumber));
+
+            CreateMap<CreateAndEditUserDtoRequest, Person>().ReverseMap();
         }
 
 

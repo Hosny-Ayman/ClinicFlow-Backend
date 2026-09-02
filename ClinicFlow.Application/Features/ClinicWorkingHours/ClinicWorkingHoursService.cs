@@ -112,7 +112,7 @@ namespace ClinicFlow.Application.Features.ClinicWorkingHours
         {
             var workingHours = await _clinicWorkingHourRepository.GetWorkingHoursAndDaysByDayOfWeekAsync(_currentUserService.ClinicId!.Value, appointment.Day, false);
 
-            if (workingHours == null)
+            if (workingHours == null || workingHours.IsClosed)
             {
                 return false;
             }

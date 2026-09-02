@@ -50,8 +50,7 @@ namespace ClinicFlow.Application.Features.Authentication
         {
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
 
-
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password,user.PasswordHash))
+            if (user == null || !user.IsActive || !BCrypt.Net.BCrypt.Verify(request.Password,user.PasswordHash))
             {
                 _logger.LogWarning("Login Failed With Email: {Email}", request.Email);
                 return OperationResult<AuthenticationResultDto>.Unauthorized(GeneralErrors.Unauthorized("Email or Password is incorrect"));

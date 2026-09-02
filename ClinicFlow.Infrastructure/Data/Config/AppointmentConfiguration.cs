@@ -30,6 +30,8 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.Property(a => a.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 
+            builder.HasIndex(a => new { a.DoctorId, a.AppointmentDate, a.StartTime , a.Status, a.PatientId }).IsUnique();
+
             builder.HasIndex(a => a.PatientId);
 
             builder.HasIndex(a => a.DoctorId);
@@ -80,53 +82,6 @@ namespace ClinicFlow.Infrastructure.Data.Config
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -52,9 +52,10 @@ namespace ClinicFlow.Application.Features.Clinics
         public async Task<OperationResult<CreateClinicResponse>> CreateClinicAsync(CreateAndEditClinicDtoRequest clinicDto, CreateAndEditUserDtoRequest userDto)
         {
             string? imageId = null;
-            var user = await _userService.AddUserInsideProjectOnlyAsync(userDto);
 
-            if(user == null)
+            var user = await _userService.CreateUserWithoutClinicId(userDto);
+
+            if (user == null)
             {
                 return OperationResult<CreateClinicResponse>.BadRequest();
             }
@@ -75,9 +76,11 @@ namespace ClinicFlow.Application.Features.Clinics
                 clinic = clinic
             };
 
-            await _roleRepository.AssignRoleAsync(user, RoleEnum.ClinicOwner);
-
             await _clinicRepository.AddAsync(clinic);
+
+            await _userRepository.AddAsync(user);
+
+            await _roleRepository.AssignRoleAsync(user, RoleEnum.ClinicOwner);
 
             await _clinicSetupRepository.AddClinicSetupStatusAsync(clinicSetup);
 

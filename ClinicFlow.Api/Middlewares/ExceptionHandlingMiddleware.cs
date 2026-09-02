@@ -34,7 +34,7 @@ namespace ClinicFlow.Api.Middlewares
 
             context.Response.StatusCode = 500;
 
-            var result = OperationResult<bool>.Failure(SysteamErrors.Unexpected());
+            var result = OperationResult<bool>.Failure(SystemErrors.Unexpected());
 
             var jsonResponse = JsonSerializer.Serialize(result);
 

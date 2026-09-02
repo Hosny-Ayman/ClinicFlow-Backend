@@ -116,7 +116,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
             try
             {
-                var user = await _userService.AddUserInsideProjectOnlyAsync(userDto);
+                var user = await _userService.AddUserInsideProjectOnlyWithClinicAlreadyExistsAsync(userDto);
 
                 if (user == null)
                 {
@@ -173,7 +173,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
             if (user == null )
             {
-                OperationResult<GetDoctorFullInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
+                return OperationResult<GetDoctorFullInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
             }
 
             if (!_authorizationService.EnsureCanManageUser(user.Id!))
@@ -185,7 +185,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
             if(doctor == null)
             {
-                OperationResult<GetDoctorFullInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
+                return OperationResult<GetDoctorFullInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
             }
 
 
@@ -215,7 +215,7 @@ namespace ClinicFlow.Application.Features.Doctors
 
             if (doctor == null)
             {
-                OperationResult<GetDoctorInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
+                return OperationResult<GetDoctorInforamtionDtoResponse>.NotFound(GeneralErrors.NotFound("Doctor Not Found"));
             }
 
             if (!_authorizationService.EnsureCanManageUser(userId))

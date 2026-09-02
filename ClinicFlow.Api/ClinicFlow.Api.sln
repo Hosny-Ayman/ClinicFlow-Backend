@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicFlow.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicFlow.UnitTests", "..\ClinicFlow.UnitTests\ClinicFlow.UnitTests.csproj", "{F4898930-E72C-4009-A8D0-BB33EE2FA276}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicFlow.IntegrationTests", "..\ClinicFlow.IntegrationTests\ClinicFlow.IntegrationTests.csproj", "{04BECF89-8897-4116-A633-5F2F597884B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F4898930-E72C-4009-A8D0-BB33EE2FA276}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4898930-E72C-4009-A8D0-BB33EE2FA276}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4898930-E72C-4009-A8D0-BB33EE2FA276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04BECF89-8897-4116-A633-5F2F597884B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04BECF89-8897-4116-A633-5F2F597884B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04BECF89-8897-4116-A633-5F2F597884B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04BECF89-8897-4116-A633-5F2F597884B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

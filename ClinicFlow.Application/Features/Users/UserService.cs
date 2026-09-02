@@ -60,7 +60,7 @@ namespace ClinicFlow.Application.Features.Users
         public async Task<OperationResult<int>> CreateReceptionistAsync(CreateAndEditUserDtoRequest userDto)
         {      
 
-            var user = await AddUserInsideProjectOnlyAsync(userDto);
+            var user = await AddUserInsideProjectOnlyWithClinicAlreadyExistsAsync(userDto);
 
             if(user == null)
             {
@@ -77,7 +77,7 @@ namespace ClinicFlow.Application.Features.Users
            
         }
 
-        public async Task<User?> AddUserInsideProjectOnlyAsync( CreateAndEditUserDtoRequest userDto)
+        public async Task<User?> AddUserInsideProjectOnlyWithClinicAlreadyExistsAsync( CreateAndEditUserDtoRequest userDto)
         {
           
 
@@ -105,6 +105,34 @@ namespace ClinicFlow.Application.Features.Users
             };
 
             await _userRepository.AddAsync(user);
+
+            return user;
+        }
+
+        public async Task <User?> CreateUserWithoutClinicId(CreateAndEditUserDtoRequest userDto)
+        {
+
+            if (await _userRepository.IsEmailExitsAsync(userDto.Email) || await _userRepository.IsPhoneExitsAsync(userDto.PhoneNumber))
+            {
+                return null;
+            }
+
+            var person = new Person
+            {
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                PhoneNumber = userDto.PhoneNumber,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var user = new User
+            {
+                Person = person,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
 
             return user;
         }

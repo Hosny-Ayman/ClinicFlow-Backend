@@ -94,12 +94,10 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 }).FirstOrDefaultAsync() ?? new GetAppointmentDashboardDtoResponse();
         }
 
-        // داخل AppointmentQueryService.cs
         public async Task<GetAdminDashboardStatisticsDtoResponse> GetAdminDashboardStatisticsAsync(int clinicId, DateOnly today)
         {
             var baseCounters = await GetAppointmentDashboardAsync(today, clinicId);
 
-            // جلب إحصائيات الأمس لحساب الفروق
             var yesterday = today.AddDays(-1);
             var yesterdayCounters = await GetAppointmentDashboardAsync(yesterday, clinicId);
 
