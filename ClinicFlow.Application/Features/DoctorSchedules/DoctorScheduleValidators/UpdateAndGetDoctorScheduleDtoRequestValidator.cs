@@ -18,4 +18,12 @@ namespace ClinicFlow.Application.Features.DoctorSchedules.DoctorScheduleValidato
         }
 
     }
+
+    public class UpdateDoctorSchedulesRequestValidator : AbstractValidator<List<UpdateAndGetDoctorScheduleDtoRequest>>
+    {
+        public UpdateDoctorSchedulesRequestValidator(IValidator<UpdateAndGetDoctorScheduleDtoRequest> validator)
+        {
+            RuleForEach(x => x).SetValidator(validator);
+        }
+    }
 }
