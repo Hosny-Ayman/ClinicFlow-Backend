@@ -1,9 +1,11 @@
+using ClinicFlow.Application.Common.DTOs;
 using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Common.Specifications;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
 using ClinicFlow.Application.Features.Appointments.DTOs.Responses;
 using ClinicFlow.Application.Features.Appointments.DTOs.Specifications;
+using ClinicFlow.Application.Features.Patients.DTOs;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +16,12 @@ namespace ClinicFlow.Infrastructure.QueryServices
     {
         private readonly AppDbContext _appDbContext;
         private readonly IFileStorageService _fileStorageService;
-        public AppointmentQueryService(AppDbContext appDbContext, IFileStorageService fileStorageService)
+        private readonly IEmailService _emailService;
+        public AppointmentQueryService(AppDbContext appDbContext, IFileStorageService fileStorageService, IEmailService emailService)
         {
             _appDbContext = appDbContext;
             _fileStorageService = fileStorageService;
+            _emailService = emailService;
         }
 
         public async Task<PagedResponse<GetAllAppointmentDtoResponse>> GetAllAppointmentAsync(AppointmentSearchDtoRequest request, int clinicId)
@@ -185,6 +189,48 @@ namespace ClinicFlow.Infrastructure.QueryServices
             }
 
             return response;
+        }
+
+        public Task<List<NotificationAppointmentPatientInfoDto>> GetAllCloseToStartAppointments()
+        {
+
+            var from = TimeOnly.FromDateTime(DateTime.Now.AddMinutes(25));
+            var to = TimeOnly.FromDateTime(DateTime.Now.AddMinutes(35));
+
+            return _appDbContext.Appointments
+                .Where(x =>  x.StartTime >= from && x.StartTime <= to)
+                .Select(x => new NotificationAppointmentPatientInfoDto
+                {
+                    Id = x.Id,
+                    PatientName = $"{ x.Patient.Person.FirstName } { x.Patient.Person.LastName }",
+                    PatientEmail = x.Patient.Person.Email ?? "",
+                    AppointmentDate = x.AppointmentDate,
+                    AppointmentTime = x.StartTime
+                }).ToListAsync();
+        }
+
+        public async Task SendAppointmentBookedAsync(NotificationAppointmentPatientInfoDto appointment)
+        {
+            var emailMessage = new EmailMessage
+            {
+                To = appointment.PatientEmail,
+                Subject = "تم تأكيد حجز موعدك",
+                Body = $"عزيزي/عزيزتي {appointment.PatientName}،\n\nتم حجز موعدك بنجاح يوم {appointment.AppointmentDate} في تمام الساعة {appointment.AppointmentTime}.\n\nنتمنى لك دوام الصحة والعافية."
+            };
+
+            await _emailService.SendAsync(emailMessage);
+        }
+
+        public async Task SendAppointmentCancelledAsync(NotificationAppointmentPatientInfoDto appointment)
+        {
+            var emailMessage = new EmailMessage
+            {
+                To = appointment.PatientEmail,
+                Subject = "تم إلغاء موعدك",
+                Body = $"عزيزي/عزيزتي {appointment.PatientName}،\n\nنود إعلامك بأنه تم إلغاء موعدك المحدد يوم {appointment.AppointmentDate} في تمام الساعة {appointment.AppointmentTime}.\n\nإذا كان لديك أي استفسار، يرجى التواصل مع العيادة."
+            };
+
+            await _emailService.SendAsync(emailMessage);
         }
     }
 }

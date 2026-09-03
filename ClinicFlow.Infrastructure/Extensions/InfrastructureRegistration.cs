@@ -10,6 +10,7 @@ using ClinicFlow.Infrastructure.Authentication;
 using ClinicFlow.Infrastructure.Data;
 using ClinicFlow.Infrastructure.QueryServices;
 using ClinicFlow.Infrastructure.Repositories;
+using ClinicFlow.Infrastructure.Services.Email;
 using ClinicFlow.Infrastructure.Services.Jobs;
 using ClinicFlow.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
@@ -61,6 +62,8 @@ namespace ClinicFlow.Infrastructure.Extensions
             services.AddScoped<IClinicWorkingHoursService, ClinicWorkingHoursService>();
             services.AddScoped<IDoctorScheduleService, DoctorScheduleService>();
             services.AddScoped<IDoctorVacationService, DoctorVacationService>();
+            services.AddScoped<IEmailService, BrevoEmailService>();
+            services.AddScoped<IAppointmentNotificationJobService, AppointmentNotificationJobService>();
 
 
 

@@ -9,7 +9,7 @@ namespace ClinicFlow.Application.Features.DoctorSchedules.DTOs.Requests
     public class UpdateAndGetDoctorScheduleDtoRequest
     {
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public DayOfWeek DayOfWeek { get; set; }
 

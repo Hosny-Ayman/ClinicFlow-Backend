@@ -10,10 +10,10 @@ using ClinicFlow.Application.Features.Appointments.DTOs.Responses;
 using ClinicFlow.Application.Features.ClinicWorkingHours;
 using ClinicFlow.Application.Features.DoctorSchedules;
 using ClinicFlow.Application.Features.DoctorVacations;
+using ClinicFlow.Application.Features.Patients.DTOs;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.Interfaces;
-using System.Numerics;
 
 namespace ClinicFlow.Application.Features.Appointments
 {
@@ -67,6 +67,13 @@ namespace ClinicFlow.Application.Features.Appointments
         public async Task<OperationResult<int>> AddAppointmentAsync(CreateAndEditAppointmentDto request)
         {
 
+            var Patient = await _patientRepository.GetPatientByIdAsync(request.PatientId, _currentUserService.ClinicId!.Value);
+
+            if (Patient == null)
+            {
+                return OperationResult<int>.NotFound(GeneralErrors.NotFound("المريض غير موجود في هذة العيادة"));
+            }
+
             var validationResult = await ValidateAppointmentBookingAsync<int>(request,_currentUserService.ClinicId!.Value);
 
             if (!validationResult.IsSuccess)
@@ -90,8 +97,21 @@ namespace ClinicFlow.Application.Features.Appointments
                 }
             }
 
-            await _unitOfWork.SaveChangesAsync();
             
+            await _unitOfWork.SaveChangesAsync();
+
+            if(!string.IsNullOrWhiteSpace(Patient.Person.Email))
+            {
+                await _appointmentQueryService.SendAppointmentBookedAsync(new NotificationAppointmentPatientInfoDto
+                {
+                    PatientEmail = Patient.Person.Email ?? "",
+                    PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentTime = appointment.StartTime
+                });
+            }
+          
+
             return OperationResult<int>.Success(appointment.Id);
 
         }
@@ -274,7 +294,14 @@ namespace ClinicFlow.Application.Features.Appointments
                 return OperationResult<bool>.NotFound(GeneralErrors.NotFound("لايوجد موعد"));
             }
 
-            if(!IsStatusauthoritative(appointment.Status, status))
+            var Patient = await _patientRepository.GetPatientByIdAsync(appointment.PatientId, _currentUserService.ClinicId!.Value);
+
+            if (Patient == null)
+            {
+                return OperationResult<bool>.NotFound(GeneralErrors.NotFound("المريض غير موجود في هذة العيادة"));
+            }
+
+            if (!IsStatusauthoritative(appointment.Status, status))
             {
                 return OperationResult<bool>.BadRequest(GeneralErrors.BadRequest("الحاله غير صحيحة"));
             }
@@ -287,6 +314,17 @@ namespace ClinicFlow.Application.Features.Appointments
                 {
                     return result;
                 }
+            }
+
+            if(status == AppointmentStatusEnum.Cancelled)
+            {
+                await _appointmentQueryService.SendAppointmentCancelledAsync(new NotificationAppointmentPatientInfoDto
+                {
+                    PatientEmail = Patient.Person.Email ?? "",
+                    PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentTime = appointment.StartTime
+                });
             }
 
             appointment.Status = status;
@@ -310,6 +348,8 @@ namespace ClinicFlow.Application.Features.Appointments
                     return oldStatus == AppointmentStatusEnum.Scheduled;
                 case AppointmentStatusEnum.NoShow:
                     return oldStatus == AppointmentStatusEnum.Scheduled;
+                case AppointmentStatusEnum.Completed:
+                    return oldStatus == AppointmentStatusEnum.InProgress;
                 default: return false;
 
             }

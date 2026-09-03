@@ -1,4 +1,4 @@
-using ClinicFlow.Application.Features.Appointments.DTOs;
+﻿using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.IntegrationTests.Infrastructure;
@@ -36,6 +36,25 @@ namespace ClinicFlow.IntegrationTests.Appointments
             };
             var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        // Test Forbidden Create (Doctor lacking AppointmentsCreate permission)
+        [Fact]
+        public async Task Create_WithoutAppointmentsCreatePermission_ReturnsForbidden()
+        {
+            // Doctor 1 has RoleId=3 which does not have AppointmentsCreate permission
+            var client = await AuthenticationHelper.GetClinicADoctor1ClientAsync(Factory);
+            var request = new CreateAndEditAppointmentDto
+            {
+                PatientId = 1,
+                DoctorId = 2,
+                AppointmentDate = new DateOnly(2030, 2, 4),
+                StartTime = new TimeOnly(12, 0),
+                EndTime = new TimeOnly(12, 30),
+                Status = AppointmentStatusEnum.Scheduled
+            };
+            var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         // Test Valid Create
@@ -92,6 +111,44 @@ namespace ClinicFlow.IntegrationTests.Appointments
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        // Test Non-Existing Patient
+        [Fact]
+        public async Task Create_WithNonExistingPatient_ReturnsNotFound()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            var request = new CreateAndEditAppointmentDto
+            {
+                PatientId = 9999, // Non-existent patient
+                DoctorId = 2,
+                AppointmentDate = new DateOnly(2030, 2, 4),
+                StartTime = new TimeOnly(12, 0),
+                EndTime = new TimeOnly(12, 30),
+                Status = AppointmentStatusEnum.Scheduled
+            };
+
+            var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        // Test Non-Existing Doctor
+        [Fact]
+        public async Task Create_WithNonExistingDoctor_ReturnsNotFound()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            var request = new CreateAndEditAppointmentDto
+            {
+                PatientId = 1,
+                DoctorId = 9999, // Non-existent doctor
+                AppointmentDate = new DateOnly(2030, 2, 4),
+                StartTime = new TimeOnly(12, 0),
+                EndTime = new TimeOnly(12, 30),
+                Status = AppointmentStatusEnum.Scheduled
+            };
+
+            var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
         // Test Cross-Clinic Creation
         [Fact]
         public async Task Create_ForDoctorInDifferentClinic_ReturnsNotFound()
@@ -129,8 +186,31 @@ namespace ClinicFlow.IntegrationTests.Appointments
             using var jsonDoc = JsonDocument.Parse(responseBody);
             var root = jsonDoc.RootElement;
             Assert.True(root.GetProperty("isSuccess").GetBoolean());
+
+            var pagedData = root.GetProperty("data");
+            var items = pagedData.GetProperty("data");
+            Assert.Equal(JsonValueKind.Array, items.ValueKind);
+            Assert.True(pagedData.GetProperty("totalRecords").GetInt32() >= 1);
+        }
+
+        // Test GetDoctorAvailableSlots
+        [Fact]
+        public async Task GetDoctorAvailableSlots_WithValidDoctor_ReturnsAvailableSlots()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            // 2030-01-07 is Monday, Clinic 1 is open, Doctor 2 has schedules 9:00 - 17:00
+            var response = await client.GetAsync("/api/Appointments/GetDoctorAvailableSlots?doctorId=2&appointmentDate=2030-01-07");
             
-            // Just test success, remove string asserts that might fail on formatting
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"Expected OK, got {response.StatusCode}. Body: {responseBody}");
+
+            using var jsonDoc = JsonDocument.Parse(responseBody);
+            var root = jsonDoc.RootElement;
+            Assert.True(root.GetProperty("isSuccess").GetBoolean());
+            
+            var slots = root.GetProperty("data");
+            Assert.Equal(JsonValueKind.Array, slots.ValueKind);
+            Assert.True(slots.GetArrayLength() > 0);
         }
 
         // Test Update Status (Valid Transition: Scheduled -> Cancelled)
@@ -160,6 +240,16 @@ namespace ClinicFlow.IntegrationTests.Appointments
             var response = await client.PutAsync("/api/Appointments/UpdateAppointmentStatus?appointmentId=1&status=4", null); // Completed = 4
             
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        // Test Update Status (Non-Existing Appointment)
+        [Fact]
+        public async Task UpdateStatus_WithNonExistingAppointment_ReturnsNotFound()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            var response = await client.PutAsync("/api/Appointments/UpdateAppointmentStatus?appointmentId=9999&status=5", null);
+            
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         // Test Update Status (Cross-Clinic)

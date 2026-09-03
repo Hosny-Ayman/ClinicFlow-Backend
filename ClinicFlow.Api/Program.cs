@@ -5,8 +5,7 @@ using ClinicFlow.Infrastructure.Extensions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Security.Cryptography.X509Certificates;
-
+using ClinicFlow.Infrastructure.Services.Email;
 namespace ClinicFlow.Api
 {
     public class Program
@@ -30,6 +29,8 @@ namespace ClinicFlow.Api
             builder.Services.AddApiServices(builder.Configuration);
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
+
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 
             builder.Services.AddRateLimitingServices();

@@ -32,6 +32,16 @@ namespace ClinicFlow.Infrastructure.Repositories
             return await query.SingleOrDefaultAsync(x => x.Id == id && x.ClinicId == clinicId);
         }
 
+        public async Task<Appointment?> GetAppointmentByIdAsync(int id, bool tracking)
+        {
+            var query = _appDbContext.Appointments.AsQueryable();
+
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.SingleOrDefaultAsync(x => x.Id == id );
+        }
+
         public async Task<List<Appointment>> GetAllAppointmentsAsync(DateOnly appointmentDate, int clinicId, int doctorId)
         {
             return await _appDbContext.Appointments.Where(x => x.AppointmentDate == appointmentDate && x.ClinicId == clinicId && x.DoctorId == doctorId).ToListAsync();

@@ -1,6 +1,7 @@
 using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
 using ClinicFlow.Application.Features.Appointments.DTOs.Responses;
+using ClinicFlow.Application.Features.Patients.DTOs;
 
 namespace ClinicFlow.Application.Common.Interfaces
 {
@@ -14,6 +15,12 @@ namespace ClinicFlow.Application.Common.Interfaces
         Task<GetAppointmentDashboardDtoResponse> GetDoctorAppointmentDashboardAsync(int doctorId, DateOnly date, int clinicId);
 
         Task<GetAdminDashboardStatisticsDtoResponse> GetAdminDashboardStatisticsAsync(int clinicId, DateOnly today);
+
+        Task<List<NotificationAppointmentPatientInfoDto>> GetAllCloseToStartAppointments();
+
+        Task SendAppointmentBookedAsync(NotificationAppointmentPatientInfoDto appointment);
+
+        Task SendAppointmentCancelledAsync(NotificationAppointmentPatientInfoDto appointment);
 
     }
 }

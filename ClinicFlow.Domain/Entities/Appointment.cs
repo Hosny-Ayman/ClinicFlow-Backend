@@ -24,6 +24,8 @@ namespace ClinicFlow.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public bool ReminderSent { get; set; }
+
         public Patient Patient { get; set; } = null!;
 
         public Doctor Doctor { get; set; } = null!;

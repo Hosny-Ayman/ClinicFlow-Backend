@@ -87,6 +87,7 @@ namespace ClinicFlow.Application.Features.Authentication
             };
 
 
+
             return OperationResult<AuthenticationResultDto>.Success(result);
 
         }
