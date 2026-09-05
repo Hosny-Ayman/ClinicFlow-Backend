@@ -13,7 +13,7 @@ namespace ClinicFlow.Domain.Interfaces
 
         Task<Appointment?> GetAppointmentByIdAsync(int id, int clinicId,bool tracking = false);
 
-        Task<Appointment?> GetAppointmentByIdAsync(int id ,bool tracking = false);
+        Task<List<Appointment>> GetAppointmentsByIdsAsync(List<int> ids ,bool tracking = false);
 
     }
 }

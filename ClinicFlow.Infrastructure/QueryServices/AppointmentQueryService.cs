@@ -198,7 +198,7 @@ namespace ClinicFlow.Infrastructure.QueryServices
             var to = TimeOnly.FromDateTime(DateTime.Now.AddMinutes(35));
 
             return _appDbContext.Appointments
-                .Where(x =>  x.StartTime >= from && x.StartTime <= to)
+                .Where(x =>  x.StartTime >= from && x.StartTime <= to && !x.ReminderSent)
                 .Select(x => new NotificationAppointmentPatientInfoDto
                 {
                     Id = x.Id,

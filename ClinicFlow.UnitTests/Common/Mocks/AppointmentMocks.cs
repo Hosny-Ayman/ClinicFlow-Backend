@@ -22,7 +22,21 @@ namespace ClinicFlow.UnitTests.Common.Mocks
         public static Mock<IClinicRepository> ClinicRepository() => new Mock<IClinicRepository>();
         public static Mock<IDoctorScheduleRepository> DoctorScheduleRepository() => new Mock<IDoctorScheduleRepository>();
         public static Mock<IDoctorVacationRepository> DoctorVacationRepository() => new Mock<IDoctorVacationRepository>();
-        public static Mock<IClinicWorkingHourRepository> ClinicWorkingHourRepository() => new Mock<IClinicWorkingHourRepository>();
+        public static Mock<IClinicWorkingHourRepository> ClinicWorkingHourRepository()
+        {
+            var mock = new Mock<IClinicWorkingHourRepository>();
+            mock.Setup(c => c.GetWorkingHoursAndDaysByDayOfWeekAsync(It.IsAny<int>(), It.IsAny<DayOfWeek>(), It.IsAny<bool>()))
+                .ReturnsAsync((int clinicId, DayOfWeek day, bool _) => new Domain.Entities.ClinicWorkingHour
+                {
+                    ClinicId = clinicId,
+                    Day = day,
+                    OpenTime = new TimeOnly(8, 0),
+                    CloseTime = new TimeOnly(20, 0),
+                    AppointmentDurationInMinutes = 30,
+                    IsClosed = false
+                });
+            return mock;
+        }
         public static Mock<IInvoiceRepository> InvoiceRepository() => new Mock<IInvoiceRepository>();
         public static Mock<IPaymentRepository> PaymentRepository() => new Mock<IPaymentRepository>();
         public static Mock<IAppointmentQueryService> AppointmentQueryService() => new Mock<IAppointmentQueryService>();

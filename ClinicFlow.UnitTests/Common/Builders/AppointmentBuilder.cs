@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Application.Features.Appointments.DTOs;
+using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
@@ -15,6 +15,7 @@ namespace ClinicFlow.UnitTests.Common.Builders
                 PatientId = 1,
                 AppointmentDate = new DateOnly(2027, 1, 1),
                 StartTime = new TimeOnly(10, 0),
+                EndTime = new TimeOnly(10, 30),
                 Status = status,
                 Notes = "Test Appointment"
             };

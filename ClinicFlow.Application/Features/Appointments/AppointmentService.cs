@@ -14,6 +14,7 @@ using ClinicFlow.Application.Features.Patients.DTOs;
 using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicFlow.Application.Features.Appointments
 {
@@ -35,6 +36,7 @@ namespace ClinicFlow.Application.Features.Appointments
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IAppointmentQueryService _appointmentQueryService;
+        private readonly ILogger<AppointmentService> _logger;
 
         public AppointmentService(IAppointmentRepository appointmentRepository, IUnitOfWork unitOfWork, IMapper mapper,
             ICurrentUserService currentUserService, IPatientRepository patientRepository, IDoctorRepository doctorRepository,
@@ -66,6 +68,11 @@ namespace ClinicFlow.Application.Features.Appointments
        
         public async Task<OperationResult<int>> AddAppointmentAsync(CreateAndEditAppointmentDto request)
         {
+
+            if(request.Status != AppointmentStatusEnum.Scheduled && request.Status != AppointmentStatusEnum.CheckedIn)
+            {
+                return OperationResult<int>.BadRequest(GeneralErrors.BadRequest("الحالة يجب ان تكون Scheduled او CheckedIn"));
+            }
 
             var Patient = await _patientRepository.GetPatientByIdAsync(request.PatientId, _currentUserService.ClinicId!.Value);
 
@@ -100,18 +107,25 @@ namespace ClinicFlow.Application.Features.Appointments
             
             await _unitOfWork.SaveChangesAsync();
 
-            if(!string.IsNullOrWhiteSpace(Patient.Person.Email))
+            try
             {
-                await _appointmentQueryService.SendAppointmentBookedAsync(new NotificationAppointmentPatientInfoDto
+                if (!string.IsNullOrWhiteSpace(Patient.Person.Email))
                 {
-                    PatientEmail = Patient.Person.Email ?? "",
-                    PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
-                    AppointmentDate = appointment.AppointmentDate,
-                    AppointmentTime = appointment.StartTime
-                });
+                    await _appointmentQueryService.SendAppointmentBookedAsync(new NotificationAppointmentPatientInfoDto
+                    {
+                        PatientEmail = Patient.Person.Email ?? "",
+                        PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
+                        AppointmentDate = appointment.AppointmentDate,
+                        AppointmentTime = appointment.StartTime
+                    });
+                }
             }
-          
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Failed to send appointment booked email for appointment {AppointmentId}", appointment.Id);
+            }
 
+ 
             return OperationResult<int>.Success(appointment.Id);
 
         }
@@ -154,7 +168,20 @@ namespace ClinicFlow.Application.Features.Appointments
         private async Task<OperationResult<T>> ValidateAppointmentBookingAsync<T>(CreateAndEditAppointmentDto request, int clinicId)
         {
 
-            if(! await _doctorRepository.IsDoctorBelongToClinic(request.DoctorId, clinicId))
+            var Clinic = await _clinicWorkingHourRepository.GetWorkingHoursAndDaysByDayOfWeekAsync(_currentUserService.ClinicId!.Value, request.AppointmentDate.DayOfWeek);
+
+            if (Clinic == null)
+            {
+                return OperationResult<T>.NotFound(GeneralErrors.NotFound("العيادة غير موجودة "));
+            }
+
+            if (request.EndTime != request.StartTime.AddMinutes(Clinic.AppointmentDurationInMinutes))
+            {
+                return OperationResult<T>.BadRequest(GeneralErrors.BadRequest($"مدة الموعد يجب ان تكون {Clinic.AppointmentDurationInMinutes} دقيقة"));
+            }
+
+
+            if (! await _doctorRepository.IsDoctorBelongToClinic(request.DoctorId, clinicId))
             {
                 return OperationResult<T>.NotFound(GeneralErrors.NotFound("الدكتور غير موجود في هذي العيادة"));
             }
@@ -316,20 +343,29 @@ namespace ClinicFlow.Application.Features.Appointments
                 }
             }
 
-            if(status == AppointmentStatusEnum.Cancelled)
-            {
-                await _appointmentQueryService.SendAppointmentCancelledAsync(new NotificationAppointmentPatientInfoDto
-                {
-                    PatientEmail = Patient.Person.Email ?? "",
-                    PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
-                    AppointmentDate = appointment.AppointmentDate,
-                    AppointmentTime = appointment.StartTime
-                });
-            }
+            
 
             appointment.Status = status;
 
             await _unitOfWork.SaveChangesAsync();
+
+            try
+            {
+                if (status == AppointmentStatusEnum.Cancelled)
+                {
+                    await _appointmentQueryService.SendAppointmentCancelledAsync(new NotificationAppointmentPatientInfoDto
+                    {
+                        PatientEmail = Patient.Person.Email ?? "",
+                        PatientName = $"{Patient.Person.FirstName} {Patient.Person.LastName}",
+                        AppointmentDate = appointment.AppointmentDate,
+                        AppointmentTime = appointment.StartTime
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send appointment booked email for appointment {AppointmentId}", appointment.Id);
+            }
 
 
             return OperationResult<bool>.Success(true);

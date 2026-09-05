@@ -1,4 +1,5 @@
 ﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,7 +31,14 @@ namespace ClinicFlow.Infrastructure.Data.Config
             builder.Property(a => a.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasIndex(a => new { a.DoctorId, a.AppointmentDate, a.StartTime , a.Status, a.PatientId }).IsUnique();
+            builder.HasIndex(a => new {
+                a.DoctorId,
+                a.AppointmentDate,
+                a.StartTime
+            }).IsUnique()
+            .HasFilter(
+    $"[Status] IN ({(int)AppointmentStatusEnum.Scheduled}, {(int)AppointmentStatusEnum.CheckedIn}, {(int)AppointmentStatusEnum.InProgress})"
+);
 
             builder.HasIndex(a => a.PatientId);
 

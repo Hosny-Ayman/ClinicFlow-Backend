@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Application.Features.Appointments.DTOs;
+using ClinicFlow.Application.Features.Appointments.DTOs;
 using ClinicFlow.Application.Features.Appointments.DTOs.Requests;
 using ClinicFlow.Domain.Enums;
 using ClinicFlow.IntegrationTests.Infrastructure;
@@ -31,7 +31,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2,
                 AppointmentDate = new DateOnly(2030, 2, 4), // Monday
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
             var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
@@ -50,7 +50,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2,
                 AppointmentDate = new DateOnly(2030, 2, 4),
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
             var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
@@ -68,7 +68,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2, // Doctor A
                 AppointmentDate = new DateOnly(2030, 2, 4), // Monday, future date
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled,
                 Notes = "Valid Test Appointment"
             };
@@ -103,12 +103,33 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2, // Doctor A
                 AppointmentDate = new DateOnly(2026, 1, 5), // Doctor A has vacation 2026-01-01 to 2026-01-10
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
 
             var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        // Test Invalid Duration (Duration does not match Clinic.AppointmentDurationInMinutes)
+        [Fact]
+        public async Task Create_WithInvalidAppointmentDuration_ReturnsBadRequest()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            var request = new CreateAndEditAppointmentDto
+            {
+                PatientId = 1,
+                DoctorId = 2,
+                AppointmentDate = new DateOnly(2030, 2, 4),
+                StartTime = new TimeOnly(12, 0),
+                EndTime = new TimeOnly(12, 30), // Clinic duration is 15 minutes, 30 is invalid
+                Status = AppointmentStatusEnum.Scheduled
+            };
+
+            var response = await client.PostAsJsonAsync("/api/Appointments/CreateAppointment", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.Contains("15", body);
         }
 
         // Test Non-Existing Patient
@@ -122,7 +143,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2,
                 AppointmentDate = new DateOnly(2030, 2, 4),
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
 
@@ -141,7 +162,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 9999, // Non-existent doctor
                 AppointmentDate = new DateOnly(2030, 2, 4),
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
 
@@ -160,7 +181,7 @@ namespace ClinicFlow.IntegrationTests.Appointments
                 DoctorId = 2, // Clinic A Doctor
                 AppointmentDate = new DateOnly(2030, 2, 4),
                 StartTime = new TimeOnly(12, 0),
-                EndTime = new TimeOnly(12, 30),
+                EndTime = new TimeOnly(12, 15),
                 Status = AppointmentStatusEnum.Scheduled
             };
 

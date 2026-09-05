@@ -26,6 +26,7 @@ namespace ClinicFlow.Infrastructure.Services.Jobs
         public async Task SendAppointmentReminderAsync()
         {
             var appointments = await _appointmentQueryService.GetAllCloseToStartAppointments();
+            List<int> ids = new(); 
 
             foreach (var appointment in appointments)
             {
@@ -41,16 +42,15 @@ namespace ClinicFlow.Infrastructure.Services.Jobs
                     await _emailService.SendAsync(emailMessage);
                 }
 
-              
+                ids.Add(appointment.Id);
 
-                var appointmentDetails = await _appointmentRepository.GetAppointmentByIdAsync(appointment.Id, true);
+            }
 
-                if(appointmentDetails!=null)
-                {
-                    appointmentDetails.ReminderSent = true;
+            var AllAppointments = await _appointmentRepository.GetAppointmentsByIdsAsync(ids, true);
 
-                }
-               
+            foreach (var appointment in AllAppointments)
+            {
+                appointment.ReminderSent = true;
             }
             await _unitOfWork.SaveChangesAsync();
         }

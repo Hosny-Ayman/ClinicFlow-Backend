@@ -76,8 +76,6 @@ namespace ClinicFlow.IntegrationTests.DoctorSchedules
             foreach (var item in getData.EnumerateArray())
             {
                 var dayOfWeek = (DayOfWeek)item.GetProperty("dayOfWeek").GetInt32();
-                if (dayOfWeek == DayOfWeek.Sunday) continue; // Skip because RequiredRule fails on 0
-
                 var id = item.GetProperty("id").GetInt32();
                 
                 requests.Add(new UpdateAndGetDoctorScheduleDtoRequest
@@ -97,15 +95,58 @@ namespace ClinicFlow.IntegrationTests.DoctorSchedules
 
             using var scope = Factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ClinicFlow.Infrastructure.Data.AppDbContext>();
-            var schedules = await dbContext.DoctorSchedules.Where(ds => ds.DoctorId == 2 && ds.DayOfWeek != DayOfWeek.Sunday).ToListAsync();
+            var schedules = await dbContext.DoctorSchedules.Where(ds => ds.DoctorId == 2).ToListAsync();
                 
-            Assert.Equal(6, schedules.Count); // We skipped Sunday
+            Assert.Equal(7, schedules.Count); // All 7 days including Sunday
             Assert.All(schedules, s => 
             {
                 Assert.True(s.IsAvailable);
                 Assert.Equal(new TimeOnly(10, 0), s.StartTime);
                 Assert.Equal(new TimeOnly(18, 0), s.EndTime);
             });
+
+            // Explicitly verify Sunday (0) was accepted and updated
+            var sundaySchedule = schedules.FirstOrDefault(s => s.DayOfWeek == DayOfWeek.Sunday);
+            Assert.NotNull(sundaySchedule);
+            Assert.True(sundaySchedule.IsAvailable);
+        }
+
+        [Fact]
+        public async Task Update_WithSundayScheduleExplicitly_Returns200AndAcceptsSunday()
+        {
+            var client = await AuthenticationHelper.GetClinicAOwnerClientAsync(Factory);
+            
+            var getResponse = await client.GetAsync("/api/DoctorSchedules/8");
+            var getResponseBody = await getResponse.Content.ReadAsStringAsync();
+            using var getJsonDoc = JsonDocument.Parse(getResponseBody);
+            var getData = getJsonDoc.RootElement.GetProperty("data");
+            
+            var sundayItem = getData.EnumerateArray().First(x => (DayOfWeek)x.GetProperty("dayOfWeek").GetInt32() == DayOfWeek.Sunday);
+            var sundayId = sundayItem.GetProperty("id").GetInt32();
+
+            var requests = new List<UpdateAndGetDoctorScheduleDtoRequest>
+            {
+                new UpdateAndGetDoctorScheduleDtoRequest
+                {
+                    Id = sundayId,
+                    DayOfWeek = DayOfWeek.Sunday, // Explicitly testing Sunday (0)
+                    StartTime = new TimeOnly(8, 0),
+                    EndTime = new TimeOnly(16, 0),
+                    IsAvailable = true
+                }
+            };
+
+            var response = await client.PutAsJsonAsync("/api/DoctorSchedules/8", requests);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"Expected OK for Sunday schedule, got {response.StatusCode}. Body: {responseBody}");
+
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ClinicFlow.Infrastructure.Data.AppDbContext>();
+            var updatedSunday = await dbContext.DoctorSchedules.FirstOrDefaultAsync(ds => ds.Id == sundayId);
+            Assert.NotNull(updatedSunday);
+            Assert.Equal(DayOfWeek.Sunday, updatedSunday.DayOfWeek);
+            Assert.Equal(new TimeOnly(8, 0), updatedSunday.StartTime);
+            Assert.Equal(new TimeOnly(16, 0), updatedSunday.EndTime);
         }
 
         [Fact]
@@ -122,8 +163,6 @@ namespace ClinicFlow.IntegrationTests.DoctorSchedules
             foreach (var item in getData.EnumerateArray())
             {
                 var dayOfWeek = (DayOfWeek)item.GetProperty("dayOfWeek").GetInt32();
-                if (dayOfWeek == DayOfWeek.Sunday) continue; // Skip because RequiredRule fails on 0
-
                 var id = item.GetProperty("id").GetInt32();
                 
                 requests.Add(new UpdateAndGetDoctorScheduleDtoRequest
