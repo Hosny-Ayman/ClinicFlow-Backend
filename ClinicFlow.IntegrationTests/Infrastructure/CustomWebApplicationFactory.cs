@@ -17,14 +17,21 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
     {
         public CustomWebApplicationFactory()
         {
+            var existingConnectionString =
+                Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
+            if (!string.IsNullOrWhiteSpace(existingConnectionString))
+                return;
+
             var path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+
             var config = new ConfigurationBuilder()
                 .AddJsonFile(path, optional: false)
                 .Build();
-                
+
             var connectionString = config.GetConnectionString("DefaultConnection");
-            
-            Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", connectionString);
+
+            Environment.SetEnvironmentVariable( "ConnectionStrings__DefaultConnection", connectionString);
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
