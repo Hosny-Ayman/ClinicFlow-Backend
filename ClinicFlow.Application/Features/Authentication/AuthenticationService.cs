@@ -48,7 +48,13 @@ namespace ClinicFlow.Application.Features.Authentication
 
         public async Task<OperationResult<AuthenticationResultDto>> LoginAsync(LoginDtoRequest request)
         {
+            _logger.LogInformation("LOGIN: Before GetUserByEmailAsync");
+
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
+
+            _logger.LogInformation(
+       "LOGIN: After GetUserByEmailAsync. User found: {Found}",
+       user != null);
 
             if (user == null || !user.IsActive || !BCrypt.Net.BCrypt.Verify(request.Password,user.PasswordHash))
             {
