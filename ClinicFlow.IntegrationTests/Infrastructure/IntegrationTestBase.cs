@@ -23,6 +23,11 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             _connectionString = dbContext.Database.GetConnectionString()!;
 
+            var connection = dbContext.Database.GetDbConnection();
+
+            Console.WriteLine($"TEST DB SERVER: {connection.DataSource}");
+            Console.WriteLine($"TEST DB NAME: {connection.Database}");
+
             _respawner = await Respawner.CreateAsync(_connectionString, new RespawnerOptions
             {
                 TablesToIgnore = new Respawn.Graph.Table[]
