@@ -39,7 +39,13 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
             builder.ConfigureAppConfiguration((context, config) =>
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-                config.AddJsonFile(path, optional: false, reloadOnChange: true);
+
+                config.AddJsonFile(
+                    path,
+                    optional: false,
+                    reloadOnChange: false);
+
+                config.AddEnvironmentVariables();
             });
 
             builder.ConfigureServices((context, services) =>
