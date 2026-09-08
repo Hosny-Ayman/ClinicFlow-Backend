@@ -43,7 +43,7 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
                 config.AddJsonFile(
                     path,
                     optional: false,
-                    reloadOnChange: false);
+                    reloadOnChange: true);
 
                 config.AddEnvironmentVariables();
             });
