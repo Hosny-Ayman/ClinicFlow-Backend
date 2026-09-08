@@ -15,6 +15,11 @@ jobs:
 
     env:
       ConnectionStrings__DefaultConnection: ${{ secrets.INTEGRATION_DB_CONNECTION }}
+      Jwt__Key: ${{ secrets.JWT_KEY }}
+      Jwt__Issuer: ClinicFlow
+      Jwt__Audience: ClinicFlowUsers
+      Jwt__DurationInMinutes: 60
+      Jwt__RefreshTokenDurationInDays: 30
 
     services:
       sqlserver:
