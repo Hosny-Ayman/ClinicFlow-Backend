@@ -16,6 +16,7 @@ using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.UnitTests.Common.Builders;
 using ClinicFlow.UnitTests.Common.Mocks;
 using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicFlow.UnitTests.Appointments
 {
@@ -35,11 +36,14 @@ namespace ClinicFlow.UnitTests.Appointments
             Mock<IPaymentRepository> paymentRepo = null,
             Mock<IDoctorScheduleRepository> docScheduleRepo = null,
             Mock<IClinicWorkingHourRepository> clinicHourRepo = null,
-            Mock<IAppointmentQueryService> queryService = null)
+            Mock<IAppointmentQueryService> queryService = null
+            )
         {
             var mapper = CommonMocks.Mapper();
             var clinicRepo = AppointmentMocks.ClinicRepository();
             var docVacationRepo = AppointmentMocks.DoctorVacationRepository();
+
+            var logger = new Mock<ILogger<AppointmentService>>();
 
             return new AppointmentService(
                 appRepo?.Object ?? AppointmentMocks.AppointmentRepository().Object,
@@ -57,7 +61,8 @@ namespace ClinicFlow.UnitTests.Appointments
                 clinicHourRepo?.Object ?? AppointmentMocks.ClinicWorkingHourRepository().Object,
                 invoiceRepo?.Object ?? AppointmentMocks.InvoiceRepository().Object,
                 paymentRepo?.Object ?? AppointmentMocks.PaymentRepository().Object,
-                queryService?.Object ?? AppointmentMocks.AppointmentQueryService().Object
+                queryService?.Object ?? AppointmentMocks.AppointmentQueryService().Object,
+                logger.Object
             );
         }
 

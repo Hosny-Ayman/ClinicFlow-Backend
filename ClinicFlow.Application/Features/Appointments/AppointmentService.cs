@@ -44,7 +44,8 @@ namespace ClinicFlow.Application.Features.Appointments
             IDoctorVacationRepository doctorVacationRepository, IClinicWorkingHoursService clinicWorkingHoursService,
             IDoctorScheduleService doctorScheduleService , IDoctorVacationService doctorVacationService
             , IClinicWorkingHourRepository clinicWorkingHourRepository, IInvoiceRepository invoiceRepository,
-            IPaymentRepository PaymentRepository, IAppointmentQueryService appointmentQueryService)
+            IPaymentRepository PaymentRepository, IAppointmentQueryService appointmentQueryService,
+            ILogger<AppointmentService> logger)
         {
             _appointmentRepository = appointmentRepository;
             _unitOfWork = unitOfWork;
@@ -62,6 +63,7 @@ namespace ClinicFlow.Application.Features.Appointments
             _invoiceRepository = invoiceRepository;
             _paymentRepository = PaymentRepository;
             _appointmentQueryService = appointmentQueryService;
+            _logger = logger;
 
         }
 
