@@ -24,7 +24,16 @@ namespace ClinicFlow.Api.Middlewares
             {
 
                 _logger.LogError(ex, "An unexpected error occurred in the application.");
-                await HandleExceptionAsync(context);
+
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    Error = ex.Message,
+                    InnerException = ex.InnerException?.Message,
+                    StackTrace = ex.StackTrace
+                });
             }
         }
 
