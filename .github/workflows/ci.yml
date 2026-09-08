@@ -1,0 +1,33 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore ClinicFlow.Api/ClinicFlow.Api.sln
+
+      - name: Build
+        run: dotnet build ClinicFlow.Api/ClinicFlow.Api.sln --no-restore
+
+      - name: Run unit tests
+        run: dotnet test ClinicFlow.UnitTests/ClinicFlow.UnitTests.csproj --no-build
+
+      - name: Run integration tests
+        run: dotnet test ClinicFlow.IntegrationTests/ClinicFlow.IntegrationTests.csproj --no-build
