@@ -44,8 +44,7 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
 
             builder.ConfigureServices((context, services) =>
             {
-                var configuration = context.Configuration;
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
                 if (string.IsNullOrEmpty(connectionString) || !connectionString.Contains("IntegrationTests"))
                 {
