@@ -13,6 +13,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     env:
       ConnectionStrings__DefaultConnection: ${{ secrets.INTEGRATION_DB_CONNECTION }}
       Jwt__Key: ${{ secrets.JWT_KEY }}
@@ -62,3 +66,17 @@ jobs:
 
       - name: Run integration tests
         run: dotnet test ClinicFlow.IntegrationTests/ClinicFlow.IntegrationTests.csproj --no-build
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/clinicflow-backend:latest

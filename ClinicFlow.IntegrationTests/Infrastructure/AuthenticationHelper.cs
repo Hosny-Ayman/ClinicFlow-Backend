@@ -36,7 +36,6 @@ namespace ClinicFlow.IntegrationTests.Infrastructure
 
         public static async Task<HttpClient> CreateAuthenticatedClientAsync(CustomWebApplicationFactory factory, string email, string password)
         {
-            
 
             var client = factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions { HandleCookies = true, BaseAddress = new Uri("https://localhost") });
             var loginRequest = new { Email = email, Password = password };
