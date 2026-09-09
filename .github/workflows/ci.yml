@@ -80,3 +80,4 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/hosny-ayman/clinicflow-backend:latest
+          provenance: false
