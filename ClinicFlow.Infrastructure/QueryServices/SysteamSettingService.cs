@@ -15,6 +15,9 @@ namespace ClinicFlow.Infrastructure.QueryServices
 
         public async Task<string?> GetOnlySettingValueAsyncBySettingKeyAsync(string SettingKey)
         {
+
+            var connectionString = _appDbContext.Database.GetConnectionString();
+
             return await _appDbContext.SysteamSettings.Where(x => x.SettingKey == SettingKey).Select(x => x.SettingValue).FirstOrDefaultAsync();
         }
     }
