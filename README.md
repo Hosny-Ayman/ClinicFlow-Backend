@@ -100,6 +100,15 @@ The application follows Clean Architecture principles to separate business logic
 - Entity Framework Core InMemory
 - Coverlet
 
+### Integration Testing
+
+- xUnit
+- ASP.NET Core WebApplicationFactory
+- SQL Server
+- Respawn
+
+Integration tests cover authentication and important API workflows, including clinics and doctors.
+
 ### Containerization
 
 - Docker
@@ -116,6 +125,7 @@ ClinicFlow
 ├── ClinicFlow.Domain
 ├── ClinicFlow.Infrastructure
 └── ClinicFlow.UnitTests
+└── ClinicFlow.IntegrationTests
 ```
 
 ### ClinicFlow.Api
@@ -285,6 +295,8 @@ ClinicFlow-Backend
 │       background jobs, and external service implementations
 ├── ClinicFlow.UnitTests
 │   └── Unit tests
+├── ClinicFlow.IntegrationTests
+│   └── Integration tests
 └── docs
     ├── Clinic-Flow-Erd-mermaid.mmd
     ├── ClinicFlowDigram.drawio
