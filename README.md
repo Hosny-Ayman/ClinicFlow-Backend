@@ -10,17 +10,11 @@ A clinic management system backend built with ASP.NET Core Web API.
 
 
 
-ClinicFlow is a backend system designed to manage clinic operations,
-
-including doctors, patients, appointments, medical records,
-
-prescriptions, schedules, vacations, and clinic working hours.
+ClinicFlow is a clinic management system designed to manage clinic operations, including doctors, patients, appointments, medical records, prescriptions, schedules, vacations, and clinic working hours.
 
 
 
-The application follows Clean Architecture principles to separate
-
-business logic from infrastructure and API concerns.
+The application follows Clean Architecture principles to separate business logic from infrastructure and API concerns.
 
 
 
@@ -220,9 +214,7 @@ business logic from infrastructure and API concerns.
 
 
 
-The project follows Clean Architecture and is separated into
-
-different layers:
+The project follows Clean Architecture and is separated into different layers:
 
 
 
@@ -250,15 +242,15 @@ ClinicFlow
 
 └── ClinicFlow.UnitTests
 
+```
+
 
 
 \### ClinicFlow.Api
 
 
 
-Responsible for handling HTTP requests, API endpoints,
-
-middleware, authentication and authorization configuration.
+Responsible for handling HTTP requests, API endpoints, middleware, authentication, and authorization configuration.
 
 
 
@@ -266,9 +258,7 @@ middleware, authentication and authorization configuration.
 
 
 
-Contains the application's business logic, services,
-
-DTOs, validators, and application-level abstractions.
+Contains the application's business logic, services, DTOs, validators, and application-level abstractions.
 
 
 
@@ -276,9 +266,7 @@ DTOs, validators, and application-level abstractions.
 
 
 
-Contains the core business entities, enums,
-
-and domain-level abstractions.
+Contains the core business entities, enums, and domain-level abstractions.
 
 
 
@@ -286,11 +274,7 @@ and domain-level abstractions.
 
 
 
-Contains implementations related to data access,
-
-Entity Framework Core, repositories, authentication,
-
-file storage, background jobs, and external services.
+Contains implementations related to data access, Entity Framework Core, repositories, authentication, file storage, background jobs, and external services.
 
 
 
@@ -298,9 +282,7 @@ file storage, background jobs, and external services.
 
 
 
-Contains unit tests for the application's business logic
-
-and services.
+Contains unit tests for the application's business logic and services.
 
 
 
@@ -308,15 +290,11 @@ and services.
 
 
 
-The application uses SQL Server with Entity Framework Core
-
-for data access and database management.
+The application uses SQL Server with Entity Framework Core for data access and database management.
 
 
 
-Entity Framework Core migrations are used to manage database
-
-schema changes.
+Entity Framework Core migrations are used to manage database schema changes.
 
 
 
@@ -344,9 +322,7 @@ The editable database diagram is also available here:
 
 
 
-The application uses JWT Bearer Authentication to secure protected
-
-API endpoints.
+The application uses JWT Bearer Authentication to secure protected API endpoints.
 
 
 
@@ -378,9 +354,7 @@ The authorization system supports:
 
 
 
-Custom authorization requirements and handlers are used to validate
-
-user permissions for protected resources.
+Custom authorization requirements and handlers are used to validate user permissions for protected resources.
 
 
 
@@ -388,15 +362,11 @@ user permissions for protected resources.
 
 
 
-The application uses FluentValidation to validate incoming requests
-
-before processing them.
+The application uses FluentValidation to validate incoming requests before processing them.
 
 
 
-AutoMapper is used to handle object-to-object mapping between
-
-entities and DTOs.
+AutoMapper is used to handle object-to-object mapping between entities and DTOs.
 
 
 
@@ -408,9 +378,7 @@ Hangfire is used to run background jobs in the application.
 
 
 
-The application uses background processing for doctor vacation-related
-
-operations, with SQL Server used as the Hangfire storage.
+The application uses background processing for doctor vacation-related operations, with SQL Server used as the Hangfire storage.
 
 
 
@@ -422,11 +390,7 @@ Cloudinary is used for file storage.
 
 
 
-File storage is abstracted behind an application service interface,
-
-allowing the storage implementation to remain separated from the
-
-application's business logic.
+File storage is abstracted behind an application service interface, allowing the storage implementation to remain separated from the application's business logic.
 
 
 
@@ -454,17 +418,11 @@ Logs are configured to be written to:
 
 
 
-The application uses global exception handling middleware to
-
-centralize unexpected exception handling.
+The application uses global exception handling middleware to centralize unexpected exception handling.
 
 
 
-Application operations also use an operation result approach
-
-to represent successful and failed operations in a consistent way.
-
-
+Application operations also use an operation result approach to represent successful and failed operations in a consistent way.
 
 
 
@@ -476,9 +434,7 @@ The API is documented using Swagger / OpenAPI.
 
 
 
-Swagger provides an interactive interface for exploring and testing
-
-the available API endpoints.
+Swagger provides an interactive interface for exploring and testing the available API endpoints.
 
 
 
@@ -508,9 +464,7 @@ Unit tests cover different application services and business logic.
 
 
 
-The application includes Docker support through a Dockerfile,
-
-allowing the backend to be built and run inside a container.
+The application includes Docker support through a Dockerfile, allowing the backend to be built and run inside a container.
 
 
 
@@ -538,7 +492,59 @@ git clone https://github.com/Hosny-Ayman/ClinicFlow-Backend.git
 
 cd ClinicFlow-Backend
 
+```
 
+
+
+\### Restore Dependencies
+
+
+
+```bash
+
+dotnet restore
+
+```
+
+
+
+\### Database Setup
+
+
+
+Configure the required database connection string in the application configuration, then apply the Entity Framework Core migrations.
+
+
+
+```bash
+
+dotnet ef database update
+
+```
+
+
+
+\### Run the Application
+
+
+
+```bash
+
+dotnet run --project ClinicFlow.Api
+
+```
+
+
+
+\### Run Tests
+
+
+
+```bash
+
+dotnet test
+
+```
 
 
 
@@ -588,9 +594,21 @@ ClinicFlow-Backend
 
 &#x20;   ├── Clinic-Flow-Erd-mermaid.mmd
 
-&#x20;   └── ClinicFlowDigram.drawio
+&#x20;   ├── ClinicFlowDigram.drawio
 
+&#x20;   └── screenshots
 
+&#x20;       ├── landing-page.png
+
+&#x20;       ├── doctors.png
+
+&#x20;       ├── appointments.png
+
+&#x20;       ├── doctor-dashboard.png
+
+&#x20;       └── booking.png
+
+```
 
 
 
@@ -619,8 +637,6 @@ ClinicFlow-Backend
 
 
 \[Swagger](https://clinicflow-backend-654e.onrender.com/swagger/index.html)
-
-
 
 
 
