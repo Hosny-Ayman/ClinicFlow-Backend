@@ -45,7 +45,16 @@ namespace ClinicFlow.Application.Features.Users
                 return OperationResult<CurrentUserDto>.Unauthorized();
             }
 
-            var CurrentUser = await _userQueryService.GetUserProfilByEmaileAsync(_currentUserService.Email!);
+            CurrentUserDto? CurrentUser = null;
+            if (_currentUserService.UserId.HasValue)
+            {
+                CurrentUser = await _userQueryService.GetUserProfilByUserIdAsync(_currentUserService.UserId.Value);
+            }
+
+            if (CurrentUser == null && !string.IsNullOrWhiteSpace(_currentUserService.Email))
+            {
+                CurrentUser = await _userQueryService.GetUserProfilByEmaileAsync(_currentUserService.Email);
+            }
 
             if (CurrentUser == null)
             {
@@ -178,6 +187,41 @@ namespace ClinicFlow.Application.Features.Users
 
             return OperationResult<bool>.Success(true);
 
+        }
+
+        public async Task<OperationResult<bool>> UpdateMyInformationAsync(UpdateMyInformationDtoRequest request)
+        {
+            if (!_currentUserService.IsAuthenticated || !_currentUserService.UserId.HasValue)
+            {
+                return OperationResult<bool>.Unauthorized();
+            }
+
+            var userId = _currentUserService.UserId.Value;
+
+            var user = await _userRepository.GetUserByIdAsync(userId, Tracking: true);
+            if (user == null)
+            {
+                return OperationResult<bool>.NotFound(GeneralErrors.NotFound("User Not Found"));
+            }
+
+            if (await _userRepository.IsEmailExistsExcludingPersonAsync(request.Email, user.PersonId))
+            {
+                return OperationResult<bool>.Conflict(GeneralErrors.Conflict("Email Already Exists"));
+            }
+
+            if (await _userRepository.IsPhoneExistsExcludingPersonAsync(request.PhoneNumber, user.PersonId))
+            {
+                return OperationResult<bool>.Conflict(GeneralErrors.Conflict("Phone Already Exists"));
+            }
+
+            user.Person.FirstName = request.FirstName.Trim();
+            user.Person.LastName = request.LastName.Trim();
+            user.Person.Email = request.Email.Trim();
+            user.Person.PhoneNumber = request.PhoneNumber.Trim();
+
+            await _UnitOfWork.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
         }
 
         public void UpdateUserInsideProjectOnlyAsync(User user, UpdateUserInformationDtoRequest dto)

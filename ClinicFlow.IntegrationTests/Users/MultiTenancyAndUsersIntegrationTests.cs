@@ -95,6 +95,84 @@ namespace ClinicFlow.IntegrationTests.Users
             var data = root.GetProperty("data");
             Assert.Equal("ahmed@g", data.GetProperty("email").GetString());
             Assert.Equal(2, data.GetProperty("clinicId").GetInt32());
+            Assert.True(data.TryGetProperty("firstName", out _));
+            Assert.True(data.TryGetProperty("lastName", out _));
+            Assert.True(data.TryGetProperty("phoneNumber", out _));
+        }
+
+        [Fact]
+        public async Task UpdateMyInformation_WhenUnauthenticated_ReturnsUnauthorized()
+        {
+            var client = Factory.CreateClient();
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "NoAuth",
+                LastName = "User",
+                Email = "noauth@example.com",
+                PhoneNumber = "01011223344"
+            };
+
+            var response = await client.PutAsJsonAsync("/api/Users/me", request);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformation_WhenWhitespaceFields_ReturnsBadRequest()
+        {
+            var client = await AuthenticationHelper.GetClinicBOwnerClientAsync(Factory);
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "   ",
+                LastName = "",
+                Email = "not-an-email",
+                PhoneNumber = "123"
+            };
+
+            var response = await client.PutAsJsonAsync("/api/Users/me", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformation_WhenEmailExistsForOtherPerson_ReturnsConflict()
+        {
+            var client = await AuthenticationHelper.GetClinicBOwnerClientAsync(Factory);
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "Ahmed",
+                LastName = "Owner",
+                Email = TestCredentials.ClinicAOwnerEmail, // already taken by Clinic A Owner
+                PhoneNumber = "01099887766"
+            };
+
+            var response = await client.PutAsJsonAsync("/api/Users/me", request);
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformation_WhenValidData_ReturnsSuccessAndUpdatesDatabase()
+        {
+            var client = await AuthenticationHelper.GetClinicAReceptionistClientAsync(Factory);
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "UpdatedReceptionist",
+                LastName = "UpdatedLastName",
+                Email = "receptionist_new@g.com",
+                PhoneNumber = "01234567890"
+            };
+
+            var response = await client.PutAsJsonAsync("/api/Users/me", request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ClinicFlow.Infrastructure.Data.AppDbContext>();
+            var receptionist = await dbContext.Users
+                .Include(u => u.Person)
+                .FirstOrDefaultAsync(u => u.Person.Email == "receptionist_new@g.com");
+
+            Assert.NotNull(receptionist);
+            Assert.Equal("UpdatedReceptionist", receptionist.Person.FirstName);
+            Assert.Equal("UpdatedLastName", receptionist.Person.LastName);
+            Assert.Equal("01234567890", receptionist.Person.PhoneNumber);
         }
     }
 }

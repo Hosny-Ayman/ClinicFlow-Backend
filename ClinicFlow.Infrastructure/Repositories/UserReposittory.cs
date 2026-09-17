@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Entities;
 using ClinicFlow.Domain.Interfaces;
 using ClinicFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +34,16 @@ namespace ClinicFlow.Infrastructure.Repositories
 
 
             return await query.SingleOrDefaultAsync(x => x.Id == userId && x.ClinicId == clinicId);
+        }
+
+        public async Task<User?> GetUserByIdAsync(int userId, bool Tracking = false)
+        {
+            var query = _appDbContext.Users.Include(x => x.Person).AsQueryable();
+
+            if (!Tracking)
+                query = query.AsNoTracking();
+
+            return await query.SingleOrDefaultAsync(x => x.Id == userId);
         }
 
         public async Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, int clinicId, bool Tracking = false)
@@ -100,6 +110,16 @@ namespace ClinicFlow.Infrastructure.Repositories
         public async Task<bool> IsPhoneExitsAsync(string phone)
         {
             return await _appDbContext.Users.AnyAsync(x => x.Person.PhoneNumber == phone);
+        }
+
+        public async Task<bool> IsEmailExistsExcludingPersonAsync(string email, int excludePersonId)
+        {
+            return await _appDbContext.Persons.AnyAsync(x => x.Email == email && x.Id != excludePersonId);
+        }
+
+        public async Task<bool> IsPhoneExistsExcludingPersonAsync(string phone, int excludePersonId)
+        {
+            return await _appDbContext.Persons.AnyAsync(x => x.PhoneNumber == phone && x.Id != excludePersonId);
         }
     }
 }

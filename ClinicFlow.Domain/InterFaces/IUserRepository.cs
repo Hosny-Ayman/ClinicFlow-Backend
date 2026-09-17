@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Domain.Entities;
+using ClinicFlow.Domain.Entities;
 
 namespace ClinicFlow.Domain.Interfaces
 {
@@ -6,6 +6,8 @@ namespace ClinicFlow.Domain.Interfaces
     {
 
         Task<User?> GetUserByIdAsync(int userId,int clinicId, bool Tracking = false);
+
+        Task<User?> GetUserByIdAsync(int userId, bool Tracking = false);
 
         Task<User?> GetUserByPhoneNumberAsync(string PhoneNumber, int clinicId, bool Tracking = false);
 
@@ -24,6 +26,10 @@ namespace ClinicFlow.Domain.Interfaces
         Task<bool> IsEmailExitsAsync(string email);
 
         Task<bool> IsPhoneExitsAsync(string phone);
+
+        Task<bool> IsEmailExistsExcludingPersonAsync(string email, int excludePersonId);
+
+        Task<bool> IsPhoneExistsExcludingPersonAsync(string phone, int excludePersonId);
 
         Task<bool> ToggleUserStatusAsync(int userId, int clinicId);
 

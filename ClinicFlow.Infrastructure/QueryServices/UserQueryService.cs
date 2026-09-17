@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Application.Common.Helper;
+using ClinicFlow.Application.Common.Helper;
 using ClinicFlow.Application.Common.Interfaces;
 using ClinicFlow.Application.Features.Authentication.DTOs.Responses;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
@@ -108,8 +108,11 @@ namespace ClinicFlow.Infrastructure.QueryServices
                 .Select(x => new
                 {
                     x.Id,
+                    x.Person.FirstName,
+                    x.Person.LastName,
                     FullName = x.Person.FirstName + " " + x.Person.LastName,
                     Email = x.Person.Email,
+                    PhoneNumber = x.Person.PhoneNumber,
                     x.ClinicId,
 
                     Roles = x.UserRoles
@@ -130,8 +133,58 @@ namespace ClinicFlow.Infrastructure.QueryServices
             return new CurrentUserDto
             {
                 Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 FullName = user.FullName,
                 Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? "",
+                ClinicId = user.ClinicId,
+
+                Roles = user.Roles,
+
+                Permissions = user.Permissions
+                    .Aggregate(0L, (current, permission) => current | permission)
+            };
+        }
+
+        public async Task<CurrentUserDto?> GetUserProfilByUserIdAsync(int userId)
+        {
+            var user = await _appDbContext.Users
+                .Include(x => x.Person)
+                .Where(x => x.Id == userId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Person.FirstName,
+                    x.Person.LastName,
+                    FullName = x.Person.FirstName + " " + x.Person.LastName,
+                    Email = x.Person.Email,
+                    PhoneNumber = x.Person.PhoneNumber,
+                    x.ClinicId,
+
+                    Roles = x.UserRoles
+                        .Select(ur => ur.Role.Name)
+                        .ToList(),
+
+                    Permissions = x.UserRoles
+                        .Select(ur => ur.Role.Permissions)
+                        .ToList()
+                })
+                .SingleOrDefaultAsync();
+
+
+            if (user == null)
+                return null;
+
+
+            return new CurrentUserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                FullName = user.FullName,
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? "",
                 ClinicId = user.ClinicId,
 
                 Roles = user.Roles,

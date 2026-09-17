@@ -570,5 +570,175 @@ namespace ClinicFlow.UnitTests.Users
 
         #endregion
 
+        #region UpdateMyInformationAsync
+
+        [Fact]
+        public async Task UpdateMyInformationAsync_WhenUnauthenticated_ShouldReturnUnauthorized()
+        {
+            // Arrange
+            _currentUserServiceMock.Setup(x => x.IsAuthenticated).Returns(false);
+            var service = CreateService();
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "john@example.com",
+                PhoneNumber = "01234567890"
+            };
+
+            // Act
+            var result = await service.UpdateMyInformationAsync(request);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(OperationStatus.Unauthorized, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformationAsync_WhenUserNotFound_ShouldReturnNotFound()
+        {
+            // Arrange
+            const int currentUserId = 99;
+            _currentUserServiceMock.Setup(x => x.IsAuthenticated).Returns(true);
+            _currentUserServiceMock.Setup(x => x.UserId).Returns(currentUserId);
+            _userRepositoryMock
+                .Setup(x => x.GetUserByIdAsync(currentUserId, true))
+                .ReturnsAsync((User?)null);
+
+            var service = CreateService();
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "john@example.com",
+                PhoneNumber = "01234567890"
+            };
+
+            // Act
+            var result = await service.UpdateMyInformationAsync(request);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformationAsync_WhenEmailExistsForOtherPerson_ShouldReturnConflict()
+        {
+            // Arrange
+            const int currentUserId = 1;
+            var user = UserBuilder.CreateUserEntity(id: currentUserId, clinicId: ClinicId);
+            _currentUserServiceMock.Setup(x => x.IsAuthenticated).Returns(true);
+            _currentUserServiceMock.Setup(x => x.UserId).Returns(currentUserId);
+
+            _userRepositoryMock
+                .Setup(x => x.GetUserByIdAsync(currentUserId, true))
+                .ReturnsAsync(user);
+
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "other@example.com",
+                PhoneNumber = "01234567890"
+            };
+
+            _userRepositoryMock
+                .Setup(x => x.IsEmailExistsExcludingPersonAsync(request.Email, user.PersonId))
+                .ReturnsAsync(true);
+
+            var service = CreateService();
+
+            // Act
+            var result = await service.UpdateMyInformationAsync(request);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformationAsync_WhenPhoneExistsForOtherPerson_ShouldReturnConflict()
+        {
+            // Arrange
+            const int currentUserId = 1;
+            var user = UserBuilder.CreateUserEntity(id: currentUserId, clinicId: ClinicId);
+            _currentUserServiceMock.Setup(x => x.IsAuthenticated).Returns(true);
+            _currentUserServiceMock.Setup(x => x.UserId).Returns(currentUserId);
+
+            _userRepositoryMock
+                .Setup(x => x.GetUserByIdAsync(currentUserId, true))
+                .ReturnsAsync(user);
+
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "unique@example.com",
+                PhoneNumber = "01234567890"
+            };
+
+            _userRepositoryMock
+                .Setup(x => x.IsEmailExistsExcludingPersonAsync(request.Email, user.PersonId))
+                .ReturnsAsync(false);
+            _userRepositoryMock
+                .Setup(x => x.IsPhoneExistsExcludingPersonAsync(request.PhoneNumber, user.PersonId))
+                .ReturnsAsync(true);
+
+            var service = CreateService();
+
+            // Act
+            var result = await service.UpdateMyInformationAsync(request);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateMyInformationAsync_WhenValidRequest_ShouldUpdatePersonAndReturnSuccess()
+        {
+            // Arrange
+            const int currentUserId = 1;
+            var user = UserBuilder.CreateUserEntity(id: currentUserId, clinicId: ClinicId);
+            _currentUserServiceMock.Setup(x => x.IsAuthenticated).Returns(true);
+            _currentUserServiceMock.Setup(x => x.UserId).Returns(currentUserId);
+
+            _userRepositoryMock
+                .Setup(x => x.GetUserByIdAsync(currentUserId, true))
+                .ReturnsAsync(user);
+
+            var request = new UpdateMyInformationDtoRequest
+            {
+                FirstName = "UpdatedFirst",
+                LastName = "UpdatedLast",
+                Email = "updated@example.com",
+                PhoneNumber = "01122334455"
+            };
+
+            _userRepositoryMock
+                .Setup(x => x.IsEmailExistsExcludingPersonAsync(request.Email, user.PersonId))
+                .ReturnsAsync(false);
+            _userRepositoryMock
+                .Setup(x => x.IsPhoneExistsExcludingPersonAsync(request.PhoneNumber, user.PersonId))
+                .ReturnsAsync(false);
+
+            var service = CreateService();
+
+            // Act
+            var result = await service.UpdateMyInformationAsync(request);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.True(result.Data);
+            Assert.Equal("UpdatedFirst", user.Person.FirstName);
+            Assert.Equal("UpdatedLast", user.Person.LastName);
+            Assert.Equal("updated@example.com", user.Person.Email);
+            Assert.Equal("01122334455", user.Person.PhoneNumber);
+            _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Moq.Times.Once);
+        }
+
+        #endregion
+
     }
 }

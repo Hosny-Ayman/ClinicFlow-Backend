@@ -1,4 +1,4 @@
-﻿using ClinicFlow.Api.Extensions;
+using ClinicFlow.Api.Extensions;
 using ClinicFlow.Application.Features.Users;
 using ClinicFlow.Application.Features.Users.DTOs.Requests;
 using ClinicFlow.Domain.Enums;
@@ -28,6 +28,15 @@ namespace ClinicFlow.Api.Controllers
 
             return this.ToHttpResponse(result);
 
+        }
+
+        [Authorize]
+        [HttpPut("me")]
+        public async Task<IActionResult> UpdateMyInformation([FromBody] UpdateMyInformationDtoRequest request)
+        {
+            var result = await _userService.UpdateMyInformationAsync(request);
+
+            return this.ToHttpResponse(result);
         }
 
 
